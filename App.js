@@ -14,66 +14,66 @@ import HomeScreen from "./screens/HomeScreen";
 const Stack = createStackNavigator();
 
 export default function App() {
-  // Load multiple fonts
-  const [fontsLoaded] = useFonts({
-    "InriaSans-Regular": require("./assets/fonts/InriaSans/InriaSans-Regular.ttf"),
-    "InriaSans-Bold": require("./assets/fonts/InriaSans/InriaSans-Bold.ttf"),
-    "Inter-Bold": require("./assets/fonts/Inter/Inter-Bold.ttf"),
-    "Inter-Regular": require("./assets/fonts/Inter/Inter-Regular.ttf"),
-  });
+	// Load multiple fonts
+	const [fontsLoaded] = useFonts({
+		"InriaSans-Regular": require("./assets/fonts/InriaSans/InriaSans-Regular.ttf"),
+		"InriaSans-Bold": require("./assets/fonts/InriaSans/InriaSans-Bold.ttf"),
+		"Inter-Bold": require("./assets/fonts/Inter/Inter-Bold.ttf"),
+		"Inter-Regular": require("./assets/fonts/Inter/Inter-Regular.ttf"),
+	});
 
-  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
+	const [showLoadingScreen, setShowLoadingScreen] = useState(true);
 
-  useEffect(() => {
-    // 1,5 second timer
-    const timer = setTimeout(() => {
-      setShowLoadingScreen(false);
-    }, 1500);
+	useEffect(() => {
+		// 1,5 second timer
+		const timer = setTimeout(() => {
+			setShowLoadingScreen(false);
+		}, 1500);
 
-    // Clear TimeOut
-    return () => clearTimeout(timer);
-  }, []);
+		// Clear TimeOut
+		return () => clearTimeout(timer);
+	}, []);
 
-  // If fonts are not loaded or showLoadingScreen is true, show loading screen
-  if (!fontsLoaded || showLoadingScreen) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Image
-          source={require("./assets/images/logo.png")}
-          style={styles.logo}
-        />
-        <Text style={styles.loadingText}>Cargando...</Text>
-      </View>
-    ); // Fonts not available
-  }
+	// If fonts are not loaded or showLoadingScreen is true, show loading screen
+	if (!fontsLoaded || showLoadingScreen) {
+		return (
+			<View style={styles.loadingContainer}>
+				<Image
+					source={require("./assets/images/logo.png")}
+					style={styles.logo}
+				/>
+				<Text style={styles.loadingText}>Cargando...</Text>
+			</View>
+		); // Fonts not available
+	}
 
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="InitialScreen" component={InitialScreen} />
-        <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
-        <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+	return (
+		<NavigationContainer>
+			<Stack.Navigator screenOptions={{ headerShown: false }}>
+				<Stack.Screen name="InitialScreen" component={InitialScreen} />
+				<Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+				<Stack.Screen name="LoginScreen" component={LoginScreen} />
+				<Stack.Screen name="HomeScreen" component={HomeScreen} />
+			</Stack.Navigator>
+		</NavigationContainer>
+	);
 }
 
 const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: "grey", // Grey
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  logo: {
-    width: 100,
-    height: 160,
-    marginBottom: 20,
-  },
-  loadingText: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "white",
-  },
+	loadingContainer: {
+		flex: 1,
+		backgroundColor: "grey", // Grey
+		alignItems: "center",
+		justifyContent: "center",
+	},
+	logo: {
+		width: 100,
+		height: 160,
+		marginBottom: 20,
+	},
+	loadingText: {
+		fontSize: 30,
+		fontWeight: "bold",
+		color: "white",
+	},
 });
