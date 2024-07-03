@@ -8,13 +8,4 @@ eas build -p android --profile preview
 ### 1. Problema en el build, no realizaba peticiones
 #### npx expo install expo-build-properties
 #### En app.json:
-##### "plugins": [
-#####    [
-#####       "expo-build-properties",
-#####       {
-#####          "android": {
-#####             "usesCleartextTraffic": true
-#####          }
-#####       }
-#####    ]
-##### ]
+##### "plugins": [ [ "expo-build-properties", { "android": { "usesCleartextTraffic": true } } ] ]
