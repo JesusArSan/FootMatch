@@ -18,7 +18,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.jesusarsan.footmatch"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -27,6 +28,11 @@
       "eas": {
         "projectId": "cbbbd74f-bc59-45bd-b3b6-acaeab524a95"
       }
-    }
+    },
+    "plugins": [
+      [ "expo-build-properties", 
+        { "android": { "usesCleartextTraffic": true } } 
+      ] 
+    ]
   }
 }
