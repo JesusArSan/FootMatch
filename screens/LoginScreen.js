@@ -53,7 +53,6 @@ const LoginScreen = () => {
 			if (response.ok) {
 				// If the response is ok, get the user data parsed
 				const data = await response.json();
-				console.log(data); // Only for debugging
 
 				// Save the userToken in AsyncStorage and the userData
 				await AsyncStorage.setItem("@userToken", data.token);
@@ -63,7 +62,7 @@ const LoginScreen = () => {
 				navigation.dispatch(
 					CommonActions.reset({
 						index: 0,
-						routes: [{ name: "HomeScreen", params: { user: data } }],
+						routes: [{ name: "HomeScreen", params: data }],
 					})
 				);
 			} else {

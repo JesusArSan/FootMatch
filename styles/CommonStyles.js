@@ -21,7 +21,7 @@ export default StyleSheet.create({
   },
 
   mainContainer: {
-    backgroundColor: "white",
+    backgroundColor: "#FAFAFA",
     width: "80%",
     height: 440,
     padding: 20,
