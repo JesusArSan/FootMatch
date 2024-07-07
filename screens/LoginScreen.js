@@ -58,11 +58,11 @@ const LoginScreen = () => {
 				await AsyncStorage.setItem("@userToken", data.token);
 				await AsyncStorage.setItem("@userData", JSON.stringify(data));
 
-				// Change to HomeScreen and send the user data as a parameter
+				// Change to MainNavigatorScreen and send the user data as a parameter
 				navigation.dispatch(
 					CommonActions.reset({
 						index: 0,
-						routes: [{ name: "HomeScreen", params: data }],
+						routes: [{ name: "MainNavigatorScreen", params: data }],
 					})
 				);
 			} else {
@@ -122,3 +122,5 @@ const LoginScreen = () => {
 };
 
 export default LoginScreen;
+
+// Name file: LoginScreen.js

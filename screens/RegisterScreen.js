@@ -94,7 +94,7 @@ const RegisterScreen = () => {
 				);
 
 				// Cambio de pantalla
-				navigation.navigate("HomeScreen", formdataParse);
+				navigation.navigate("MainNavigatorScreen", formdataParse);
 			} else {
 				throw new Error("Error al crear el usuario");
 			}
@@ -146,3 +146,5 @@ const RegisterScreen = () => {
 };
 
 export default RegisterScreen;
+
+// Name file: RegisterScreen.js

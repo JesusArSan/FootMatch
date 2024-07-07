@@ -4,7 +4,6 @@ import { View, Text, SafeAreaView } from "react-native";
 import {
 	useNavigation,
 	CommonActions,
-	useFocusEffect,
 } from "@react-navigation/native";
 // My Styles
 import commonStyles from "../styles/CommonStyles.js";
@@ -22,18 +21,18 @@ const InitialScreen = ({ route }) => {
 	// Extract user and tokenValid from the route params
 	const { user, tokenValid } = route.params || {};
 
-	// If the token is valid and user not null, navigate to the Home screen
+	// If the token is valid and user not null, navigate to the MainNavigatorScreen
 	useEffect(() => {
 		if (tokenValid && user) {
 			try {
 				navigation.dispatch(
 					CommonActions.reset({
 						index: 0,
-						routes: [{ name: "HomeScreen", params: user }],
+						routes: [{ name: "MainNavigatorScreen", params: user }],
 					})
 				);
 			} catch (error) {
-				console.error("Error al redirigir a HomeScreen: ", error);
+				console.error("Error al redirigir a MainNavigatorScreen: ", error);
 			}
 		}
 	}, [tokenValid, user, navigation]);
@@ -87,3 +86,5 @@ const InitialScreen = ({ route }) => {
 };
 
 export default InitialScreen;
+
+// Name file: InitialScreen.js

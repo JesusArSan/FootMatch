@@ -1,16 +1,15 @@
 // React Imports
 import { NavigationContainer } from "@react-navigation/native";
-import { StyleSheet, Text, View, Image } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useFonts } from "expo-font";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 // Screen Imports
 import InitialScreen from "./screens/InitialScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import LoginScreen from "./screens/LoginScreen";
-import HomeScreen from "./screens/HomeScreen";
+import MainNavigatorScreen from "./screens/MainNavigatorScreen";
 // My imports
 import LoadingManager from "./components/LoadingManager";
+import HeaderTabTitle from "./components/HeaderTabTitle";
 
 // Stack Navigator
 const Stack = createStackNavigator();
@@ -40,8 +39,19 @@ export default function App() {
 				/>
 				<Stack.Screen name="RegisterScreen" component={RegisterScreen} />
 				<Stack.Screen name="LoginScreen" component={LoginScreen} />
-				<Stack.Screen name="HomeScreen" component={HomeScreen} />
+				<Stack.Screen
+					name="MainNavigatorScreen"
+					component={MainNavigatorScreen}
+					options={{
+						headerTitle: () => <HeaderTabTitle />,
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+					}}
+				/>
 			</Stack.Navigator>
 		</NavigationContainer>
 	);
 }
+
+// Name file: App.js
