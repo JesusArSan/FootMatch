@@ -1,10 +1,16 @@
 // React Imports
 import { TouchableOpacity, StyleSheet } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useNavigation, DrawerActions } from "@react-navigation/native";
 
-const MenuIcon = () => {
+const MenuIcon = ({}) => {
+	const navigation = useNavigation();
+
 	return (
-		<TouchableOpacity style={styles.menu}>
+		<TouchableOpacity
+			style={styles.menu}
+			onPress={() => navigation.dispatch(DrawerActions.toggleDrawer())}
+		>
 			<Svg
 				xmlns="http://www.w3.org/2000/svg"
 				x="0px"

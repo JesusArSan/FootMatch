@@ -1,10 +1,7 @@
 // React Imports
-import React, { useLayoutEffect, useEffect } from "react";
+import React from "react";
 import { View, Text, SafeAreaView } from "react-native";
-import {
-	useNavigation,
-	CommonActions,
-} from "@react-navigation/native";
+
 // My Styles
 import commonStyles from "../styles/CommonStyles.js";
 import styles from "../styles/InitialScreenStyles.js";
@@ -14,34 +11,7 @@ import CustomButton from "../components/CustomButton.js";
 import SocialButtons from "../components/SocialButtons.js";
 
 // INITIAL SCREEN
-const InitialScreen = ({ route }) => {
-	// Navigation between screens
-	const navigation = useNavigation();
-
-	// Extract user and tokenValid from the route params
-	const { user, tokenValid } = route.params || {};
-
-	// If the token is valid and user not null, navigate to the MainNavigatorScreen
-	useEffect(() => {
-		if (tokenValid && user) {
-			try {
-				navigation.dispatch(
-					CommonActions.reset({
-						index: 0,
-						routes: [{ name: "MainNavigatorScreen", params: user }],
-					})
-				);
-			} catch (error) {
-				console.error("Error al redirigir a MainNavigatorScreen: ", error);
-			}
-		}
-	}, [tokenValid, user, navigation]);
-
-	// Hide the arrow back button
-	useLayoutEffect(() => {
-		navigation.setOptions({ headerShown: false });
-	}, [navigation]);
-
+const InitialScreen = ({}) => {
 	return (
 		<SafeAreaView style={commonStyles.container}>
 			{/* Component Header */}

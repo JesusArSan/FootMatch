@@ -62,7 +62,9 @@ const LoginScreen = () => {
 				navigation.dispatch(
 					CommonActions.reset({
 						index: 0,
-						routes: [{ name: "MainNavigatorScreen", params: data }],
+						routes: [
+							{ name: "MainNavigatorScreen", params: { user: data } },
+						],
 					})
 				);
 			} else {

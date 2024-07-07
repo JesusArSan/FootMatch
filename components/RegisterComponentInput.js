@@ -66,6 +66,7 @@ const RegisterComponentInput = ({ formData, onInputChange, errors }) => {
           placeholder="Email"
           value={formData.email}
           onChangeText={(text) => onInputChange("email", text)}
+          autoCapitalize="none" // Deactivate the first letter in uppercase
           keyboardType="email-address"
         />
       </View>
@@ -86,6 +87,7 @@ const RegisterComponentInput = ({ formData, onInputChange, errors }) => {
           value={formData.password}
           onChangeText={(text) => onInputChange("password", text)}
           secureTextEntry={true}
+          autoCapitalize="none" // Deactivate the first letter in uppercase
           maxLength={15} // Máximo de caracteres
         />
       </View>

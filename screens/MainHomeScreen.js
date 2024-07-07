@@ -44,7 +44,7 @@ const MainHomeScreen = ({ route }) => {
 	};
 
 	// Get the user data from the route params
-	const { user } = route.params || {};
+	const user = route.params.user || {};
 
 	return (
 		<View style={styles.container}>

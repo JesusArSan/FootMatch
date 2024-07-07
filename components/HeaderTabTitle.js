@@ -3,7 +3,7 @@ import React from "react";
 import { View, StyleSheet } from "react-native";
 // Icon Components
 import MenuIcon from "./icons/MenuIcon";
-import MagnifyingGlassIcon from "./icons/MagnifyingGlassIcon";
+import MessageIcon from "./icons/MessageIcon";
 import AppIcon from "./icons/AppIcon";
 
 // Header Tab Tittle
@@ -12,7 +12,7 @@ const HeaderTabTitle = () => {
 		<View style={styles.container}>
 			<MenuIcon />
 			<AppIcon />
-			<MagnifyingGlassIcon />
+			<MessageIcon />
 		</View>
 	);
 };

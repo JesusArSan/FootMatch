@@ -29,24 +29,26 @@ export default function App() {
 		return <LoadingManager onLoadingComplete={handleLoadingComplete} />;
 	}
 
+	// If the token is valid and the user is not null, the initial route is MainNavigatorScreen
+	const initialRouteName =
+		userData && isTokenValid ? "MainNavigatorScreen" : "InitialScreen";
+
 	return (
 		<NavigationContainer>
-			<Stack.Navigator>
+			<Stack.Navigator initialRouteName={initialRouteName}>
 				<Stack.Screen
 					name="InitialScreen"
 					component={InitialScreen}
-					initialParams={{ user: userData, tokenValid: isTokenValid }}
+					options={{ headerShown: false }}
 				/>
 				<Stack.Screen name="RegisterScreen" component={RegisterScreen} />
 				<Stack.Screen name="LoginScreen" component={LoginScreen} />
 				<Stack.Screen
 					name="MainNavigatorScreen"
 					component={MainNavigatorScreen}
+					initialParams={{ user: userData }}
 					options={{
-						headerTitle: () => <HeaderTabTitle />,
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
+						headerShown: false,
 					}}
 				/>
 			</Stack.Navigator>

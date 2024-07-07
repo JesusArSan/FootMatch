@@ -76,19 +76,15 @@ const LoadingManager = ({ onLoadingComplete }) => {
 	}, [showLoadingScreen, fontsLoaded, userData, isTokenValid]);
 
 	// Load Screen
-	if (showLoadingScreen || !fontsLoaded || (!userData && isTokenValid)) {
-		return (
-			<View style={styles.loadingContainer}>
-				<Image
-					source={require("../assets/images/logo.png")}
-					style={styles.logo}
-				/>
-				<Text style={styles.loadingText}>Cargando...</Text>
-			</View>
-		);
-	} else {
-		return null;
-	}
+	return (
+		<View style={styles.loadingContainer}>
+			<Image
+				source={require("../assets/images/logo.png")}
+				style={styles.logo}
+			/>
+			<Text style={styles.loadingText}>Cargando...</Text>
+		</View>
+	);
 };
 
 export default LoadingManager;

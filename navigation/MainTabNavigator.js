@@ -8,19 +8,24 @@ import NotificationsScreen from "../screens/NotificationsScreen";
 import CommunityScreen from "../screens/CommunityScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
+import HeaderTabTitle from "../components/HeaderTabTitle";
 
 // Create the Tab Navigator
 const Tab = createBottomTabNavigator();
 
-const MainTabNavigator = ({ user }) => {
+const MainTabNavigator = ({ route }) => {
 	// Get the user data from the params
-	const userData = user || {};
+	const userData = route.params.user || {};
 
 	return (
 		<Tab.Navigator
 			screenOptions={({ route }) => ({
-				// Hide the header
-				headerShown: false,
+				// Header personalized
+				headerShown: true,
+				headerTitle: () => <HeaderTabTitle />,
+				headerStyle: {
+					backgroundColor: "#3562A6",
+				},
 				// Background color of the tab and height
 				tabBarStyle: {
 					backgroundColor: "#3562A6",

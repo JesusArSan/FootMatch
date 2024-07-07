@@ -7,7 +7,7 @@ import {
 	Image,
 	TouchableOpacity,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My imports
 import config from "../config.js";
@@ -94,7 +94,17 @@ const RegisterScreen = () => {
 				);
 
 				// Cambio de pantalla
-				navigation.navigate("MainNavigatorScreen", formdataParse);
+				navigation.dispatch(
+					CommonActions.reset({
+						index: 0,
+						routes: [
+							{
+								name: "MainNavigatorScreen",
+								params: { user: formdataParse },
+							},
+						],
+					})
+				);
 			} else {
 				throw new Error("Error al crear el usuario");
 			}
