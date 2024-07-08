@@ -8,6 +8,7 @@ import CustomButton from "../../components/CustomButton.js";
 import MyLastGame from "../../components/MyLastGame.js";
 // My Styles
 import homeStyles from "../../styles/homeStyles.js";
+import { ScrollView } from "react-native-gesture-handler";
 
 const MainHomeScreen = ({ route }) => {
 	// Navigation between screens
@@ -48,46 +49,136 @@ const MainHomeScreen = ({ route }) => {
 	const user = route.params.user || {};
 
 	return (
-		<View style={styles.container}>
-			{/* MyLastGame */}
-			<MyLastGame />
+		<View style={styles.totalContainer}>
+			<ScrollView
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+			>
+				{/* MyLastGame */}
+				<View style={styles.lastGameContainer}>
+					<Text style={styles.sectionTitle}>Your Last Game</Text>
+					<MyLastGame />
+				</View>
 
-			<View style={homeStyles.mainContainerHome}>
-				<Text>Bienvenido, {user.username}</Text>
+				{/* ActionsApp */}
+				<View style={styles.actionsAppContainer}>
+					<Text style={styles.sectionTitle}>Time To Play!</Text>
+					<View style={styles.actionsSpace}>
+						{/* <CustomActionApp actionType="1" />
+					<CustomActionApp actionType="2" /> */}
+						<Text style={styles.text}>Hola1</Text>
+						<Text>Hola2</Text>
+					</View>
+					<View style={styles.actionsSpace}>
+						{/* <CustomActionApp actionType="3" />
+					<CustomActionApp actionType="4" /> */}
+						<Text>Hola1</Text>
+						<Text>Hola2</Text>
+					</View>
+					<View style={styles.actionsSpace}>
+						{/* <CustomActionApp actionType="5" />
+					<CustomActionApp actionType="6" /> */}
+						<Text>Hola1</Text>
+						<Text>Hola2</Text>
+					</View>
+					<View style={styles.actionsSpace}>
+						{/* <CustomActionApp actionType="7" />
+					<CustomActionApp actionType="8" /> */}
+						<Text>Hola1</Text>
+						<Text>Hola2</Text>
+					</View>
+				</View>
 
-				{/* Button Log out */}
-				<CustomButton
-					text="Log Out"
-					onPress={handleLogout}
-					typeStyle="2"
-					buttonWidth="50%"
-				/>
-			</View>
+				{/* Some Nearby Centers */}
+				<View style={styles.centersContainer}>
+					<Text style={styles.sectionTitle}>Nearby Centers</Text>
+					<View style={styles.centersSpace}>
+						{/* <CustomCenter /> */}
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+						<Text>Hola1</Text>
+					</View>
+				</View>
 
-			<Button
-				title="Comunidad"
-				onPress={() => alert("Navegar a Comunidad")}
-			/>
-			<Text style={styles.footer}>Gracias por usar nuestra aplicación.</Text>
+				{/* BORRAR */}
+				<View style={styles.others}>
+					<Text>Bienvenido, {user.username}</Text>
+					{/* Button Log out */}
+					<CustomButton
+						text="Log Out"
+						onPress={handleLogout}
+						typeStyle="2"
+						buttonWidth="50%"
+					/>
+					<Button
+						title="Comunidad"
+						onPress={() => alert("Navegar a Comunidad")}
+					/>
+
+					<Text style={styles.footer}>
+						Gracias por usar nuestra aplicación.
+					</Text>
+				</View>
+			</ScrollView>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
-	container: {
+	// Main Container
+	totalContainer: {
 		backgroundColor: "#EEEEEE",
 		width: "100%",
 		height: "100%",
 	},
-	title: {
+	// LastGame Styles
+	sectionTitle: {
 		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 20,
+		fontFamily: "InriaSans-Bold",
+		marginBottom: 10,
 	},
-	subtitle: {
-		fontSize: 18,
-		marginBottom: 20,
-		textAlign: "center",
+	lastGameContainer: {
+		width: "100%",
+		padding: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
+	// ActionsApp Styles
+	actionsAppContainer: {
+		width: "100%",
+		padding: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
+	actionsSpace: {
+		flexDirection: "row",
+		justifyContent: "space-around",
+		backgroundColor: "red",
+		width: "100%",
+	},
+	// Nearby Centers Styles
+	centersContainer: {
+		width: "100%",
+		padding: 20,
+		paddingTop: 10,
+		paddingBottom: 10,
+	},
+	centersSpace: {
+		backgroundColor: "cyan",
+		width: "100%",
+	},
+
+	// borrar
+	others: {
+		marginTop: 20,
+		alignItems: "center",
+		backgroundColor: "yellow",
 	},
 	footer: {
 		fontSize: 16,

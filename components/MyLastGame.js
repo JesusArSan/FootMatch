@@ -4,25 +4,26 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 
 const MyLastGame = ({}) => {
 	return (
-		<View style={styles.container}>
-			<Text style={styles.titleComponent}>Your Last Game</Text>
+		<View>
 			<TouchableOpacity style={styles.resultContainer} activeOpacity={0.7}>
 				<View style={styles.team}>
 					<Image
-						source={require("../assets/images/teamGeneric.png")}
+						// source={require("../assets/images/teamGeneric.png")}
+						source={require("../assets/images/espana.png")}
 						style={styles.teamLogo}
 					/>
-					<Text style={styles.teamName}>Team 1</Text>
+					<Text style={styles.teamName}>España</Text>
 				</View>
 				<View>
 					<Text style={styles.textVersus}>VS</Text>
 				</View>
 				<View style={styles.team}>
 					<Image
-						source={require("../assets/images/teamGeneric.png")}
+						// source={require("../assets/images/teamGeneric.png")}
+						source={require("../assets/images/alemania.png")}
 						style={styles.teamLogo}
 					/>
-					<Text style={styles.teamName}>Team 2</Text>
+					<Text style={styles.teamName}>Alemania</Text>
 				</View>
 			</TouchableOpacity>
 		</View>
@@ -44,37 +45,28 @@ const shadowStyles = {
 };
 
 const styles = StyleSheet.create({
-	container: {
-		width: "100%",
-		padding: 20,
-	},
-	titleComponent: {
-		fontSize: 24,
-		fontFamily: "InriaSans-Bold",
-		marginBottom: 10,
-	},
 	resultContainer: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-between",
 		width: "100%",
-		padding: 20,
-		paddingLeft: 50,
-		paddingRight: 50,
+		padding: 15,
+		paddingLeft: 25,
+		paddingRight: 25,
 		borderRadius: 30,
 		backgroundColor: "#FAFAFA",
 		...shadowStyles,
 	},
 	teamLogo: {
-		width: 60,
-		height: 55,
-		marginBottom: 8,
+		width: 50,
+		height: 50,
 	},
 	team: {
+		width: 120,
 		alignItems: "center",
 	},
 	teamName: {
-		fontSize: 18,
+		fontSize: 20,
 		fontFamily: "InriaSans-Bold",
 	},
 	textVersus: {
