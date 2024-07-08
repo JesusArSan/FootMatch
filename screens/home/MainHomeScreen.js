@@ -4,9 +4,9 @@ import { StyleSheet, View, Text, Alert, Button } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
-import CustomButton from "../components/CustomButton.js";
+import CustomButton from "../../components/CustomButton.js";
 // My Styles
-import homeStyles from "../styles/homeStyles.js";
+import homeStyles from "../../styles/homeStyles.js";
 
 const MainHomeScreen = ({ route }) => {
 	// Navigation between screens

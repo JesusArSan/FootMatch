@@ -2,10 +2,10 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // Screen Imports
-import MainHomeScreen from "../screens/MainHomeScreen";
-import UserProfileScreen from "../screens/UserProfileScreen";
-import NotificationsScreen from "../screens/NotificationsScreen";
-import CommunityScreen from "../screens/CommunityScreen";
+import MainHomeScreen from "../screens/home/MainHomeScreen";
+import UserProfileScreen from "../screens/home/UserProfileScreen";
+import NotificationsScreen from "../screens/home/NotificationsScreen";
+import CommunityScreen from "../screens/home/CommunityScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
 import HeaderTabTitle from "../components/HeaderTabTitle";
@@ -34,7 +34,9 @@ const MainTabNavigator = ({ route }) => {
 				// Padding of the item tab
 				tabBarItemStyle: { paddingVertical: 6 },
 				// Font weight of the item tab's text
-				tabBarLabelStyle: { fontWeight: "bold" },
+				tabBarLabelStyle: {
+					fontFamily: "InriaSans-Bold",
+				},
 				// Color of the icon's text of the active tab
 				tabBarActiveTintColor: "white",
 				// Color of the icon's text of the inactive tab

@@ -3,10 +3,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState } from "react";
 // Screen Imports
-import InitialScreen from "./screens/InitialScreen";
-import RegisterScreen from "./screens/RegisterScreen";
-import LoginScreen from "./screens/LoginScreen";
-import MainNavigatorScreen from "./screens/MainNavigatorScreen";
+import InitialScreen from "./screens/auth/InitialScreen";
+import RegisterScreen from "./screens/auth/RegisterScreen";
+import LoginScreen from "./screens/auth/LoginScreen";
+import MainNavigatorScreen from "./screens/home/MainNavigatorScreen";
 // My imports
 import LoadingManager from "./components/LoadingManager";
 import HeaderTabTitle from "./components/HeaderTabTitle";

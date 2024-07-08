@@ -11,14 +11,14 @@ import {
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My imports
-import config from "../config.js";
+import config from "../../config.js";
 // My Styles
-import commonStyles from "../styles/CommonStyles.js";
-import styles from "../styles/LoginStyles";
+import commonStyles from "../../styles/CommonStyles.js";
+import styles from "../../styles/LoginStyles";
 // My components
-import LoginComponentInput from "../components/LoginCustomInput";
-import InitialHeader from "../components/InitialHeader.js";
-import SocialButtons from "../components/SocialButtons.js";
+import LoginComponentInput from "../../components/LoginCustomInput";
+import InitialHeader from "../../components/InitialHeader.js";
+import SocialButtons from "../../components/SocialButtons.js";
 
 const LoginScreen = () => {
 	// Navigation between screens

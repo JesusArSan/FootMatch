@@ -1,7 +1,7 @@
 // React Imports
 import React from "react";
 // My Imports
-import DrawerNavigator from "../navigation/DrawerNavigator.js";
+import DrawerNavigator from "../../navigation/DrawerNavigator.js";
 
 // HOME SCREEN
 const MainNavigatorScreen = ({ route }) => {

@@ -3,12 +3,12 @@ import React from "react";
 import { View, Text, SafeAreaView } from "react-native";
 
 // My Styles
-import commonStyles from "../styles/CommonStyles.js";
-import styles from "../styles/InitialScreenStyles.js";
+import commonStyles from "../../styles/CommonStyles.js";
+import styles from "../../styles/InitialScreenStyles.js";
 // My components
-import InitialHeader from "../components/InitialHeader.js";
-import CustomButton from "../components/CustomButton.js";
-import SocialButtons from "../components/SocialButtons.js";
+import InitialHeader from "../../components/InitialHeader.js";
+import CustomButton from "../../components/CustomButton.js";
+import SocialButtons from "../../components/SocialButtons.js";
 
 // INITIAL SCREEN
 const InitialScreen = ({}) => {
