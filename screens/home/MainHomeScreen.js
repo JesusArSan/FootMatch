@@ -5,6 +5,7 @@ import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
 import CustomButton from "../../components/CustomButton.js";
+import MyLastGame from "../../components/MyLastGame.js";
 // My Styles
 import homeStyles from "../../styles/homeStyles.js";
 
@@ -48,23 +49,12 @@ const MainHomeScreen = ({ route }) => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Bienvenido a la Home Principal!</Text>
-			<Text style={styles.subtitle}>
-				Aquí puedes encontrar varias opciones y funcionalidades.
-			</Text>
-			<Button title="Ver Perfil" onPress={() => alert("Navegar a Perfil")} />
-			<Button
-				title="Notificaciones"
-				onPress={() => alert("Navegar a Notificaciones")}
-			/>
-			<Button
-				title="Comunidad"
-				onPress={() => alert("Navegar a Comunidad")}
-			/>
-			<Text style={styles.footer}>Gracias por usar nuestra aplicación.</Text>
+			{/* MyLastGame */}
+			<MyLastGame />
 
 			<View style={homeStyles.mainContainerHome}>
 				<Text>Bienvenido, {user.username}</Text>
+
 				{/* Button Log out */}
 				<CustomButton
 					text="Log Out"
@@ -73,16 +63,21 @@ const MainHomeScreen = ({ route }) => {
 					buttonWidth="50%"
 				/>
 			</View>
+
+			<Button
+				title="Comunidad"
+				onPress={() => alert("Navegar a Comunidad")}
+			/>
+			<Text style={styles.footer}>Gracias por usar nuestra aplicación.</Text>
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-		padding: 16,
+		backgroundColor: "#EEEEEE",
+		width: "100%",
+		height: "100%",
 	},
 	title: {
 		fontSize: 24,
