@@ -6,6 +6,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
 import CustomButton from "../../components/CustomButton.js";
 import MyLastGame from "../../components/MyLastGame.js";
+import CustomActionApp from "../../components/CustomActionApp.js";
+import CustomCenter from "../../components/CustomCenter.js";
 // My Styles
 import homeStyles from "../../styles/homeStyles.js";
 import { ScrollView } from "react-native-gesture-handler";
@@ -48,6 +50,14 @@ const MainHomeScreen = ({ route }) => {
 	// Get the user data from the route params
 	const user = route.params.user || {};
 
+	// DESIGN NOTE: The following code is a mockup of the data that will be displayed in the app.
+	const nameCenter1 = "Complejo Deportivo Chana";
+	const addressCenter1 = "C. Estrellas, S/N, Chana, 18015 Granada";
+	const imgUrlCenter1 = require("../../assets/images/centro-deportivo.webp");
+	const nameCenter2 = "Complejo Deportivo Bola de Oro";
+	const addressCenter2 = "C. Borreguiles, s, Genil, 18008 Granada";
+	const imgUrlCenter2 = require("../../assets/images/centro-deportivo2.png");
+
 	return (
 		<View style={styles.totalContainer}>
 			<ScrollView
@@ -63,46 +73,32 @@ const MainHomeScreen = ({ route }) => {
 				{/* ActionsApp */}
 				<View style={styles.actionsAppContainer}>
 					<Text style={styles.sectionTitle}>Time To Play!</Text>
-					<View style={styles.actionsSpace}>
-						{/* <CustomActionApp actionType="1" />
-					<CustomActionApp actionType="2" /> */}
-						<Text style={styles.text}>Hola1</Text>
-						<Text>Hola2</Text>
+					<View style={[styles.actionsSpace, { marginBottom: 25 }]}>
+						<CustomActionApp actionType="1" />
+						<CustomActionApp actionType="2" />
 					</View>
 					<View style={styles.actionsSpace}>
-						{/* <CustomActionApp actionType="3" />
-					<CustomActionApp actionType="4" /> */}
-						<Text>Hola1</Text>
-						<Text>Hola2</Text>
-					</View>
-					<View style={styles.actionsSpace}>
-						{/* <CustomActionApp actionType="5" />
-					<CustomActionApp actionType="6" /> */}
-						<Text>Hola1</Text>
-						<Text>Hola2</Text>
-					</View>
-					<View style={styles.actionsSpace}>
-						{/* <CustomActionApp actionType="7" />
-					<CustomActionApp actionType="8" /> */}
-						<Text>Hola1</Text>
-						<Text>Hola2</Text>
+						<CustomActionApp actionType="3" />
+						<CustomActionApp actionType="4" />
 					</View>
 				</View>
 
 				{/* Some Nearby Centers */}
 				<View style={styles.centersContainer}>
 					<Text style={styles.sectionTitle}>Nearby Centers</Text>
+					<View style={[styles.centersSpace, { marginBottom: 20 }]}>
+						<CustomCenter
+							name={nameCenter1}
+							address={addressCenter1}
+							imgUrl={imgUrlCenter1}
+						/>
+					</View>
 					<View style={styles.centersSpace}>
-						{/* <CustomCenter /> */}
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
-						<Text>Hola1</Text>
+						<CustomCenter
+							name={nameCenter2}
+							address={addressCenter2}
+							imgUrl={imgUrlCenter2}
+						/>
 					</View>
 				</View>
 
@@ -115,10 +111,6 @@ const MainHomeScreen = ({ route }) => {
 						onPress={handleLogout}
 						typeStyle="2"
 						buttonWidth="50%"
-					/>
-					<Button
-						title="Comunidad"
-						onPress={() => alert("Navegar a Comunidad")}
 					/>
 
 					<Text style={styles.footer}>
@@ -148,6 +140,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		paddingTop: 10,
 		paddingBottom: 10,
+		backgroundColor: "#EEEEEE",
 	},
 	// ActionsApp Styles
 	actionsAppContainer: {
@@ -158,8 +151,7 @@ const styles = StyleSheet.create({
 	},
 	actionsSpace: {
 		flexDirection: "row",
-		justifyContent: "space-around",
-		backgroundColor: "red",
+		justifyContent: "space-between",
 		width: "100%",
 	},
 	// Nearby Centers Styles
@@ -168,21 +160,19 @@ const styles = StyleSheet.create({
 		padding: 20,
 		paddingTop: 10,
 		paddingBottom: 10,
+		backgroundColor: "#EEEEEE",
 	},
 	centersSpace: {
-		backgroundColor: "cyan",
 		width: "100%",
 	},
 
 	// borrar
 	others: {
-		marginTop: 20,
 		alignItems: "center",
 		backgroundColor: "yellow",
 	},
 	footer: {
 		fontSize: 16,
-		marginTop: 20,
 		color: "gray",
 		textAlign: "center",
 	},

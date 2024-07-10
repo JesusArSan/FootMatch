@@ -29,6 +29,7 @@ const InitialScreen = ({}) => {
 					dirNavigation="LoginScreen"
 					typeStyle="1"
 					buttonWidth="85%"
+					marginBottom={25}
 				/>
 
 				{/* Button Sign Up */}
@@ -38,6 +39,7 @@ const InitialScreen = ({}) => {
 					dirNavigation="RegisterScreen"
 					typeStyle="2"
 					buttonWidth="85%"
+					marginBottom={15}
 				/>
 
 				{/* Social Buttons Component */}

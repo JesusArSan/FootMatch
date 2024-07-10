@@ -1,7 +1,12 @@
 // React Imports
 import React from "react";
+import { View, Image, StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import {
+	createDrawerNavigator,
+	DrawerContentScrollView,
+	DrawerItemList,
+} from "@react-navigation/drawer";
 // My Sreens
 import MainTabNavigator from "./MainTabNavigator";
 import ReservationsScreen from "../screens/general/ReservationsScreen";
@@ -15,19 +20,29 @@ import FAQScreen from "../screens/general/FAQScreen";
 import PrivacyPolicyScreen from "../screens/general/PrivacyPolicyScreen";
 import RateAppScreen from "../screens/general/RateAppScreen";
 import SupportScreen from "../screens/general/SupportScreen";
+// My icons
+import AppIcon from "../components/icons/AppIcon";
 
 // Create the Drawer Navigator
 const Drawer = createDrawerNavigator();
 
+// const CustomDrawerContent = (props) => (
+// 	<DrawerContentScrollView {...props}>
+// 		<View style={styles.imageContainer}>
+// 			<AppIcon />
+// 		</View>
+// 		<DrawerItemList {...props} />
+// 	</DrawerContentScrollView>
+// );
+
 const DrawerNavigator = ({ userData }) => {
 	return (
 		<Drawer.Navigator
+			// drawerContent={(props) => <CustomDrawerContent {...props} />}
 			screenOptions={{
 				headerShown: false,
-				drawerLabelStyle: {
-					fontSize: 15,
-					fontFamily: "InriaSans-Bold", // Font family
-				},
+				drawerLabelStyle: styles.drawerLabelStyle,
+				drawerStyle: styles.drawerContainer,
 			}}
 		>
 			<Drawer.Screen
@@ -57,5 +72,17 @@ const DrawerNavigator = ({ userData }) => {
 };
 
 export default DrawerNavigator;
+
+const styles = StyleSheet.create({
+	drawerContainer: {
+		backgroundColor: "#1E417F",
+		padding: 20,
+	},
+	drawerLabelStyle: {
+		fontSize: 15,
+		fontFamily: "InriaSans-Bold",
+		color: "#ffffff",
+	},
+});
 
 // Name file: DrawerNavigator.js
