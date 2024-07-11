@@ -1,7 +1,6 @@
 // React Imports
 import React from "react";
-import { View, Image, StyleSheet, Text } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { View, Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 import {
 	createDrawerNavigator,
 	DrawerContentScrollView,
@@ -13,36 +12,55 @@ import ReservationsScreen from "../screens/general/ReservationsScreen";
 import FriendsScreen from "../screens/general/FriendsScreen";
 import TeamsScreen from "../screens/general/TeamsScreen";
 import StatisticsScreen from "../screens/general/StatisticsScreen";
-import GamePreferencesScreen from "../screens/general/GamePreferencesScreen";
 import SettingsScreen from "../screens/general/SettingsScreen";
 import AboutScreen from "../screens/general/AboutScreen";
-import FAQScreen from "../screens/general/FAQScreen";
-import PrivacyPolicyScreen from "../screens/general/PrivacyPolicyScreen";
-import RateAppScreen from "../screens/general/RateAppScreen";
 import SupportScreen from "../screens/general/SupportScreen";
 // My icons
 import AppIcon from "../components/icons/AppIcon";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign } from "@expo/vector-icons";
+// My components
+import DrawerDivider from "../components/DrawerDivider";
 
 // Create the Drawer Navigator
 const Drawer = createDrawerNavigator();
 
-// const CustomDrawerContent = (props) => (
-// 	<DrawerContentScrollView {...props}>
-// 		<View style={styles.imageContainer}>
-// 			<AppIcon />
-// 		</View>
-// 		<DrawerItemList {...props} />
-// 	</DrawerContentScrollView>
-// );
+const CustomDrawerContent = (props) => (
+	<DrawerContentScrollView {...props}>
+		<View style={styles.logoContainer}>
+			<AppIcon customHeight={50} customWidth={30} />
+			<Text style={styles.textTitle}>OOTMATCH</Text>
+		</View>
+		<DrawerDivider />
+		<DrawerItemList {...props} />
+		<DrawerDivider />
+		<View style={styles.darkIcon}>
+			<TouchableOpacity
+				onPress={() => {
+					Alert.alert("Information", "Dark Mode in development");
+				}}
+			>
+				<MaterialIcons name="dark-mode" size={40} color="white" />
+			</TouchableOpacity>
+		</View>
+	</DrawerContentScrollView>
+);
 
 const DrawerNavigator = ({ userData }) => {
 	return (
 		<Drawer.Navigator
-			// drawerContent={(props) => <CustomDrawerContent {...props} />}
+			drawerContent={(props) => <CustomDrawerContent {...props} />}
 			screenOptions={{
 				headerShown: false,
 				drawerLabelStyle: styles.drawerLabelStyle,
 				drawerStyle: styles.drawerContainer,
+				drawerActiveTintColor: "#ffffff",
+				drawerInactiveTintColor: "#ffffff",
+				drawerItemStyle: { paddingLeft: 8 },
 			}}
 		>
 			<Drawer.Screen
@@ -53,20 +71,74 @@ const DrawerNavigator = ({ userData }) => {
 					drawerItemStyle: { display: "none" },
 				}}
 			/>
-			<Drawer.Screen name="My Reservations" component={ReservationsScreen} />
-			<Drawer.Screen name="My Friends" component={FriendsScreen} />
-			<Drawer.Screen name="My Teams" component={TeamsScreen} />
-			<Drawer.Screen name="My Statistics" component={StatisticsScreen} />
 			<Drawer.Screen
-				name="Game Preferences"
-				component={GamePreferencesScreen}
+				name="My Reservations"
+				component={ReservationsScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<MaterialIcons name="date-range" size={30} color={color} />
+					),
+				}}
 			/>
-			<Drawer.Screen name="Settings" component={SettingsScreen} />
-			<Drawer.Screen name="About" component={AboutScreen} />
-			<Drawer.Screen name="FAQ" component={FAQScreen} />
-			<Drawer.Screen name="Privacy Policy" component={PrivacyPolicyScreen} />
-			<Drawer.Screen name="Rate The App" component={RateAppScreen} />
-			<Drawer.Screen name="Support" component={SupportScreen} />
+			<Drawer.Screen
+				name="My Friends"
+				component={FriendsScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<FontAwesome5 name="user-friends" size={24} color={color} />
+					),
+				}}
+			/>
+			<Drawer.Screen
+				name="My Teams"
+				component={TeamsScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<MaterialCommunityIcons
+							name="microsoft-teams"
+							size={30}
+							color={color}
+						/>
+					),
+				}}
+			/>
+			<Drawer.Screen
+				name="My Statistics"
+				component={StatisticsScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<Ionicons name="stats-chart" size={30} color={color} />
+					),
+				}}
+			/>
+
+			<Drawer.Screen
+				name="Settings"
+				component={SettingsScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<Ionicons name="settings-sharp" size={30} color={color} />
+					),
+				}}
+			/>
+			<Drawer.Screen
+				name="About"
+				component={AboutScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<AntDesign name="exclamationcircle" size={31} color={color} />
+					),
+				}}
+			/>
+			<Drawer.Screen
+				name="Support"
+				component={SupportScreen}
+				options={{
+					drawerIcon: ({ color }) => (
+						<FontAwesome name="support" size={31} color={color} />
+					),
+				}}
+			/>
 		</Drawer.Navigator>
 	);
 };
@@ -76,12 +148,31 @@ export default DrawerNavigator;
 const styles = StyleSheet.create({
 	drawerContainer: {
 		backgroundColor: "#1E417F",
-		padding: 20,
 	},
 	drawerLabelStyle: {
 		fontSize: 15,
 		fontFamily: "InriaSans-Bold",
 		color: "#ffffff",
+		marginLeft: -15,
+	},
+	logoContainer: {
+		flexDirection: "row",
+		padding: 20,
+		paddingLeft: 27,
+		paddingBottom: 13,
+	},
+	textTitle: {
+		fontSize: 35,
+		fontFamily: "InriaSans-Bold",
+		color: "#ffffff",
+		alignSelf: "flex-end",
+		height: 35,
+	},
+	darkIcon: {
+		alignSelf: "flex-start",
+		marginLeft: 24,
+		marginTop: "90%",
+		marginBottom: 0,
 	},
 });
 

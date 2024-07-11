@@ -2,13 +2,17 @@
 import { StyleSheet } from "react-native";
 import Svg, { Rect, Defs, Pattern, Use, Image } from "react-native-svg";
 
-const ShirtTeam = () => {
+const ShirtTeam = ({
+	customWidth = 53,
+	customHeight = 53,
+	color = "black",
+}) => {
 	return (
 		<Svg
-			width="53"
-			height="53"
+			width={customWidth}
+			height={customHeight}
 			viewBox="0 0 53 53"
-			fill="none"
+			fill="white"
 			syles={styles.shirtTeam}
 		>
 			<Rect width="53" height="53" fill="url(#pattern0_130_94)" />
