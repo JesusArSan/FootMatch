@@ -128,7 +128,7 @@ const DrawerNavigator = ({ userData }) => {
 				component={AboutScreen}
 				options={{
 					drawerIcon: ({ color }) => (
-						<AntDesign name="exclamationcircle" size={31} color={color} />
+						<AntDesign name="exclamationcircle" size={30} color={color} />
 					),
 				}}
 			/>
@@ -137,7 +137,7 @@ const DrawerNavigator = ({ userData }) => {
 				component={SupportScreen}
 				options={{
 					drawerIcon: ({ color }) => (
-						<FontAwesome name="support" size={31} color={color} />
+						<FontAwesome name="support" size={30} color={color} />
 					),
 				}}
 			/>
