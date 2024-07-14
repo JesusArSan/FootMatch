@@ -32,7 +32,9 @@ const Drawer = createDrawerNavigator();
 const CustomDrawerContent = (props) => (
 	<DrawerContentScrollView {...props}>
 		<View style={styles.logoContainer}>
-			<AppIcon customHeight={50} customWidth={30} />
+			<View style={styles.logoApp}>
+				<AppIcon customHeight={45} customWidth={28} />
+			</View>
 			<Text style={styles.textTitle}>OOTMATCH</Text>
 		</View>
 		<DrawerDivider />
@@ -157,21 +159,26 @@ const styles = StyleSheet.create({
 	},
 	logoContainer: {
 		flexDirection: "row",
-		padding: 20,
+		marginTop: 8,
 		paddingLeft: 27,
 		paddingBottom: 13,
+		height: 60,
+	},
+	logoApp: {
+		width: 28,
+		height: 45,
 	},
 	textTitle: {
-		fontSize: 35,
+		fontSize: 30,
 		fontFamily: "InriaSans-Bold",
 		color: "#ffffff",
 		alignSelf: "flex-end",
-		height: 35,
+		height: 32,
 	},
 	darkIcon: {
 		alignSelf: "flex-start",
 		marginLeft: 24,
-		marginTop: "90%",
+		marginTop: "95%",
 		marginBottom: 0,
 	},
 });
