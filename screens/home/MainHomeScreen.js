@@ -2,7 +2,6 @@
 import React from "react";
 import { StyleSheet, View, Text, Alert, Button } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
 import CustomButton from "../../components/CustomButton.js";
 import MyLastGame from "../../components/MyLastGame.js";
@@ -15,37 +14,6 @@ import { ScrollView } from "react-native-gesture-handler";
 const MainHomeScreen = ({ route }) => {
 	// Navigation between screens
 	const navigation = useNavigation();
-
-	// Logout handler
-	const handleLogout = async () => {
-		try {
-			// Remove the userToken and userData from AsyncStorage
-			await AsyncStorage.removeItem("@userToken");
-			await AsyncStorage.removeItem("@userData");
-
-			// Remove data of route.params
-			route.params = {};
-
-			// Navigate to the Login screen, and reset the navigation stack
-			navigation.dispatch(
-				CommonActions.reset({
-					index: 0,
-					routes: [
-						{
-							name: "InitialScreen",
-							params: { user: null, tokenValid: false },
-						},
-					],
-				})
-			);
-		} catch (e) {
-			console.error("Error al cerrar sesión: ", e);
-			Alert.alert(
-				"Error",
-				"No se pudo cerrar la sesión. Por favor, intentalo de nuevo."
-			);
-		}
-	};
 
 	// Get the user data from the route params
 	const user = route.params.user || {};
@@ -100,22 +68,6 @@ const MainHomeScreen = ({ route }) => {
 							imgUrl={imgUrlCenter2}
 						/>
 					</View>
-				</View>
-
-				{/* BORRAR */}
-				<View style={styles.others}>
-					<Text>Bienvenido, {user.username}</Text>
-					{/* Button Log out */}
-					<CustomButton
-						text="Log Out"
-						onPress={handleLogout}
-						typeStyle="2"
-						buttonWidth="50%"
-					/>
-
-					<Text style={styles.footer}>
-						Gracias por usar nuestra aplicación.
-					</Text>
 				</View>
 			</ScrollView>
 		</View>

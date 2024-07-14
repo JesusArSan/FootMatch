@@ -54,7 +54,11 @@ const MainTabNavigator = ({ route }) => {
 			/>
 			<Tab.Screen name="Community" component={CommunityScreen} />
 			<Tab.Screen name="Notifications" component={NotificationsScreen} />
-			<Tab.Screen name="Profile" component={UserProfileScreen} />
+			<Tab.Screen
+				name="Profile"
+				component={UserProfileScreen}
+				initialParams={{ user: userData }}
+			/>
 		</Tab.Navigator>
 	);
 };
