@@ -2,16 +2,21 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Svg, { Path, G, ClipPath, Rect, Defs } from "react-native-svg";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import BallMagnifyingGlassIcon from "./icons/BallMagnifyingGlassIcon";
 import ShirtTeam from "./icons/ShirtTeam";
 import TrophyIcon from "./icons/TrophyIcon";
 import PeopleIcon from "./icons/PeopleIcon";
 
 const CustomActionApp = ({ actionType }) => {
+	// Navigation between screens
+	const navigation = useNavigation();
+
 	switch (actionType) {
 		case "1":
 			return (
 				<TouchableOpacity
+					onPress={() => navigation.navigate("BookFieldScreen")}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -27,6 +32,7 @@ const CustomActionApp = ({ actionType }) => {
 		case "2":
 			return (
 				<TouchableOpacity
+					onPress={() => navigation.navigate("FindMatchScreen")}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -42,6 +48,7 @@ const CustomActionApp = ({ actionType }) => {
 		case "3":
 			return (
 				<TouchableOpacity
+					onPress={() => navigation.navigate("JoinCompetScreen")}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -57,6 +64,7 @@ const CustomActionApp = ({ actionType }) => {
 		case "4":
 			return (
 				<TouchableOpacity
+					onPress={() => navigation.navigate("TeamsScreen")}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
