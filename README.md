@@ -1,6 +1,9 @@
 # FootMatch
 TFG - Football Aplication
 
+## Build on expo
+npm install && npm start --reset-cache
+
 ## Build APK
 eas build -p android --profile preview
 
