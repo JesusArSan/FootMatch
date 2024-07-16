@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
 // My Imports
-import config from "../config";
+import config from "../../config";
 
 // LOADING MANAGER COMPONENT
 const LoadingManager = ({ onLoadingComplete }) => {
@@ -79,7 +79,7 @@ const LoadingManager = ({ onLoadingComplete }) => {
 	return (
 		<View style={styles.loadingContainer}>
 			<Image
-				source={require("../assets/images/logo.png")}
+				source={require("../assets/images/icons/logo.png")}
 				style={styles.logo}
 			/>
 			<Text style={styles.loadingText}>Cargando...</Text>

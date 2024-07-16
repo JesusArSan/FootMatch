@@ -8,13 +8,13 @@ import {
 } from "@react-navigation/drawer";
 // My Sreens
 import MainTabNavigator from "./MainTabNavigator";
-import ReservationsScreen from "../screens/general/ReservationsScreen";
-import FriendsScreen from "../screens/general/FriendsScreen";
-import TeamsScreen from "../screens/general/TeamsScreen";
-import StatisticsScreen from "../screens/general/StatisticsScreen";
-import SettingsScreen from "../screens/general/SettingsScreen";
-import AboutScreen from "../screens/general/AboutScreen";
-import SupportScreen from "../screens/general/SupportScreen";
+import ReservationsScreen from "../screens/General/ReservationsScreen";
+import FriendsScreen from "../screens/General/FriendsScreen";
+import TeamsScreen from "../screens/General/TeamsScreen";
+import StatisticsScreen from "../screens/General/StatisticsScreen";
+import SettingsScreen from "../screens/General/SettingsScreen";
+import AboutScreen from "../screens/General/AboutScreen";
+import SupportScreen from "../screens/General/SupportScreen";
 // My icons
 import AppIcon from "../components/icons/AppIcon";
 import { MaterialCommunityIcons } from "@expo/vector-icons";

@@ -2,10 +2,10 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // Screen Imports
-import MainHomeScreen from "../screens/home/MainHomeScreen";
-import UserProfileScreen from "../screens/home/UserProfileScreen";
-import NotificationsScreen from "../screens/home/NotificationsScreen";
-import CommunityScreen from "../screens/home/CommunityScreen";
+import MainHomeScreen from "../screens/Home/MainHomeScreen";
+import UserProfileScreen from "../screens/Home/UserProfileScreen";
+import NotificationsScreen from "../screens/Home/NotificationsScreen";
+import CommunityScreen from "../screens/Home/CommunityScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
 import HeaderTabTitle from "../components/HeaderTabTitle";

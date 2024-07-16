@@ -8,8 +8,8 @@ const MyLastGame = ({}) => {
 			<TouchableOpacity style={styles.resultContainer} activeOpacity={0.7}>
 				<View style={styles.team}>
 					<Image
-						// source={require("../assets/images/teamGeneric.png")}
-						source={require("../assets/images/espana.png")}
+						// source={require("../assets/images/icons/teamGeneric.png")}
+						source={require("../assets/images/icons/espana.png")}
 						style={styles.teamLogo}
 					/>
 					<Text style={styles.teamName}>España</Text>
@@ -19,8 +19,8 @@ const MyLastGame = ({}) => {
 				</View>
 				<View style={styles.team}>
 					<Image
-						// source={require("../assets/images/teamGeneric.png")}
-						source={require("../assets/images/alemania.png")}
+						// source={require("../assets/images/icons/teamGeneric.png")}
+						source={require("../assets/images/icons/alemania.png")}
 						style={styles.teamLogo}
 					/>
 					<Text style={styles.teamName}>Alemania</Text>

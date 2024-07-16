@@ -5,7 +5,7 @@ import { Image } from "react-native";
 const PeopleIcon = () => {
 	return (
 		<Image
-			source={require("../../assets/images/equipo.png")}
+			source={require("../../assets/images/icons/equipo.png")}
 			style={styles.peopleIcon}
 		/>
 	);

@@ -4,19 +4,19 @@ import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState } from "react";
 import { Text } from "react-native";
 // Screen Imports
-import InitialScreen from "./screens/auth/InitialScreen";
-import RegisterScreen from "./screens/auth/RegisterScreen";
-import LoginScreen from "./screens/auth/LoginScreen";
-import MainNavigatorScreen from "./screens/home/MainNavigatorScreen";
-import BookFieldScreen from "./screens/general/BookFieldScreen";
-import FindMatchScreen from "./screens/general/FindMatchScreen";
-import JoinCompetScreen from "./screens/general/JoinCompetScreen";
-import TeamsScreen from "./screens/general/TeamsScreen";
+import InitialScreen from "./src/screens/General/InitialScreen";
+import RegisterScreen from "./src/screens/Auth/RegisterScreen";
+import LoginScreen from "./src/screens/Auth/LoginScreen";
+import MainNavigatorScreen from "./src/screens/Home/MainNavigatorScreen";
+import BookFieldScreen from "./src/screens/General/BookFieldScreen";
+import FindMatchScreen from "./src/screens/General/FindMatchScreen";
+import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
+import TeamsScreen from "./src/screens/General/TeamsScreen";
 // My imports
-import LoadingManager from "./components/LoadingManager";
-import HeaderTabTitle from "./components/HeaderTabTitle";
+import LoadingManager from "./src/components/LoadingManager";
+import HeaderTabTitle from "./src/components/HeaderTabTitle";
 // My Components
-import TitleScreen from "./components/TitleScreen";
+import TitleScreen from "./src/components/TitleScreen";
 
 // Stack Navigator
 const Stack = createStackNavigator();

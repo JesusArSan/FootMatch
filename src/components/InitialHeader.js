@@ -10,7 +10,7 @@ const InitialHeader = ({ mainText }) => {
       />
 
       <Image
-        source={require("../assets/images/logo.png")}
+        source={require("../assets/images/icons/logo.png")}
         resizeMode="contain"
         style={styles.logo}
       />
