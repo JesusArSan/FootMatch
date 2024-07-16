@@ -1,11 +1,6 @@
 // React Imports
 import React, { useState, useLayoutEffect } from "react";
-import {
-	View,
-	SafeAreaView,
-	Text,
-	TouchableOpacity,
-} from "react-native";
+import { View, SafeAreaView, Text, TouchableOpacity } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My imports
@@ -96,7 +91,11 @@ const LoginScreen = () => {
 						<Text style={styles.forgotText}>Forgot your password?</Text>
 					</TouchableOpacity>
 				</View>
-				<TouchableOpacity style={styles.buttonSignin} onPress={handleLogin}>
+				<TouchableOpacity
+					style={styles.buttonSignin}
+					onPress={handleLogin}
+					testID="loginButton"
+				>
 					<Text style={styles.buttonTextSignin}>Sign In</Text>
 				</TouchableOpacity>
 
