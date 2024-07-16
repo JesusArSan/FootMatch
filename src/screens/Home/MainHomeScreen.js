@@ -1,14 +1,12 @@
 // React Imports
 import React from "react";
-import { StyleSheet, View, Text, Alert, Button } from "react-native";
-import { useNavigation, CommonActions } from "@react-navigation/native";
+import { StyleSheet, View, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // My components
-import CustomButton from "../../components/CustomButton.js";
 import MyLastGame from "../../components/MyLastGame.js";
 import CustomActionApp from "../../components/CustomActionApp.js";
 import CustomCenter from "../../components/CustomCenter.js";
 // My Styles
-import homeStyles from "../../styles/homeStyles.js";
 import { ScrollView } from "react-native-gesture-handler";
 
 const MainHomeScreen = ({ route }) => {

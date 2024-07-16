@@ -2,7 +2,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { Text } from "react-native";
 // Screen Imports
 import InitialScreen from "./src/screens/General/InitialScreen";
 import RegisterScreen from "./src/screens/Auth/RegisterScreen";
@@ -14,7 +13,6 @@ import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
 // My imports
 import LoadingManager from "./src/components/LoadingManager";
-import HeaderTabTitle from "./src/components/HeaderTabTitle";
 // My Components
 import TitleScreen from "./src/components/TitleScreen";
 

@@ -1,8 +1,7 @@
 // React Imports
 import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
-import Svg, { Path, G, ClipPath, Rect, Defs } from "react-native-svg";
-import { useNavigation, CommonActions } from "@react-navigation/native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import BallMagnifyingGlassIcon from "./icons/BallMagnifyingGlassIcon";
 import ShirtTeam from "./icons/ShirtTeam";
 import TrophyIcon from "./icons/TrophyIcon";

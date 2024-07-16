@@ -1,5 +1,5 @@
 import React from "react";
-import { View, TextInput, StyleSheet, Image } from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";

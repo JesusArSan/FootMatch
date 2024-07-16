@@ -1,12 +1,10 @@
 // React Imports
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import {
 	View,
 	SafeAreaView,
 	Text,
 	TouchableOpacity,
-	Image,
-	KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
