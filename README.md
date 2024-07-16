@@ -7,7 +7,7 @@ npm install && npm start --reset-cache
 ## Build APK
 eas build -p android --profile preview
 
-## Errores hasta ahora
+## Errores solucionados hasta el momento
 ### 1. Problema en el build, no realizaba peticiones
 #### Primer Paso: 
 ##### npx expo install expo-build-properties
