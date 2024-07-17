@@ -1,7 +1,6 @@
 // React Imports
 import React from "react";
-import { View, Text, SafeAreaView } from "react-native";
-
+import { View, Text, SafeAreaView, StatusBar } from "react-native";
 // My Styles
 import commonStyles from "../../styles/CommonStyles.js";
 import styles from "../../styles/InitialScreenStyles.js";
@@ -16,7 +15,6 @@ const InitialScreen = ({}) => {
 		<SafeAreaView style={commonStyles.container}>
 			{/* Component Header */}
 			<InitialHeader mainText="Book and organize matches with your friends!" />
-
 			{/* Body */}
 			<View style={commonStyles.mainContainer}>
 				<Text style={styles.welcomeText}>Welcome to FootMatch!</Text>
@@ -45,7 +43,6 @@ const InitialScreen = ({}) => {
 				{/* Social Buttons Component */}
 				<SocialButtons />
 			</View>
-
 			<View style={commonStyles.termsContainer}>
 				<Text style={commonStyles.termsText}>
 					By registering, you agree to our{" "}

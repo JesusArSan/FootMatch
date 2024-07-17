@@ -1,5 +1,6 @@
 // React Imports
 import React, { useState, useEffect } from "react";
+import { StatusBar } from "react-native";
 import { StyleSheet, Text, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
@@ -78,6 +79,7 @@ const LoadingManager = ({ onLoadingComplete }) => {
 	// Load Screen
 	return (
 		<View style={styles.loadingContainer}>
+			<StatusBar translucent backgroundColor={"transparent"} />
 			<Image
 				source={require("../assets/images/icons/logo.png")}
 				style={styles.logo}

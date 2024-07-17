@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {
-    "start": "expo start --reset-cache",
-    "prebuild": "npm run clean && npm install",
+    "start": "expo start",
     "build": "eas build -p android --profile preview",
     "clean": "rm -rf node_modules && npm cache clean --force",
     "android": "expo start --android",
@@ -20,11 +19,10 @@
     "@react-navigation/drawer": "^6.7.0",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/stack": "^6.4.0",
-    "expo": "~51.0.20",
+    "expo": "~51.0.21",
     "expo-build-properties": "~0.12.3",
     "expo-dev-client": "~4.0.20",
     "expo-font": "^12.0.7",
-    "expo-status-bar": "~1.12.1",
     "react": "^18.2.0",
     "react-native": "0.74.3",
     "react-native-gesture-handler": "~2.16.1",
@@ -43,11 +41,7 @@
     "preset": "react-native",
     "setupFiles": [
       "/home/jesusarsan/Escritorio/Proyecto/FootMatch/jest/setup.js"
-    ],
-    "transformIgnorePatterns": [
-      "node_modules/(?!(@react-native|react-native|react-navigation|@react-navigation/.*|@react-native-async-storage/async-storage|@react-native-community|@react-native/js-polyfills)/)"
     ]
   },
   "private": true
 }
-

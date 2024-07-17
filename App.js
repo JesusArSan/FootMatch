@@ -2,6 +2,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import React, { useState } from "react";
+import { StatusBar } from "react-native";
 // Screen Imports
 import InitialScreen from "./src/screens/General/InitialScreen";
 import RegisterScreen from "./src/screens/Auth/RegisterScreen";
@@ -40,6 +41,7 @@ export default function App() {
 
 	return (
 		<NavigationContainer>
+			<StatusBar translucent backgroundColor={"transparent"} />
 			<Stack.Navigator initialRouteName={initialRouteName}>
 				<Stack.Screen
 					name="InitialScreen"
