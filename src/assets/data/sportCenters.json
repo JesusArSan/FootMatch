@@ -1,0 +1,42 @@
+[
+   {
+      "id": 1,
+      "latitude": 37.18817,
+      "longitude": -3.60667,
+      "price": 30,
+      "title": "Granada Sports Arena",
+      "numberOfStars": 4,
+      "rating": 4.5,
+      "image": ""
+   },
+   {
+      "id": 2,
+      "latitude": 37.17463,
+      "longitude": -3.59855,
+      "price": 25,
+      "title": "Albaicín Fitness Center",
+      "numberOfStars": 5,
+      "rating": 4.8,
+      "image": ""
+   },
+   {
+      "id": 3,
+      "latitude": 37.1675,
+      "longitude": -3.6244,
+      "price": 15,
+      "title": "Centro Deportivo La Chana",
+      "numberOfStars": 3,
+      "rating": 4.3,
+      "image": ""
+   },
+   {
+      "id": 4,
+      "latitude": 37.1629,
+      "longitude": -3.6158,
+      "price": 10,
+      "title": "Polideportivo Universitario",
+      "numberOfStars": 4,
+      "rating": 4.7,
+      "image": ""
+   }
+]
