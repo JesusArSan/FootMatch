@@ -178,8 +178,7 @@ const styles = StyleSheet.create({
 	darkIcon: {
 		alignSelf: "flex-start",
 		marginLeft: 24,
-		marginTop: "95%",
-		marginBottom: 0,
+		marginTop: "100%",
 	},
 });
 
