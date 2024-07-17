@@ -1,10 +1,20 @@
 // React Imports
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, Alert } from "react-native";
 import Svg, { Path } from "react-native-svg";
+import { useNavigation } from "@react-navigation/native";
 
 const MessageIcon = () => {
+	// Navigation between screens
+	const navigation = useNavigation();
+
 	return (
-		<TouchableOpacity style={styles.message}>
+		<TouchableOpacity
+			style={styles.message}
+			onPress={() => {
+				Alert.alert("Information", "Chat in development");
+			}}
+			//onPress={() => navigation.navigate("ChatScreen")}
+		>
 			<Svg
 				fill="white"
 				height="31"
