@@ -2,7 +2,7 @@
 import React from "react";
 import { Image, StyleSheet } from "react-native";
 
-const CustomMarker = ({ customHeight = 40, customWidth = 50 }) => {
+const CustomMarker = ({ customWidth = 40, customHeight = 50 }) => {
 	return (
 		<Image
 			source={require("../../assets/images/icons/marker.png")}

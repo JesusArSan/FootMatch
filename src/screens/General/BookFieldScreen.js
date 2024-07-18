@@ -1,11 +1,13 @@
 // React Imports
-import React, { useEffect } from "react";
+import * as React from "react";
 import { View, Text, StyleSheet, Animated, Alert } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 // My components
 import CustomMarker from "../../components/icons/CustomMarker";
+import CustomCenter from "../../components/CustomCenter";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
+import { ScrollView } from "react-native-gesture-handler";
 
 // useEffect(() => {
 // 	// Get user location
@@ -22,41 +24,61 @@ userUbication = {
 const BookFieldScreen = () => {
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>My Ubication</Text>
-			<View style={styles.locationContainer}>
-				<MapView
-					provider={PROVIDER_GOOGLE}
-					style={styles.mapDimensions}
-					initialRegion={userUbication}
-				>
-					{centers.map((center) => (
-						<Marker
-							key={center.id}
-							coordinate={{
-								latitude: center.latitude,
-								longitude: center.longitude,
-							}}
-							// title={center.title}
-							tracksViewChanges={false}
-							onPress={() => {
-								alert("test");
-							}}
-						>
-							<CustomMarker customWidth={27} customHeight={34} />
-							<Callout tooltip>
-								<View style={styles.calloutContainer}>
-									<View style={styles.bubbleCenter}>
-										<Text style={styles.titleMarker}>
-											{center.title}
-										</Text>
+			<View style={styles.myUbication}>
+				<Text style={styles.title}>My Ubication</Text>
+				<View style={styles.locationContainer}>
+					<MapView
+						provider={PROVIDER_GOOGLE}
+						style={styles.mapDimensions}
+						initialRegion={userUbication}
+					>
+						{centers.map((center) => (
+							<Marker
+								key={center.id}
+								coordinate={{
+									latitude: center.latitude,
+									longitude: center.longitude,
+								}}
+								// title={center.title}
+								tracksViewChanges={false}
+								onPress={() => {
+									alert("test");
+								}}
+							>
+								{/* <CustomMarker customWidth={27} customHeight={34} /> */}
+								<Callout tooltip>
+									<View style={styles.calloutContainer}>
+										<View style={styles.bubbleCenter}>
+											<Text style={styles.titleMarker}>
+												{center.title}
+											</Text>
+										</View>
+										<View style={styles.arrow} />
 									</View>
-									<View style={styles.arrow} />
-								</View>
-							</Callout>
-						</Marker>
-					))}
-				</MapView>
+								</Callout>
+							</Marker>
+						))}
+					</MapView>
+				</View>
 			</View>
+			<View style={styles.searchBox}>
+				<Text>Search Box</Text>
+			</View>
+			<ScrollView
+				style={styles.centerList}
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+			>
+				{centers.map((center) => (
+					<View style={styles.centerInformation}>
+						<CustomCenter
+							name={center.title}
+							address={center.latitude}
+							imgUrl={center.image}
+						/>
+					</View>
+				))}
+			</ScrollView>
 		</View>
 	);
 };
@@ -64,6 +86,10 @@ const BookFieldScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		height: "100%",
+		backgroundColor: "#EEEEEE",
+	},
+	myUbication: {
 		padding: 20,
 	},
 	locationContainer: {
@@ -112,6 +138,19 @@ const styles = StyleSheet.create({
 		borderTopColor: "#3562A6",
 		alignSelf: "center",
 		marginTop: -0.5,
+	},
+	centerList: {
+		marginTop: 20,
+
+	},
+	centerInformation: {
+		marginVertical: 10,
+		paddingHorizontal: 20,
+	},
+	searchBox: {
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingVertical: 10,
 	},
 });
 
