@@ -1,7 +1,9 @@
 // React Imports
 import React, { useEffect } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { View, Text, StyleSheet, Animated, Alert } from "react-native";
+import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
+// My components
+import CustomMarker from "../../components/icons/CustomMarker";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
 
@@ -34,11 +36,23 @@ const BookFieldScreen = () => {
 								latitude: center.latitude,
 								longitude: center.longitude,
 							}}
-							title={center.title}
+							// title={center.title}
+							tracksViewChanges={false}
+							onPress={() => {
+								alert("test");
+							}}
 						>
-							<View style={styles.marker}>
-								<Text>${center.price}</Text>
-							</View>
+							<CustomMarker customWidth={27} customHeight={34} />
+							<Callout tooltip>
+								<View style={styles.calloutContainer}>
+									<View style={styles.bubbleCenter}>
+										<Text style={styles.titleMarker}>
+											{center.title}
+										</Text>
+									</View>
+									<View style={styles.arrow} />
+								</View>
+							</Callout>
 						</Marker>
 					))}
 				</MapView>
@@ -67,12 +81,37 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		marginBottom: 10,
 	},
-	marker: {
-		backgroundColor: "lightgreen",
+	calloutContainer: {
+		flex: 1,
+		alignItems: "center",
+		marginBottom: 2,
+	},
+	bubbleCenter: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#3562A6",
+		width: 150,
+		borderRadius: 5,
 		padding: 5,
-		borderRadius: 20,
-		borderWidth: 1,
-		borderColor: "grey",
+	},
+	titleMarker: {
+		color: "#fff",
+		fontSize: 13,
+		fontFamily: "InriaSans-Bold",
+	},
+	arrow: {
+		width: 0,
+		height: 0,
+		backgroundColor: "transparent",
+		borderLeftWidth: 8,
+		borderRightWidth: 8,
+		borderTopWidth: 10,
+		borderLeftColor: "transparent",
+		borderRightColor: "transparent",
+		borderTopColor: "#3562A6",
+		alignSelf: "center",
+		marginTop: -0.5,
 	},
 });
 
