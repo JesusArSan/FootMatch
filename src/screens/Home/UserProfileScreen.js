@@ -19,6 +19,7 @@ const UserProfileScreen = ({ route }) => {
 			// Remove the userToken and userData from AsyncStorage
 			await AsyncStorage.removeItem("@userToken");
 			await AsyncStorage.removeItem("@userData");
+			await AsyncStorage.removeItem("@userLocation");
 
 			// Remove data of route.params
 			route.params = {};

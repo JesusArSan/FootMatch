@@ -18,8 +18,9 @@ const LoadingManager = ({ onLoadingComplete }) => {
 	});
 
 	const [showLoadingScreen, setShowLoadingScreen] = useState(true);
-	const [userData, setUserData] = useState(null);
+	let [userData, setUserData] = useState(null);
 	const [isTokenValid, setIsTokenValid] = useState(false);
+	const [location, setUserLocation] = useState(null);
 
 	// Timer 1.5s
 	useEffect(() => {
@@ -66,15 +67,35 @@ const LoadingManager = ({ onLoadingComplete }) => {
 				}
 			}
 		};
+
 		checkUserToken();
+	}, []);
+
+	// Load userLocation from asyncStorage if it exists
+	useEffect(() => {
+		const loadUserLocation = async () => {
+			try {
+				const userLocation = await AsyncStorage.getItem("@userLocation");
+				if (userLocation !== null) {
+					setUserLocation(JSON.parse(userLocation));
+				}
+			} catch (error) {
+				console.error("Error loading user location", error);
+			}
+		};
+
+		loadUserLocation();
 	}, []);
 
 	// Loading Complete
 	useEffect(() => {
 		if (!showLoadingScreen && fontsLoaded && (userData || !isTokenValid)) {
+			// Pass location with UserData
+			if (location !== null) userData = { ...userData, location };
+
 			onLoadingComplete(isTokenValid, userData); // Pass additional parameters
 		}
-	}, [showLoadingScreen, fontsLoaded, userData, isTokenValid]);
+	}, [showLoadingScreen, fontsLoaded, userData, isTokenValid, location]);
 
 	// Load Screen
 	return (

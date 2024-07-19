@@ -35,6 +35,8 @@ export default function App() {
 		return <LoadingManager onLoadingComplete={handleLoadingComplete} />;
 	}
 
+	console.log("userData: ", userData);
+
 	// If the token is valid and the user is not null, the initial route is MainNavigatorScreen
 	const initialRouteName =
 		userData && isTokenValid ? "MainNavigatorScreen" : "InitialScreen";
@@ -61,6 +63,7 @@ export default function App() {
 				<Stack.Screen
 					name="BookFieldScreen"
 					component={BookFieldScreen}
+					initialParams={{ user: userData }}
 					options={{
 						headerTitle: (props) => (
 							<TitleScreen {...props} text={"Book a Field"} />

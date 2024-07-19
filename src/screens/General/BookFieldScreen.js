@@ -1,17 +1,23 @@
 // React Imports
 import * as React from "react";
-import { View, Text, StyleSheet, Animated, Alert } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	Animated,
+	Alert,
+	Touchable,
+	TouchableOpacity,
+} from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+// Expo Imports
+import UserLocation from "../../utils/UserLocation";
 // My components
-import CustomMarker from "../../components/icons/CustomMarker";
 import CustomCenter from "../../components/CustomCenter";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
 import { ScrollView } from "react-native-gesture-handler";
-
-// useEffect(() => {
-// 	// Get user location
-// });
 
 // const ubication
 userUbication = {
@@ -21,16 +27,95 @@ userUbication = {
 	longitudeDelta: 0.07,
 };
 
-const BookFieldScreen = () => {
+const LOCATION_KEY = "@userLocation";
+
+const BookFieldScreen = ({ route }) => {
+	const mapRef = React.useRef(null);
+
+	// Initialize the location of Spain
+	const [location, setLocation] = React.useState({
+		latitude: 40.4168,
+		longitude: -3.7038,
+		latitudeDelta: 8,
+		longitudeDelta: 8,
+	});
+
+	// Get the user data from the route params
+	const userData = route.params.user || {};
+
+	if (userData.location) {
+		const userLatitude = userData.location.latitude;
+		const userLongitude = userData.location.longitude;
+		if (
+			location.latitude !== userLatitude ||
+			location.longitude !== userLongitude
+		) {
+			setLocation({
+				latitude: userLatitude,
+				longitude: userLongitude,
+				latitudeDelta: 0.07,
+				longitudeDelta: 0.07,
+			});
+			mapRef.current?.animateToRegion({ ...location }, 1000);
+		}
+	}
+
+	React.useEffect(() => {
+		const fetchLocation = async () => {
+			const coords = await UserLocation();
+			if (coords) {
+				const { latitude, longitude } = coords;
+				setLocation({
+					latitude,
+					longitude,
+					latitudeDelta: 0.07,
+					longitudeDelta: 0.07,
+				});
+
+				try {
+					await AsyncStorage.setItem(
+						LOCATION_KEY,
+						JSON.stringify({ latitude, longitude }) // Guardar como objeto
+					);
+				} catch (error) {
+					console.error("Error storing coordinates: ", error);
+				}
+			}
+		};
+
+		// Fetch the location if the user location is not set
+		if (!userData.location) {
+			Alert.alert("No location found", "Fetching location...");
+			fetchLocation();
+		}
+	}, [userData.location]); // Dependencia del useEffect
+
+	React.useEffect(() => {
+		if (location && mapRef.current) {
+			mapRef.current.animateToRegion(
+				{
+					latitude: location.latitude,
+					longitude: location.longitude,
+					latitudeDelta: 0.07,
+					longitudeDelta: 0.07,
+				},
+				1000
+			);
+		}
+	}, [location]); // Añadir location a las dependencias para reaccionar a sus cambios
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.myUbication}>
-				<Text style={styles.title}>My Ubication</Text>
+				<Text style={styles.title}>
+					My Ubication, {location.latitude}, {location.longitude}
+				</Text>
 				<View style={styles.locationContainer}>
 					<MapView
+						ref={mapRef}
 						provider={PROVIDER_GOOGLE}
 						style={styles.mapDimensions}
-						initialRegion={userUbication}
+						initialRegion={{ ...location }}
 					>
 						{centers.map((center) => (
 							<Marker
@@ -45,7 +130,6 @@ const BookFieldScreen = () => {
 									alert("test");
 								}}
 							>
-								{/* <CustomMarker customWidth={27} customHeight={34} /> */}
 								<Callout tooltip>
 									<View style={styles.calloutContainer}>
 										<View style={styles.bubbleCenter}>
@@ -62,7 +146,13 @@ const BookFieldScreen = () => {
 				</View>
 			</View>
 			<View style={styles.searchBox}>
-				<Text>Search Box</Text>
+				{/* <TouchableOpacity
+					onPress={() =>
+						mapRef.current?.animateToRegion(userUbication, 1000)
+					}
+				>
+					<Text>Search Box</Text>
+				</TouchableOpacity> */}
 			</View>
 			<ScrollView
 				style={styles.centerList}
@@ -70,7 +160,7 @@ const BookFieldScreen = () => {
 				showsVerticalScrollIndicator={false}
 			>
 				{centers.map((center) => (
-					<View style={styles.centerInformation}>
+					<View key={center.id} style={styles.centerInformation}>
 						<CustomCenter
 							name={center.title}
 							address={center.latitude}
@@ -141,7 +231,6 @@ const styles = StyleSheet.create({
 	},
 	centerList: {
 		marginTop: 20,
-
 	},
 	centerInformation: {
 		marginVertical: 10,

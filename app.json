@@ -37,6 +37,12 @@
             "usesCleartextTraffic": true
           }
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow FootMatch to use your location."
+        }
       ]
     ]
   }
