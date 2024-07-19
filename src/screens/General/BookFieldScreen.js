@@ -1,20 +1,15 @@
 // React Imports
 import * as React from "react";
-import {
-	View,
-	Text,
-	StyleSheet,
-	Animated,
-	Alert,
-	Touchable,
-	TouchableOpacity,
-} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
+import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // Expo Imports
 import UserLocation from "../../utils/UserLocation";
 // My components
 import CustomCenter from "../../components/CustomCenter";
+import StatusBar from "../../components/StatusBar";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
 import { ScrollView } from "react-native-gesture-handler";
@@ -31,6 +26,7 @@ const LOCATION_KEY = "@userLocation";
 
 const BookFieldScreen = ({ route }) => {
 	const mapRef = React.useRef(null);
+	const scrollRef = React.useRef(null);
 
 	// Initialize the location of Spain
 	const [location, setLocation] = React.useState({
@@ -39,6 +35,8 @@ const BookFieldScreen = ({ route }) => {
 		latitudeDelta: 8,
 		longitudeDelta: 8,
 	});
+
+	const [selectedCenterId, setSelectedCenterId] = React.useState(null);
 
 	// Get the user data from the route params
 	const userData = route.params.user || {};
@@ -104,6 +102,14 @@ const BookFieldScreen = ({ route }) => {
 		}
 	}, [location]); // Añadir location a las dependencias para reaccionar a sus cambios
 
+	const HEIGHT_OF_EACH_ITEM = 155; // Cambia esto por la altura real de tus elementos
+	const handleMarkerPress = (centerId) => {
+		// Encontrar el índice del centro en el arreglo
+		const index = centers.findIndex((center) => center.id === centerId);
+		const yOffset = index * HEIGHT_OF_EACH_ITEM; // Asume que todos los items tienen la misma altura
+		scrollRef.current?.scrollTo({ y: yOffset, animated: true });
+	};
+
 	return (
 		<View style={styles.container}>
 			<View style={styles.myUbication}>
@@ -117,6 +123,18 @@ const BookFieldScreen = ({ route }) => {
 						style={styles.mapDimensions}
 						initialRegion={{ ...location }}
 					>
+						<Marker
+							coordinate={{
+								latitude: location.latitude,
+								longitude: location.longitude,
+							}}
+						>
+							<MaterialIcons
+								name="location-history"
+								size={30}
+								color="#1772FB"
+							/>
+						</Marker>
 						{centers.map((center) => (
 							<Marker
 								key={center.id}
@@ -126,8 +144,10 @@ const BookFieldScreen = ({ route }) => {
 								}}
 								// title={center.title}
 								tracksViewChanges={false}
+
 								onPress={() => {
-									alert("test");
+									setSelectedCenterId(center.id);
+									handleMarkerPress(center.id);
 								}}
 							>
 								<Callout tooltip>
@@ -146,15 +166,27 @@ const BookFieldScreen = ({ route }) => {
 				</View>
 			</View>
 			<View style={styles.searchBox}>
-				{/* <TouchableOpacity
+				<TouchableOpacity
+					style={styles.reloadUbication}
 					onPress={() =>
-						mapRef.current?.animateToRegion(userUbication, 1000)
+						mapRef.current?.animateToRegion({ ...location }, 1000)
 					}
 				>
-					<Text>Search Box</Text>
-				</TouchableOpacity> */}
+					<MaterialCommunityIcons
+						name="map-marker-right"
+						size={30}
+						color="black"
+						style={{ marginRight: 7 }}
+					/>
+					<Text>Where Am I?</Text>
+				</TouchableOpacity>
+				<StatusBar />
 			</View>
+
+			<View style={styles.divider} />
+
 			<ScrollView
+				ref={scrollRef}
 				style={styles.centerList}
 				showsHorizontalScrollIndicator={false}
 				showsVerticalScrollIndicator={false}
@@ -162,9 +194,11 @@ const BookFieldScreen = ({ route }) => {
 				{centers.map((center) => (
 					<View key={center.id} style={styles.centerInformation}>
 						<CustomCenter
+							key={center.id}
 							name={center.title}
-							address={center.latitude}
+							address={center.address}
 							imgUrl={center.image}
+							isSelected={selectedCenterId === center.id}
 						/>
 					</View>
 				))}
@@ -180,7 +214,10 @@ const styles = StyleSheet.create({
 		backgroundColor: "#EEEEEE",
 	},
 	myUbication: {
-		padding: 20,
+		paddingLeft: 20,
+		paddingRight: 20,
+		paddingTop: 20,
+		marginBottom: 10,
 	},
 	locationContainer: {
 		width: "100%",
@@ -229,17 +266,32 @@ const styles = StyleSheet.create({
 		alignSelf: "center",
 		marginTop: -0.5,
 	},
-	centerList: {
-		marginTop: 20,
+	reloadUbication: {
+		flexDirection: "row",
+		alignItems: "center",
+		marginBottom: 20,
 	},
+	divider: {
+		height: 1,
+		width: "100%",
+		marginTop: 20,
+		borderBottomColor: "#000",
+		borderBottomWidth: 0.1,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 5 },
+		shadowOpacity: 0,
+		shadowRadius: 5,
+		elevation: 3,
+	},
+	centerList: {},
 	centerInformation: {
 		marginVertical: 10,
 		paddingHorizontal: 20,
 	},
 	searchBox: {
-		paddingLeft: 20,
-		paddingRight: 20,
-		paddingVertical: 10,
+		alignItems: "center",
+		marginLeft: 20,
+		marginRight: 20,
 	},
 });
 

@@ -1,22 +1,45 @@
-// React Imports
-import React from "react";
-import { View, Text, Image, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useRef, useEffect } from "react";
+import { View, Text, Image, StyleSheet, Animated } from "react-native";
 
-const CustomCenter = ({ name, address, imgUrl }) => {
+const CustomCenter = ({
+	name,
+	address,
+	imgUrl = "https://economia3.com/wp-content/themes/economia3/inc/component/img/no-image.png",
+	isSelected = 0,
+}) => {
+	const backgroundColorAnim = useRef(new Animated.Value(0)).current; // Controla la animación
+
+	useEffect(() => {
+		Animated.timing(backgroundColorAnim, {
+			// if isSelected is true, animate to 1, else animate to 0
+			toValue: isSelected ? 1 : 0,
+			// 1000 ms
+			duration: 1000,
+			useNativeDriver: true,
+		}).start();
+	}, [isSelected]);
+
+	const animatedStyle = {
+		backgroundColor: backgroundColorAnim.interpolate({
+			inputRange: [0, 1],
+			outputRange: ["#FAFAFA", "#C7DDFF"], // Color de fondo cambia de gris claro a gris más oscuro cuando está seleccionado
+		}),
+	};
+
 	return (
-		<TouchableOpacity style={styles.centerContainer} activeOpacity={0.7}>
+		<Animated.View style={[styles.centerContainer, animatedStyle]}>
 			<View style={styles.infoCenter}>
 				<Text style={styles.nameCenter}>{name}</Text>
 				<Text style={styles.addressCenter}>{address}</Text>
 			</View>
-			<Image source={imgUrl} style={styles.image} />
-		</TouchableOpacity>
+			<Image source={{ uri: imgUrl }} style={styles.image} />
+		</Animated.View>
 	);
 };
 
 export default CustomCenter;
 
-// Shadow styles
+// Estilos, incluyendo sombras
 const shadowStyles = {
 	shadowColor: "#000",
 	shadowOffset: {
@@ -38,7 +61,6 @@ const styles = StyleSheet.create({
 		padding: 18,
 		paddingVertical: 25,
 		...shadowStyles,
-		backgroundColor: "#FAFAFA",
 	},
 	infoCenter: {
 		width: "50%",

@@ -20,6 +20,7 @@ const RegisterComponentInput = ({ formData, onInputChange, errors }) => {
           placeholder="Full Name"
           value={formData.name}
           onChangeText={(text) => onInputChange("name", text)}
+          maxLength={30}
         />
       </View>
 
@@ -68,6 +69,7 @@ const RegisterComponentInput = ({ formData, onInputChange, errors }) => {
           onChangeText={(text) => onInputChange("email", text)}
           autoCapitalize="none" // Deactivate the first letter in uppercase
           keyboardType="email-address"
+          maxLength={40}
         />
       </View>
 

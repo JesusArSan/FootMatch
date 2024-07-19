@@ -19,10 +19,12 @@ const MainHomeScreen = ({ route }) => {
 	// DESIGN NOTE: The following code is a mockup of the data that will be displayed in the app.
 	const nameCenter1 = "Complejo Deportivo Chana";
 	const addressCenter1 = "C. Estrellas, S/N, Chana, 18015 Granada";
-	const imgUrlCenter1 = require("../../assets/images/centro-deportivo.webp");
+	const imgUrlCenter1 =
+		"https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg";
 	const nameCenter2 = "Complejo Deportivo Bola de Oro";
 	const addressCenter2 = "C. Borreguiles, s, Genil, 18008 Granada";
-	const imgUrlCenter2 = require("../../assets/images/centro-deportivo2.png");
+	const imgUrlCenter2 =
+		"https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg";
 
 	return (
 		<View style={styles.totalContainer}>

@@ -7,7 +7,8 @@
       "title": "Granada Sports Arena",
       "numberOfStars": 4,
       "rating": 4.5,
-      "image": ""
+      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
    },
    {
       "id": 2,
@@ -17,7 +18,8 @@
       "title": "Albaicín Fitness Center",
       "numberOfStars": 5,
       "rating": 4.8,
-      "image": ""
+      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
    },
    {
       "id": 3,
@@ -27,7 +29,8 @@
       "title": "C. Deportivo La Chana",
       "numberOfStars": 3,
       "rating": 4.3,
-      "image": ""
+      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
    },
    {
       "id": 4,
@@ -37,6 +40,51 @@
       "title": "Polidep. Universitario",
       "numberOfStars": 4,
       "rating": 4.7,
-      "image": ""
+      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+   },
+   {
+      "id": 5,
+      "latitude": 37.1021,
+      "longitude": -4.3901,
+      "price": 20,
+      "title": "Centro Deportivo Loja",
+      "numberOfStars": 3,
+      "rating": 4.2,
+      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+   },
+   {
+      "id": 6,
+      "latitude": 37.0970,
+      "longitude": -4.3830,
+      "price": 18,
+      "title": "Gimnasio FitLoja",
+      "numberOfStars": 4,
+      "rating": 4.6,
+      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+   },
+   {
+      "id": 7,
+      "latitude": 37.0905,
+      "longitude": -4.3915,
+      "price": 22,
+      "title": "Arena Sports Loja",
+      "numberOfStars": 5,
+      "rating": 4.9,
+      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+   },
+   {
+      "id": 8,
+      "latitude": 37.0997,
+      "longitude": -4.3789,
+      "price": 25,
+      "title": "Health Club Loja",
+      "numberOfStars": 4,
+      "rating": 4.4,
+      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
    }
 ]
