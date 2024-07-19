@@ -1,15 +1,14 @@
 // React Imports
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import {
-	View,
-	Text,
-	TextInput,
-	TouchableOpacity,
-	StyleSheet,
-} from "react-native";
+import { View, TextInput, StyleSheet } from "react-native";
 
-const StatusBar = ({}) => {
+const StatusBar = ({ onSearchInputChange }) => {
+	// Handle Input Change and return it to the parent component
+	const handleInputChange = (text) => {
+		onSearchInputChange(text);
+	};
+
 	return (
 		<View style={styles.searchBar}>
 			<Feather
@@ -18,7 +17,12 @@ const StatusBar = ({}) => {
 				color="black"
 				style={styles.searchIcon}
 			/>
-			<TextInput style={styles.input} placeholder="Search" maxLength={50} />
+			<TextInput
+				style={styles.input}
+				placeholder="Search"
+				maxLength={50}
+				onChangeText={handleInputChange}
+			/>
 		</View>
 	);
 };

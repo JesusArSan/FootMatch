@@ -5,7 +5,9 @@ import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// Expo Imports
+// GeoLib
+import { getDistance } from "geolib";
+// My utils
 import UserLocation from "../../utils/UserLocation";
 // My components
 import CustomCenter from "../../components/CustomCenter";
@@ -23,8 +25,11 @@ userUbication = {
 };
 
 const LOCATION_KEY = "@userLocation";
+const MAX_DISTANCE = 20000; // 20 km
+const HEIGHT_OF_EACH_ITEM = 172; // Item height
 
 const BookFieldScreen = ({ route }) => {
+	// Refs
 	const mapRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
 
@@ -35,12 +40,15 @@ const BookFieldScreen = ({ route }) => {
 		latitudeDelta: 8,
 		longitudeDelta: 8,
 	});
-
+	// Initialize the selected center
 	const [selectedCenterId, setSelectedCenterId] = React.useState(null);
+	// Initialize the filtered centers
+	const [filteredCenters, setFilteredCenters] = React.useState(centers);
 
 	// Get the user data from the route params
 	const userData = route.params.user || {};
 
+	// Check if the user has a location set and animate the map to that location
 	if (userData.location) {
 		const userLatitude = userData.location.latitude;
 		const userLongitude = userData.location.longitude;
@@ -51,13 +59,14 @@ const BookFieldScreen = ({ route }) => {
 			setLocation({
 				latitude: userLatitude,
 				longitude: userLongitude,
-				latitudeDelta: 0.07,
-				longitudeDelta: 0.07,
+				latitudeDelta: 0.03,
+				longitudeDelta: 0.03,
 			});
 			mapRef.current?.animateToRegion({ ...location }, 1000);
 		}
 	}
 
+	// Fetch the user location and set iteam in AsyncStorage
 	React.useEffect(() => {
 		const fetchLocation = async () => {
 			const coords = await UserLocation();
@@ -66,8 +75,8 @@ const BookFieldScreen = ({ route }) => {
 				setLocation({
 					latitude,
 					longitude,
-					latitudeDelta: 0.07,
-					longitudeDelta: 0.07,
+					latitudeDelta: 0.03,
+					longitudeDelta: 0.03,
 				});
 
 				try {
@@ -83,39 +92,73 @@ const BookFieldScreen = ({ route }) => {
 
 		// Fetch the location if the user location is not set
 		if (!userData.location) {
-			Alert.alert("No location found", "Fetching location...");
+			console.log("No location found", "Fetching location...");
 			fetchLocation();
 		}
+
+		filterNearbyCenters();
 	}, [userData.location]); // Dependencia del useEffect
 
+	// If location is set, animate the map to the location
 	React.useEffect(() => {
 		if (location && mapRef.current) {
 			mapRef.current.animateToRegion(
 				{
 					latitude: location.latitude,
 					longitude: location.longitude,
-					latitudeDelta: 0.07,
-					longitudeDelta: 0.07,
+					latitudeDelta: 0.03,
+					longitudeDelta: 0.03,
 				},
 				1000
 			);
+			filterNearbyCenters();
 		}
 	}, [location]); // Añadir location a las dependencias para reaccionar a sus cambios
 
-	const HEIGHT_OF_EACH_ITEM = 155; // Cambia esto por la altura real de tus elementos
+	// Scroll to the selected center
 	const handleMarkerPress = (centerId) => {
-		// Encontrar el índice del centro en el arreglo
-		const index = centers.findIndex((center) => center.id === centerId);
-		const yOffset = index * HEIGHT_OF_EACH_ITEM; // Asume que todos los items tienen la misma altura
+		// Asegúrate de usar filteredCenters para buscar el índice, ya que estos son los elementos que realmente se muestran
+		const index = filteredCenters.findIndex(
+			(center) => center.id === centerId
+		);
+		if (index === -1) return; // Si no encuentra el centro, no hace nada
+
+		const yOffset = index * HEIGHT_OF_EACH_ITEM; // Todos los items tienen la misma altura
 		scrollRef.current?.scrollTo({ y: yOffset, animated: true });
+	};
+
+	// Using the search input to filter the centers
+	const handleSearchInput = (input) => {
+		const filtered = centers.filter((center) =>
+			center.title.toLowerCase().includes(input.toLowerCase())
+		);
+		setFilteredCenters(filtered); // Centers to show
+	};
+
+	// Filter the centers by the user location
+	const filterNearbyCenters = () => {
+		// First, calculate the distance between the user location and the centers
+		const centersWithDistance = centers.map((center) => {
+			const distance = getDistance(
+				{ latitude: location.latitude, longitude: location.longitude },
+				{ latitude: center.latitude, longitude: center.longitude }
+			);
+			// Return the center with the distance
+			return { ...center, distance };
+		});
+
+		// Filter the centers by distance
+		const filtered = centersWithDistance.filter(
+			(center) => center.distance < MAX_DISTANCE
+		);
+
+		setFilteredCenters(filtered);
 	};
 
 	return (
 		<View style={styles.container}>
 			<View style={styles.myUbication}>
-				<Text style={styles.title}>
-					My Ubication, {location.latitude}, {location.longitude}
-				</Text>
+				<Text style={styles.title}>My Ubication</Text>
 				<View style={styles.locationContainer}>
 					<MapView
 						ref={mapRef}
@@ -144,7 +187,6 @@ const BookFieldScreen = ({ route }) => {
 								}}
 								// title={center.title}
 								tracksViewChanges={false}
-
 								onPress={() => {
 									setSelectedCenterId(center.id);
 									handleMarkerPress(center.id);
@@ -180,7 +222,7 @@ const BookFieldScreen = ({ route }) => {
 					/>
 					<Text>Where Am I?</Text>
 				</TouchableOpacity>
-				<StatusBar />
+				<StatusBar onSearchInputChange={handleSearchInput} />
 			</View>
 
 			<View style={styles.divider} />
@@ -191,12 +233,12 @@ const BookFieldScreen = ({ route }) => {
 				showsHorizontalScrollIndicator={false}
 				showsVerticalScrollIndicator={false}
 			>
-				{centers.map((center) => (
+				{filteredCenters.map((center) => (
 					<View key={center.id} style={styles.centerInformation}>
 						<CustomCenter
-							key={center.id}
 							name={center.title}
 							address={center.address}
+							distance={center.distance}
 							imgUrl={center.image}
 							isSelected={selectedCenterId === center.id}
 						/>

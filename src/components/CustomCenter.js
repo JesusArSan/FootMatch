@@ -4,12 +4,14 @@ import { View, Text, Image, StyleSheet, Animated } from "react-native";
 const CustomCenter = ({
 	name,
 	address,
+	distance,
 	imgUrl = "https://economia3.com/wp-content/themes/economia3/inc/component/img/no-image.png",
 	isSelected = 0,
 }) => {
 	const backgroundColorAnim = useRef(new Animated.Value(0)).current; // Controla la animación
 
 	useEffect(() => {
+		// Animation for background color
 		Animated.timing(backgroundColorAnim, {
 			// if isSelected is true, animate to 1, else animate to 0
 			toValue: isSelected ? 1 : 0,
@@ -31,6 +33,11 @@ const CustomCenter = ({
 			<View style={styles.infoCenter}>
 				<Text style={styles.nameCenter}>{name}</Text>
 				<Text style={styles.addressCenter}>{address}</Text>
+				{distance ? (
+					<Text style={styles.distance}>
+						{(distance / 1000).toFixed(2)} km
+					</Text>
+				) : null}
 			</View>
 			<Image source={{ uri: imgUrl }} style={styles.image} />
 		</Animated.View>
@@ -78,5 +85,10 @@ const styles = StyleSheet.create({
 		width: 148,
 		height: 85,
 		borderRadius: 20,
+	},
+	distance: {
+		fontSize: 13,
+		fontFamily: "InriaSans-Regular",
+		marginTop: 5,
 	},
 });
