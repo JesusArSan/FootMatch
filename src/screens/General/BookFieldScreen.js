@@ -16,14 +16,6 @@ import StatusBar from "../../components/StatusBar";
 import centers from "../../assets/data/sportCenters.json";
 import { ScrollView } from "react-native-gesture-handler";
 
-// const ubication
-userUbication = {
-	latitude: 37.1771,
-	longitude: -3.6008,
-	latitudeDelta: 0.07,
-	longitudeDelta: 0.07,
-};
-
 const LOCATION_KEY = "@userLocation";
 const MAX_DISTANCE = 20000; // 20 km
 const HEIGHT_OF_EACH_ITEM = 172; // Item height
@@ -32,6 +24,9 @@ const BookFieldScreen = ({ route }) => {
 	// Refs
 	const mapRef = React.useRef(null);
 	const scrollRef = React.useRef(null);
+
+	// Get the user data from the route params
+	const userData = route.params.user || {};
 
 	// Initialize the location of Spain
 	const [location, setLocation] = React.useState({
@@ -45,114 +40,104 @@ const BookFieldScreen = ({ route }) => {
 	// Initialize the filtered centers
 	const [filteredCenters, setFilteredCenters] = React.useState(centers);
 
-	// Get the user data from the route params
-	const userData = route.params.user || {};
-
 	// Check if the user has a location set and animate the map to that location
-	if (userData.location) {
-		const userLatitude = userData.location.latitude;
-		const userLongitude = userData.location.longitude;
-		if (
-			location.latitude !== userLatitude ||
-			location.longitude !== userLongitude
-		) {
-			setLocation({
-				latitude: userLatitude,
-				longitude: userLongitude,
-				latitudeDelta: 0.03,
-				longitudeDelta: 0.03,
-			});
-			mapRef.current?.animateToRegion({ ...location }, 1000);
-		}
-	}
-
-	// Fetch the user location and set iteam in AsyncStorage
 	React.useEffect(() => {
-		const fetchLocation = async () => {
-			const coords = await UserLocation();
-			if (coords) {
-				const { latitude, longitude } = coords;
-				setLocation({
-					latitude,
-					longitude,
-					latitudeDelta: 0.03,
-					longitudeDelta: 0.03,
-				});
-
-				try {
-					await AsyncStorage.setItem(
-						LOCATION_KEY,
-						JSON.stringify({ latitude, longitude }) // Guardar como objeto
-					);
-				} catch (error) {
-					console.error("Error storing coordinates: ", error);
-				}
+		if (userData.location) {
+			const userLatitude = userData.location.latitude;
+			const userLongitude = userData.location.longitude;
+			if (
+				location.latitude !== userLatitude ||
+				location.longitude !== userLongitude
+			) {
+				updateLocation(userData.location);
 			}
-		};
-
-		// Fetch the location if the user location is not set
-		if (!userData.location) {
-			console.log("No location found", "Fetching location...");
+		} else {
 			fetchLocation();
 		}
+	}, [userData.location]);
 
-		filterNearbyCenters();
-	}, [userData.location]); // Dependencia del useEffect
+	React.useEffect(
+		() => {
+			// Filter centers
+			applyFilters("");
 
-	// If location is set, animate the map to the location
-	React.useEffect(() => {
-		if (location && mapRef.current) {
-			mapRef.current.animateToRegion(
-				{
-					latitude: location.latitude,
-					longitude: location.longitude,
-					latitudeDelta: 0.03,
-					longitudeDelta: 0.03,
-				},
-				1000
+			// Move the map to the user location
+			if (mapRef.current) {
+				moveMapToUserLocation(mapRef, location, 1000);
+			}
+		},
+		[location],
+		[mapRef]
+	);
+
+	// Update the location of the user
+	const updateLocation = (newCoords) => {
+		setLocation({
+			latitude: newCoords.latitude,
+			longitude: newCoords.longitude,
+			latitudeDelta: 0.03,
+			longitudeDelta: 0.03,
+		});
+	};
+
+	// Move the map to the user location
+	const moveMapToUserLocation = (mapRef, location, timeAnimation) => {
+		mapRef.current?.animateToRegion({ ...location }, timeAnimation);
+	};
+
+	// Filter the centers by the search input and distance from the user location
+	const applyFilters = (searchInput) => {
+		const lowercasedInput = searchInput.toLowerCase();
+		const filtered = centers
+			.map((center) => ({
+				...center,
+				distance: getDistance(
+					{ latitude: location.latitude, longitude: location.longitude },
+					{ latitude: center.latitude, longitude: center.longitude }
+				),
+			}))
+			.filter(
+				(center) =>
+					center.title.toLowerCase().includes(lowercasedInput) &&
+					center.distance < MAX_DISTANCE
 			);
-			filterNearbyCenters();
+		setFilteredCenters(filtered);
+	};
+
+	// Fetch the user location and set iteam in AsyncStorage
+	const fetchLocation = async () => {
+		const coords = await UserLocation();
+		if (coords) {
+			// Update the location
+			updateLocation(coords);
+
+			// Store the location in AsyncStorage
+			const { latitude, longitude } = coords;
+			try {
+				await AsyncStorage.setItem(
+					LOCATION_KEY,
+					JSON.stringify({ latitude, longitude })
+				);
+			} catch (error) {
+				console.error("Error storing coordinates: ", error);
+			}
 		}
-	}, [location]); // Añadir location a las dependencias para reaccionar a sus cambios
+	};
+
+	// Handle the search input
+	const handleSearchInput = (input) => {
+		applyFilters(input);
+	};
 
 	// Scroll to the selected center
 	const handleMarkerPress = (centerId) => {
-		// Asegúrate de usar filteredCenters para buscar el índice, ya que estos son los elementos que realmente se muestran
 		const index = filteredCenters.findIndex(
 			(center) => center.id === centerId
 		);
-		if (index === -1) return; // Si no encuentra el centro, no hace nada
-
-		const yOffset = index * HEIGHT_OF_EACH_ITEM; // Todos los items tienen la misma altura
-		scrollRef.current?.scrollTo({ y: yOffset, animated: true });
-	};
-
-	// Using the search input to filter the centers
-	const handleSearchInput = (input) => {
-		const filtered = centers.filter((center) =>
-			center.title.toLowerCase().includes(input.toLowerCase())
-		);
-		setFilteredCenters(filtered); // Centers to show
-	};
-
-	// Filter the centers by the user location
-	const filterNearbyCenters = () => {
-		// First, calculate the distance between the user location and the centers
-		const centersWithDistance = centers.map((center) => {
-			const distance = getDistance(
-				{ latitude: location.latitude, longitude: location.longitude },
-				{ latitude: center.latitude, longitude: center.longitude }
-			);
-			// Return the center with the distance
-			return { ...center, distance };
-		});
-
-		// Filter the centers by distance
-		const filtered = centersWithDistance.filter(
-			(center) => center.distance < MAX_DISTANCE
-		);
-
-		setFilteredCenters(filtered);
+		if (index !== -1) {
+			const yOffset = index * HEIGHT_OF_EACH_ITEM;
+			scrollRef.current?.scrollTo({ y: yOffset, animated: true });
+		}
 	};
 
 	return (
@@ -210,9 +195,7 @@ const BookFieldScreen = ({ route }) => {
 			<View style={styles.searchBox}>
 				<TouchableOpacity
 					style={styles.reloadUbication}
-					onPress={() =>
-						mapRef.current?.animateToRegion({ ...location }, 1000)
-					}
+					onPress={() => moveMapToUserLocation(mapRef, location, 1000)}
 				>
 					<MaterialCommunityIcons
 						name="map-marker-right"

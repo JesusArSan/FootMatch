@@ -33,9 +33,9 @@ export default function App() {
 
 	if (!loadingComplete) {
 		return <LoadingManager onLoadingComplete={handleLoadingComplete} />;
+	} else {
+		console.log("userData: ", userData);
 	}
-
-	console.log("userData: ", userData);
 
 	// If the token is valid and the user is not null, the initial route is MainNavigatorScreen
 	const initialRouteName =

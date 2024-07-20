@@ -15,6 +15,8 @@ const userLocation = async () => {
 			timeout: 5000,
 		});
 
+		console.log("Obteniendo ubicación");
+
 		if (coords) {
 			return coords;
 		}
