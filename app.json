@@ -19,7 +19,12 @@
         "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jesusarsan.footmatch"
+      "package": "com.jesusarsan.footmatch",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyB2247Tw7CdB8ePz1TTAZvIb-ERz6lASOU" 
+        }
+      }
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
