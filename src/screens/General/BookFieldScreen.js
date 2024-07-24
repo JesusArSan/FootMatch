@@ -1,7 +1,15 @@
 // React Imports
 import * as React from "react";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	Alert,
+	TouchableOpacity,
+	FlatList,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -14,16 +22,17 @@ import CustomCenter from "../../components/CustomCenter";
 import StatusBar from "../../components/StatusBar";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
-import { ScrollView } from "react-native-gesture-handler";
 
 const LOCATION_KEY = "@userLocation";
 const MAX_DISTANCE = 20000; // 20 km
-const HEIGHT_OF_EACH_ITEM = 172; // Item height
 
 const BookFieldScreen = ({ route }) => {
 	// Refs
 	const mapRef = React.useRef(null);
-	const scrollRef = React.useRef(null);
+	const flatListRef = React.useRef(null);
+
+	// Navigation
+	const navigation = useNavigation();
 
 	// Get the user data from the route params
 	const userData = route.params.user || {};
@@ -135,9 +144,37 @@ const BookFieldScreen = ({ route }) => {
 			(center) => center.id === centerId
 		);
 		if (index !== -1) {
-			const yOffset = index * HEIGHT_OF_EACH_ITEM;
-			scrollRef.current?.scrollTo({ y: yOffset, animated: true });
+			flatListRef.current?.scrollToIndex({ index, animated: true });
 		}
+	};
+
+	// Render the item of the FlatList
+	const renderItem = ({ item: center }) => (
+		<View key={center.id} style={styles.centerInformation}>
+			<TouchableOpacity
+				activeOpacity={0.75}
+				onPress={() => handleCenterPress(center)}
+			>
+				<CustomCenter
+					name={center.title}
+					address={center.address}
+					distance={center.distance}
+					imgUrl={center.image}
+					isSelected={selectedCenterId === center.id}
+				/>
+			</TouchableOpacity>
+		</View>
+	);
+
+	// Handle when center is pressed
+	const handleCenterPress = (center) => {
+		// Console log
+		console.log("Center " + center.id + " pressed");
+
+		// Go to the FieldDetailsScreen
+		navigation.navigate("FieldDetailsScreen", {
+			centerInfo: center,
+		});
 	};
 
 	return (
@@ -210,24 +247,15 @@ const BookFieldScreen = ({ route }) => {
 
 			<View style={styles.divider} />
 
-			<ScrollView
-				ref={scrollRef}
+			<FlatList
+				ref={flatListRef}
+				data={filteredCenters}
+				renderItem={renderItem}
+				keyExtractor={(center) => center.id.toString()}
 				style={styles.centerList}
 				showsHorizontalScrollIndicator={false}
 				showsVerticalScrollIndicator={false}
-			>
-				{filteredCenters.map((center) => (
-					<View key={center.id} style={styles.centerInformation}>
-						<CustomCenter
-							name={center.title}
-							address={center.address}
-							distance={center.distance}
-							imgUrl={center.image}
-							isSelected={selectedCenterId === center.id}
-						/>
-					</View>
-				))}
-			</ScrollView>
+			/>
 		</View>
 	);
 };
