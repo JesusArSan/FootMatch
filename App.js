@@ -10,6 +10,7 @@ import LoginScreen from "./src/screens/Auth/LoginScreen";
 import MainNavigatorScreen from "./src/screens/Home/MainNavigatorScreen";
 import BookFieldScreen from "./src/screens/General/BookFieldScreen";
 import FieldDetailsScreen from "./src/screens/General/FieldDetailsScreen";
+import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
@@ -81,6 +82,19 @@ export default function App() {
 					options={{
 						headerTitle: (props) => (
 							<TitleScreen {...props} text={"Field Details"} />
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					}}
+				/>
+				<Stack.Screen
+					name="PitchTimeScreen"
+					component={PitchTimeScreen}
+					options={{
+						headerTitle: (props) => (
+							<TitleScreen {...props} text={"Book a Field"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",

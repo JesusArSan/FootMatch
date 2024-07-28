@@ -1,35 +1,42 @@
 // React Imports
 import * as React from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+	BottomSheetModal,
+	BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
 import {
 	View,
 	Text,
 	StyleSheet,
-	Alert,
 	TouchableOpacity,
 	FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
-import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // GeoLib
 import { getDistance } from "geolib";
+// React Icons
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { FontAwesome6 } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 // My utils
 import UserLocation from "../../utils/UserLocation";
 // My components
 import CustomCenter from "../../components/CustomCenter";
 import StatusBar from "../../components/StatusBar";
+import BottomSheetContent from "../../components/BottomSheetContent";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
 
 const LOCATION_KEY = "@userLocation";
-const MAX_DISTANCE = 20000; // 20 km
 
 const BookFieldScreen = ({ route }) => {
 	// Refs
 	const mapRef = React.useRef(null);
 	const flatListRef = React.useRef(null);
+	const bottomSheetModalRef = React.useRef(null);
 
 	// Navigation
 	const navigation = useNavigation();
@@ -48,6 +55,8 @@ const BookFieldScreen = ({ route }) => {
 	const [selectedCenterId, setSelectedCenterId] = React.useState(null);
 	// Initialize the filtered centers
 	const [filteredCenters, setFilteredCenters] = React.useState(centers);
+	// Initialize the distance
+	const [maxDistance, setMaxDistance] = React.useState(20000); // Initial distance state 20km
 
 	// Check if the user has a location set and animate the map to that location
 	React.useEffect(() => {
@@ -108,7 +117,7 @@ const BookFieldScreen = ({ route }) => {
 			.filter(
 				(center) =>
 					center.title.toLowerCase().includes(lowercasedInput) &&
-					center.distance < MAX_DISTANCE
+					center.distance < maxDistance
 			);
 		setFilteredCenters(filtered);
 	};
@@ -117,6 +126,8 @@ const BookFieldScreen = ({ route }) => {
 	const fetchLocation = async () => {
 		const coords = await UserLocation();
 		if (coords) {
+			// Latitud longitud San Francisco EEUU
+			// const coords = { latitude: 37.7749, longitude: -122.4194 };
 			// Update the location
 			updateLocation(coords);
 
@@ -148,6 +159,19 @@ const BookFieldScreen = ({ route }) => {
 		}
 	};
 
+	// BOTTON SHEET MODAL
+	const snapPoints = ["35%"];
+	const handlePresentModal = () => {
+		bottomSheetModalRef.current?.present();
+	};
+	const handleFinalDistanceSelect = (distance) => {
+		setMaxDistance(distance);
+	};
+	React.useEffect(() => {
+		console.log("Max distance updated:", maxDistance);
+		applyFilters("");
+	}, [maxDistance]);
+
 	// Render the item of the FlatList
 	const renderItem = ({ item: center }) => (
 		<View key={center.id} style={styles.centerInformation}>
@@ -174,89 +198,132 @@ const BookFieldScreen = ({ route }) => {
 		// Go to the FieldDetailsScreen
 		navigation.navigate("FieldDetailsScreen", {
 			centerInfo: center,
+			userLocation: location,
 		});
 	};
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.myUbication}>
-				<Text style={styles.title}>My Ubication</Text>
-				<View style={styles.locationContainer}>
-					<MapView
-						ref={mapRef}
-						provider={PROVIDER_GOOGLE}
-						style={styles.mapDimensions}
-						initialRegion={{ ...location }}
+		<BottomSheetModalProvider>
+			<View style={styles.container}>
+				<View style={styles.myUbication}>
+					<View
+						style={{
+							flexDirection: "row",
+							justifyContent: "space-between",
+						}}
 					>
-						<Marker
-							coordinate={{
-								latitude: location.latitude,
-								longitude: location.longitude,
-							}}
+						<Text style={styles.title}>My Ubication</Text>
+						<View style={{ flexDirection: "row" }}>
+							<TouchableOpacity
+								style={{ marginRight: 20 }}
+								onPress={() => fetchLocation()}
+							>
+								<FontAwesome6
+									name="location-crosshairs"
+									size={30}
+									color="black"
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity onPress={() => handlePresentModal()}>
+								<Ionicons
+									name="options-sharp"
+									size={30}
+									color="black"
+								/>
+							</TouchableOpacity>
+						</View>
+					</View>
+					<View style={styles.locationContainer}>
+						<MapView
+							ref={mapRef}
+							provider={PROVIDER_GOOGLE}
+							style={styles.mapDimensions}
+							initialRegion={{ ...location }}
 						>
-							<MaterialIcons
-								name="location-history"
-								size={30}
-								color="#1772FB"
-							/>
-						</Marker>
-						{centers.map((center) => (
 							<Marker
-								key={center.id}
 								coordinate={{
-									latitude: center.latitude,
-									longitude: center.longitude,
-								}}
-								// title={center.title}
-								tracksViewChanges={false}
-								onPress={() => {
-									setSelectedCenterId(center.id);
-									handleMarkerPress(center.id);
+									latitude: location.latitude,
+									longitude: location.longitude,
 								}}
 							>
-								<Callout tooltip>
-									<View style={styles.calloutContainer}>
-										<View style={styles.bubbleCenter}>
-											<Text style={styles.titleMarker}>
-												{center.title}
-											</Text>
-										</View>
-										<View style={styles.arrow} />
-									</View>
-								</Callout>
+								<MaterialIcons
+									name="location-history"
+									size={30}
+									color="#1772FB"
+								/>
 							</Marker>
-						))}
-					</MapView>
+							{centers.map((center) => (
+								<Marker
+									key={center.id}
+									coordinate={{
+										latitude: center.latitude,
+										longitude: center.longitude,
+									}}
+									// title={center.title}
+									tracksViewChanges={false}
+									onPress={() => {
+										setSelectedCenterId(center.id);
+										handleMarkerPress(center.id);
+									}}
+								>
+									<Callout tooltip>
+										<View style={styles.calloutContainer}>
+											<View style={styles.bubbleCenter}>
+												<Text style={styles.titleMarker}>
+													{center.title}
+												</Text>
+											</View>
+											<View style={styles.arrow} />
+										</View>
+									</Callout>
+								</Marker>
+							))}
+						</MapView>
+					</View>
 				</View>
-			</View>
-			<View style={styles.searchBox}>
-				<TouchableOpacity
-					style={styles.reloadUbication}
-					onPress={() => moveMapToUserLocation(mapRef, location, 1000)}
+				<View style={styles.searchBox}>
+					<TouchableOpacity
+						style={styles.reloadUbication}
+						onPress={() => moveMapToUserLocation(mapRef, location, 1000)}
+					>
+						<MaterialCommunityIcons
+							name="map-marker-right"
+							size={30}
+							color="black"
+							style={{ marginRight: 7 }}
+						/>
+						<Text>Where Am I?</Text>
+					</TouchableOpacity>
+					<StatusBar onSearchInputChange={handleSearchInput} />
+				</View>
+
+				<View style={styles.divider} />
+
+				<FlatList
+					ref={flatListRef}
+					data={filteredCenters}
+					renderItem={renderItem}
+					keyExtractor={(center) => center.id.toString()}
+					style={styles.centerList}
+					showsHorizontalScrollIndicator={false}
+					showsVerticalScrollIndicator={false}
+				/>
+
+				<BottomSheetModal
+					ref={bottomSheetModalRef}
+					index={0}
+					snapPoints={snapPoints}
+					style={{ borderRadius: 50 }}
+					enableContentPanningGesture={false}
 				>
-					<MaterialCommunityIcons
-						name="map-marker-right"
-						size={30}
-						color="black"
-						style={{ marginRight: 7 }}
+					<BottomSheetContent
+						onFinalDistanceSelect={handleFinalDistanceSelect}
+						onClose={() => bottomSheetModalRef.current?.dismiss()}
+						maxDistance={maxDistance}
 					/>
-					<Text>Where Am I?</Text>
-				</TouchableOpacity>
-				<StatusBar onSearchInputChange={handleSearchInput} />
+				</BottomSheetModal>
 			</View>
-
-			<View style={styles.divider} />
-
-			<FlatList
-				ref={flatListRef}
-				data={filteredCenters}
-				renderItem={renderItem}
-				keyExtractor={(center) => center.id.toString()}
-				style={styles.centerList}
-				showsHorizontalScrollIndicator={false}
-				showsVerticalScrollIndicator={false}
-			/>
-		</View>
+		</BottomSheetModalProvider>
 	);
 };
 
@@ -345,6 +412,14 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginLeft: 20,
 		marginRight: 20,
+	},
+	bottomSheet: {
+		borderRadius: 50,
+	},
+	sheetContent: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 
