@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
 // My Imports
+import UserLocation from "../utils/UserLocation";
 import config from "../../config";
 
 // LOADING MANAGER COMPONENT
@@ -71,25 +72,41 @@ const LoadingManager = ({ onLoadingComplete }) => {
 		checkUserToken();
 	}, []);
 
-	// Load userLocation from asyncStorage if it exists
+	// Load userLocation from asyncStorage if it exists or get it from the device
 	useEffect(() => {
 		const loadUserLocation = async () => {
-			try {
-				const userLocation = await AsyncStorage.getItem("@userLocation");
-				if (userLocation !== null) {
-					setUserLocation(JSON.parse(userLocation));
+			if (userData !== null) {
+				try {
+					const userLocation = await AsyncStorage.getItem("@userLocation");
+					if (userLocation !== null) {
+						setUserLocation(JSON.parse(userLocation));
+					} else {
+						// Get user location
+						const location = await UserLocation();
+						const { latitude, longitude } = location;
+						setUserLocation({ latitude, longitude });
+						// Storage
+						await AsyncStorage.setItem(
+							"@userLocation",
+							JSON.stringify({ latitude, longitude })
+						);
+					}
+				} catch (error) {
+					console.error("Error loading user location", error);
 				}
-			} catch (error) {
-				console.error("Error loading user location", error);
 			}
 		};
 
 		loadUserLocation();
-	}, []);
+	}, [userData]);
 
 	// Loading Complete
 	useEffect(() => {
-		if (!showLoadingScreen && fontsLoaded && (userData || !isTokenValid)) {
+		if (
+			!showLoadingScreen &&
+			fontsLoaded &&
+			(userData || !isTokenValid)
+		) {
 			// Pass location with UserData
 			if (location !== null) userData = { ...userData, location };
 
