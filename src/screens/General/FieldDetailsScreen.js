@@ -192,7 +192,8 @@ const styles = StyleSheet.create({
 		flex: 1,
 		marginTop: -30,
 		marginHorizontal: 20,
-		padding: 30,
+		paddingHorizontal: 30,
+		paddingTop: 30,
 		borderTopLeftRadius: 20,
 		borderTopRightRadius: 20,
 		backgroundColor: "#fafafa",
@@ -226,6 +227,7 @@ const styles = StyleSheet.create({
 	},
 	availablePitchesContainer: {
 		marginTop: 20,
+		marginBottom: 20,
 	},
 	pitchContainer: {
 		marginTop: 8,
