@@ -14,8 +14,6 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// GeoLib
-import { getDistance } from "geolib";
 // React Icons
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome6 } from "@expo/vector-icons";
@@ -23,6 +21,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 // My utils
 import UserLocation from "../../utils/UserLocation";
+import { applyFilters } from "../../utils/NearbyCenters";
 // My components
 import CustomCenter from "../../components/CustomCenter";
 import StatusBar from "../../components/StatusBar";
@@ -77,7 +76,8 @@ const BookFieldScreen = ({ route }) => {
 	React.useEffect(
 		() => {
 			// Filter centers
-			applyFilters("");
+			const filtered = applyFilters(centers, "", location, maxDistance);
+			setFilteredCenters(filtered);
 
 			// Move the map to the user location
 			if (mapRef.current) {
@@ -85,7 +85,8 @@ const BookFieldScreen = ({ route }) => {
 			}
 		},
 		[location],
-		[mapRef]
+		[mapRef],
+		[centers, location, maxDistance]
 	);
 
 	// Update the location of the user
@@ -101,25 +102,6 @@ const BookFieldScreen = ({ route }) => {
 	// Move the map to the user location
 	const moveMapToUserLocation = (mapRef, location, timeAnimation) => {
 		mapRef.current?.animateToRegion({ ...location }, timeAnimation);
-	};
-
-	// Filter the centers by the search input and distance from the user location
-	const applyFilters = (searchInput) => {
-		const lowercasedInput = searchInput.toLowerCase();
-		const filtered = centers
-			.map((center) => ({
-				...center,
-				distance: getDistance(
-					{ latitude: location.latitude, longitude: location.longitude },
-					{ latitude: center.latitude, longitude: center.longitude }
-				),
-			}))
-			.filter(
-				(center) =>
-					center.title.toLowerCase().includes(lowercasedInput) &&
-					center.distance < maxDistance
-			);
-		setFilteredCenters(filtered);
 	};
 
 	// Fetch the user location and set iteam in AsyncStorage
@@ -146,7 +128,8 @@ const BookFieldScreen = ({ route }) => {
 
 	// Handle the search input
 	const handleSearchInput = (input) => {
-		applyFilters(input);
+		const filtered = applyFilters(centers, input, location, maxDistance);
+		setFilteredCenters(filtered);
 	};
 
 	// Scroll to the selected center
@@ -168,9 +151,9 @@ const BookFieldScreen = ({ route }) => {
 		setMaxDistance(distance);
 	};
 	React.useEffect(() => {
-		console.log("Max distance updated:", maxDistance);
-		applyFilters("");
-	}, [maxDistance]);
+		const filtered = applyFilters(centers, "", location, maxDistance);
+		setFilteredCenters(filtered);
+	}, [maxDistance, location, centers]);
 
 	// Render the item of the FlatList
 	const renderItem = ({ item: center }) => (
@@ -304,6 +287,11 @@ const BookFieldScreen = ({ route }) => {
 					data={filteredCenters}
 					renderItem={renderItem}
 					keyExtractor={(center) => center.id.toString()}
+					ListEmptyComponent={() => (
+						<Text style={styles.noCentersText}>
+							No hay centros cerca de usted.
+						</Text>
+					)}
 					style={styles.centerList}
 					showsHorizontalScrollIndicator={false}
 					showsVerticalScrollIndicator={false}
@@ -407,6 +395,13 @@ const styles = StyleSheet.create({
 	centerInformation: {
 		marginVertical: 10,
 		paddingHorizontal: 20,
+	},
+	noCentersText: {
+		color: "red",
+		fontSize: 16,
+		fontWeight: "bold",
+		marginTop: 20,
+		textAlign: "center",
 	},
 	searchBox: {
 		alignItems: "center",
