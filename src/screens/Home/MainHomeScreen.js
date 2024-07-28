@@ -1,5 +1,5 @@
 // React Imports
-import React from "react";
+import React, { useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // My components
@@ -8,38 +8,27 @@ import CustomActionApp from "../../components/CustomActionApp.js";
 import CustomCenter from "../../components/CustomCenter.js";
 // My Styles
 import { ScrollView } from "react-native-gesture-handler";
+// Dummy Data
+import centers from "../../assets/data/sportCenters.json";
 
 const MainHomeScreen = ({ route }) => {
+	// Initialize the filtered centers
+	let favCenters = [];
+	if (true) {
+		favCenters = centers;
+	}
+
 	// Navigation between screens
 	const navigation = useNavigation();
 
 	// Get the user data from the route params
 	const user = route.params.user || {};
 
-	// DESIGN NOTE: The following code is a mockup of the data that will be displayed in the app.
-	const center1 = {
-		id: 1,
-		latitude: 37.18817,
-		longitude: -3.60667,
-		price: 30,
-		title: "Granada Sports Arena",
-		numberOfStars: 4,
-		rating: 4.5,
-		image: "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
-		address: "C. Estrellas, S/N, Chana, 18015 Granada",
-		distance: 515,
-	};
-	const center2 = {
-		id: 2,
-		latitude: 37.17463,
-		longitude: -3.59855,
-		price: 25,
-		title: "Albaicín Fitness Center",
-		numberOfStars: 5,
-		rating: 4.8,
-		image: "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
-		address: "C. Luna, S/N, Albaicín, 18010 Granada",
-		distance: 1781,
+	const handleCenterPress = (center) => {
+		console.log("Center " + center.id + " pressed");
+		navigation.navigate("FieldDetailsScreen", {
+			centerInfo: center,
+		});
 	};
 
 	return (
@@ -70,38 +59,29 @@ const MainHomeScreen = ({ route }) => {
 				{/* Some Nearby Centers */}
 				<View style={styles.centersContainer}>
 					<Text style={styles.sectionTitle}>Nearby Centers</Text>
-					<View style={[styles.centersSpace, { marginBottom: 20 }]}>
-						<TouchableOpacity
-							activeOpacity={0.75}
-							onPress={() =>
-								navigation.navigate("FieldDetailsScreen", {
-									centerInfo: center1,
-								})
-							}
-						>
-							<CustomCenter
-								name={center1.title}
-								address={center1.address}
-								imgUrl={center1.image}
-							/>
-						</TouchableOpacity>
-					</View>
-					<View style={styles.centersSpace}>
-						<TouchableOpacity
-							activeOpacity={0.75}
-							onPress={() =>
-								navigation.navigate("FieldDetailsScreen", {
-									centerInfo: center2,
-								})
-							}
-						>
-							<CustomCenter
-								name={center2.title}
-								address={center2.address}
-								imgUrl={center2.image}
-							/>
-						</TouchableOpacity>
-					</View>
+					{favCenters.length > 0 ? (
+						<View style={styles.centersSpace}>
+							{favCenters.map((center) => (
+								<TouchableOpacity
+									key={center.id}
+									activeOpacity={0.75}
+									onPress={() => handleCenterPress(center)}
+									style={styles.centerInformation}
+								>
+									<CustomCenter
+										name={center.title}
+										address={center.address}
+										imgUrl={center.image}
+										distance={center.distance}
+									/>
+								</TouchableOpacity>
+							))}
+						</View>
+					) : (
+						<Text style={styles.noCentersText}>
+							There are no centers in your favorites list
+						</Text>
+					)}
 				</View>
 			</ScrollView>
 		</View>
@@ -152,15 +132,14 @@ const styles = StyleSheet.create({
 		width: "100%",
 		backgroundColor: "#EEEEEE",
 	},
-
-	// borrar
-	others: {
-		alignItems: "center",
-		backgroundColor: "yellow",
+	centerInformation: {
+		marginBottom: 20,
 	},
-	footer: {
+	noCentersText: {
+		color: "red",
 		fontSize: 16,
-		color: "gray",
+		fontWeight: "bold",
+		marginTop: 20,
 		textAlign: "center",
 	},
 });
