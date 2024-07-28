@@ -8,7 +8,98 @@
       "numberOfStars": 4,
       "rating": 4.5,
       "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
-      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 2,
@@ -19,7 +110,76 @@
       "numberOfStars": 5,
       "rating": 4.8,
       "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
-      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 3,
@@ -30,7 +190,76 @@
       "numberOfStars": 3,
       "rating": 4.3,
       "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
-      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 4,
@@ -41,7 +270,76 @@
       "numberOfStars": 4,
       "rating": 4.7,
       "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
-      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "closed",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 5,
@@ -52,7 +350,98 @@
       "numberOfStars": 3,
       "rating": 4.2,
       "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
-      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "closed",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 4,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 6,
@@ -63,7 +452,76 @@
       "numberOfStars": 4,
       "rating": 4.6,
       "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
-      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "closed",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 7,
@@ -74,7 +532,76 @@
       "numberOfStars": 5,
       "rating": 4.9,
       "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
-      "address": "C. Estrellas, S/N, Chana, 18015 Granada"
+      "address": "C. Estrellas, S/N, Chana, 18015 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "closed",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    },
    {
       "id": 8,
@@ -85,6 +612,75 @@
       "numberOfStars": 4,
       "rating": 4.4,
       "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
-      "address": "C. Luna, S/N, Albaicín, 18010 Granada"
+      "address": "C. Luna, S/N, Albaicín, 18010 Granada",
+      "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
+      "pitches": [
+         {
+            "id": 1,
+            "type": "Outdoor 7-a-side grass",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 2,
+            "type": "Outdoor 5-a-side grass",
+            "status": "closed",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "09:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         },
+         {
+            "id": 3,
+            "type": "Indoor 5-a-side",
+            "status": "active",
+            "occupancy": [
+               {
+                  "day": "Monday",
+                  "date": "2023-07-29",
+                  "hours": [
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2023-07-30",
+                  "hours": [
+                     { "time": "07:30 AM", "status": "occupied" },
+                     { "time": "10:30 AM", "status": "occupied" }
+                  ]
+               }
+            ]
+         }
+      ]
    }
 ]
