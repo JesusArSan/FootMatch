@@ -3,11 +3,11 @@ import React from "react";
 import { Text, StyleSheet } from "react-native";
 
 // Title Screen
-const TitleScreen = ({ props, text }) => {
+const HeaderTitleScreen = ({ props, text }) => {
 	return <Text style={styles.title}>{text}</Text>;
 };
 
-export default TitleScreen;
+export default HeaderTitleScreen;
 
 const styles = StyleSheet.create({
 	title: {
@@ -19,4 +19,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-// Name file: components/TitleScreen.js
+// Name file: components/HeaderTitleScreen.js

@@ -1,0 +1,77 @@
+// React Imports
+import React from "react";
+import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+// My icons
+import MessageIcon from "../components/icons/MessageIcon";
+
+const FriendFollower = ({ userData }) => {
+	const handlePressUser = () => {
+		console.log("User pressed: ", userData.id);
+	};
+
+	const handlePressMsg = () => {
+		console.log("Message button pressed for: ", userData.id);
+	};
+
+	return (
+		<View style={styles.friendContainer}>
+			<Pressable style={styles.containerComponent} onPress={handlePressUser}>
+				<View style={styles.userPhoto}>
+					<Image
+						style={{
+							width: 50,
+							height: 50,
+							borderRadius: 25,
+							resizeMode: "cover",
+						}}
+						source={{ uri: userData.photo }}
+					/>
+				</View>
+				<View style={styles.requestTextContainer}>
+					<Text style={styles.combinedText}>
+						<Text style={{ fontFamily: "InriaSans-Bold" }}>
+							{userData.username}
+						</Text>
+						<Text style={{ fontFamily: "InriaSans-Regular" }}>
+							{" "}
+							has sent you a friend request.
+						</Text>
+					</Text>
+				</View>
+				<View>
+					<Pressable style={styles.msgButton} onPress={handlePressMsg}>
+						<MessageIcon size={22} />
+					</Pressable>
+				</View>
+			</Pressable>
+		</View>
+	);
+};
+
+const styles = StyleSheet.create({
+	friendContainer: {},
+	requestTextContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		alignItems: "center",
+		width: "55%",
+	},
+	containerComponent: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		marginVertical: 10,
+	},
+	msgButton: {
+		backgroundColor: "black",
+		paddingHorizontal: 31,
+		paddingVertical: 5,
+		borderRadius: 5,
+		alignItems: "center",
+		justifyContent: "center",
+	},
+});
+
+export default FriendFollower;
+
+// Name file: components/FriendFollower.js

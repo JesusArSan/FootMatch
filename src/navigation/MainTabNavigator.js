@@ -6,9 +6,11 @@ import MainHomeScreen from "../screens/Home/MainHomeScreen";
 import UserProfileScreen from "../screens/Home/UserProfileScreen";
 import NotificationsScreen from "../screens/Home/NotificationsScreen";
 import CommunityScreen from "../screens/Home/CommunityScreen";
+import ConversationsScreen from "../screens/General/ConversationsScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
-import HeaderTabTitle from "../components/HeaderTabTitle";
+import HeaderConversations from "../components/headers/HeaderConversations";
+import HeaderCustom from "../components/headers/HeaderCustom";
 
 // Create the Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -22,7 +24,6 @@ const MainTabNavigator = ({ route }) => {
 			screenOptions={({ route }) => ({
 				// Header personalized
 				headerShown: true,
-				headerTitle: () => <HeaderTabTitle />,
 				headerStyle: {
 					backgroundColor: "#3562A6",
 				},
@@ -51,13 +52,56 @@ const MainTabNavigator = ({ route }) => {
 				name="Home"
 				component={MainHomeScreen}
 				initialParams={{ user: userData }}
+				options={{
+					headerTitle: (props) => (
+						<HeaderCustom
+							{...props}
+							type={""}
+							screenRedirectedTo={"ConversationsScreen"}
+						/>
+					),
+				}}
 			/>
-			<Tab.Screen name="Community" component={CommunityScreen} />
-			<Tab.Screen name="Notifications" component={NotificationsScreen} />
+			<Tab.Screen
+				name="Community"
+				component={CommunityScreen}
+				initialParams={{ user: userData }}
+				options={{
+					headerTitle: (props) => (
+						<HeaderCustom {...props} type={"community"} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="Notifications"
+				component={NotificationsScreen}
+				initialParams={{ user: userData }}
+				options={{
+					headerTitle: (props) => (
+						<HeaderCustom {...props} type={"notifications"} />
+					),
+				}}
+			/>
 			<Tab.Screen
 				name="Profile"
 				component={UserProfileScreen}
 				initialParams={{ user: userData }}
+				options={{
+					headerTitle: (props) => (
+						<HeaderCustom {...props} type={"profile"} />
+					),
+				}}
+			/>
+			<Tab.Screen
+				name="ConversationsScreen"
+				component={ConversationsScreen}
+				initialParams={{ user: userData }}
+				options={{
+					headerTitle: (props) => (
+						<HeaderConversations {...props} text={"Chats"} />
+					),
+					tabBarButton: () => null,
+				}}
 			/>
 		</Tab.Navigator>
 	);

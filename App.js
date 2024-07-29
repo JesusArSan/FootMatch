@@ -17,7 +17,7 @@ import TeamsScreen from "./src/screens/General/TeamsScreen";
 // My imports
 import LoadingManager from "./src/components/LoadingManager";
 // My Components
-import TitleScreen from "./src/components/TitleScreen";
+import HeaderTitleScreen from "./src/components/headers/HeaderTitleScreen";
 
 // Stack Navigator
 const Stack = createStackNavigator();
@@ -68,7 +68,7 @@ export default function App() {
 					initialParams={{ user: userData }}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Book a Field"} />
+							<HeaderTitleScreen {...props} text={"Book a Field"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -81,7 +81,7 @@ export default function App() {
 					component={FieldDetailsScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Field Details"} />
+							<HeaderTitleScreen {...props} text={"Field Details"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -94,7 +94,7 @@ export default function App() {
 					component={PitchTimeScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Book a Field"} />
+							<HeaderTitleScreen {...props} text={"Book a Field"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -107,7 +107,7 @@ export default function App() {
 					component={FindMatchScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Find a Match"} />
+							<HeaderTitleScreen {...props} text={"Find a Match"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -120,7 +120,7 @@ export default function App() {
 					component={JoinCompetScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Join Competitions"} />
+							<HeaderTitleScreen {...props} text={"Join Competitions"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -133,7 +133,7 @@ export default function App() {
 					component={TeamsScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Teams"} />
+							<HeaderTitleScreen {...props} text={"Teams"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
