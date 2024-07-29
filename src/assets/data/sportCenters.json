@@ -36,7 +36,7 @@
          {
             "id": 2,
             "type": "Outdoor 5-a-side grass",
-            "status": "active",
+            "status": "closed",
             "occupancy": [
                {
                   "day": "Monday",
@@ -116,7 +116,7 @@
          {
             "id": 1,
             "type": "Outdoor 7-a-side grass",
-            "status": "active",
+            "status": "closed",
             "occupancy": [
                {
                   "day": "Monday",
@@ -160,7 +160,7 @@
          {
             "id": 3,
             "type": "Indoor 5-a-side",
-            "status": "active",
+            "status": "closed",
             "occupancy": [
                {
                   "day": "Monday",
@@ -218,7 +218,7 @@
          {
             "id": 2,
             "type": "Outdoor 5-a-side grass",
-            "status": "active",
+            "status": "closed",
             "occupancy": [
                {
                   "day": "Monday",
@@ -276,7 +276,7 @@
          {
             "id": 1,
             "type": "Outdoor 7-a-side grass",
-            "status": "active",
+            "status": "closed",
             "occupancy": [
                {
                   "day": "Monday",
