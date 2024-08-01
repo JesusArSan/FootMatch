@@ -50,12 +50,17 @@ const FriendRequest = ({ userData }) => {
 };
 
 const styles = StyleSheet.create({
-	friendContainer: {},
+	friendContainer: {
+		paddingHorizontal: 0,
+	},
 	requestTextContainer: {
 		flexDirection: "row",
 		flexWrap: "wrap",
 		alignItems: "center",
 		width: "55%",
+	},
+	combinedText: {
+		fontSize: 16,
 	},
 	containerComponent: {
 		flexDirection: "row",
@@ -64,7 +69,7 @@ const styles = StyleSheet.create({
 		marginVertical: 10,
 	},
 	acceptButton: {
-		backgroundColor: "black",
+		backgroundColor: "#3562A6",
 		paddingHorizontal: 20,
 		paddingVertical: 5,
 		borderRadius: 5,

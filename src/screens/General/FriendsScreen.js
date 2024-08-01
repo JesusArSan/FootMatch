@@ -13,85 +13,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import DrawerDivider from "../../components/DrawerDivider";
 import FriendRequest from "../../components/FriendRequest";
 import FriendFollower from "../../components/FriendFollower";
-
 // Dummy data
-const requestFriendsList = [
-	{
-		id: 1,
-		username: "ester_exposito",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 2,
-		username: "danna_paola",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 3,
-		username: "lana_rhoades",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 4,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 5,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 6,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 7,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 8,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 9,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 10,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 11,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 12,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 13,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 14,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-	{
-		id: 15,
-		username: "daniela_lopez",
-		photo: "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-	},
-];
+import requestFriendsList from "../../assets/data/friends.json";
 
 const FriendsScreen = () => {
 	// Safe Area
@@ -104,37 +27,49 @@ const FriendsScreen = () => {
 
 	return (
 		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
-			<View
-				style={[
-					styles.friendRequestContainer,
-					{ maxHeight: availableHeight * 0.37 },
-				]}
-			>
-				<Text style={styles.title}>Friend Requests</Text>
-				<FlatList
-					data={requestFriendsList}
-					keyExtractor={(item) => item.id.toString()}
-					renderItem={({ item }) => <FriendRequest userData={item} />}
-					contentContainerStyle={{ paddingBottom: 10 }}
-					style={{ marginVertical: 10 }}
-				/>
-			</View>
-			<DrawerDivider color={"black"} customWidth="100%" />
-			<View
-				style={[
-					styles.friendsContainer,
-					{ maxHeight: availableHeight * 0.81 },
-				]}
-			>
-				<Text style={styles.title}>My Friends</Text>
-				<FlatList
-					data={requestFriendsList}
-					keyExtractor={(item) => item.id.toString()}
-					renderItem={({ item }) => <FriendFollower userData={item} />}
-					contentContainerStyle={{ paddingBottom: 10 }}
-					style={{ marginVertical: 10 }}
-				/>
-			</View>
+			{requestFriendsList.length === 0 ? null : (
+				<View
+					style={[
+						styles.friendRequestContainer,
+						{ maxHeight: availableHeight * 0.388 },
+					]}
+				>
+					<Text style={styles.title}>Friend Requests</Text>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						showsVerticalScrollIndicator={false}
+						data={requestFriendsList}
+						keyExtractor={(item) => item.id.toString()}
+						renderItem={({ item }) => <FriendRequest userData={item} />}
+						contentContainerStyle={{ paddingBottom: 10 }}
+						style={{ marginVertical: 10 }}
+					/>
+					<DrawerDivider color={"black"} customWidth="100%" />
+				</View>
+			)}
+			{requestFriendsList.length === 0 ? (
+				<View>
+					<Text style={styles.text}>You have no friends yet.</Text>
+				</View>
+			) : (
+				<View
+					style={[
+						styles.friendsContainer,
+						{ maxHeight: availableHeight * 0.81 },
+					]}
+				>
+					<Text style={styles.title}>My Friends</Text>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						showsVerticalScrollIndicator={false}
+						data={requestFriendsList}
+						keyExtractor={(item) => item.id.toString()}
+						renderItem={({ item }) => <FriendFollower userData={item} />}
+						contentContainerStyle={{ paddingBottom: 10 }}
+						style={{ marginVertical: 10 }}
+					/>
+				</View>
+			)}
 		</SafeAreaView>
 	);
 };
@@ -142,10 +77,9 @@ const FriendsScreen = () => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		paddingHorizontal: 30,
+		paddingHorizontal: 20,
 	},
-	friendRequestContainer: {
-	},
+	friendRequestContainer: {},
 	friendsContainer: {
 		marginTop: 10,
 	},
