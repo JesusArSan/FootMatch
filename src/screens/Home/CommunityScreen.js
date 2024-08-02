@@ -42,15 +42,13 @@ const CommunityScreen = ({ route }) => {
 		setPublicationsData(mappedPublications);
 	}, []);
 
-	const renderItem = ({ item }) => {
-		return <PublicationContainer publication={item} />;
-	};
-
 	return (
 		<View style={styles.container}>
 			<FlatList
 				data={publicationsData}
-				renderItem={renderItem}
+				renderItem={({ item }) => (
+					<PublicationContainer publication={item} />
+				)}
 				keyExtractor={(item) => item.id.toString()}
 			/>
 		</View>

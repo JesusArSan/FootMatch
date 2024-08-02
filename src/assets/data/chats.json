@@ -1,0 +1,47 @@
+[
+   {
+      "id": "1",
+      "username": "Alice Johnson",
+      "userId": "5",
+      "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+      "lastMessage": "¡Hola! ¿Cómo estás?",
+      "lastMessageTime": "15:30",
+      "unreadCount": 2
+   },
+   {
+      "id": "2",
+      "username": "Bob Smith",
+      "userId": "2",
+      "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+      "lastMessage": "¿Te gustaría ir al cine esta noche? Ha salido una nueva pelicula y tiene muy buena pinta. Avisame si quieres verla",
+      "lastMessageTime": "yesterday",
+      "unreadCount": 0
+   },
+   {
+      "id": "3",
+      "username": "Carol White",
+      "userId": "3",
+      "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+      "lastMessage": "El proyecto se entregó con éxito. ¡Gracias!",
+      "lastMessageTime": "19:38",
+      "unreadCount": 1
+   },
+   {
+      "id": "4",
+      "username": "Dave Brown",
+      "userId": "1",
+      "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+      "lastMessage": "Voy en camino.",
+      "lastMessageTime": "yesterday",
+      "unreadCount": 0
+   },
+   {
+      "id": "5",
+      "username": "Eva Green",
+      "userId": "4",
+      "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+      "lastMessage": "Adjunto el archivo que solicitaste.",
+      "lastMessageTime": "20:00",
+      "unreadCount": 3
+   }
+]
