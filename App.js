@@ -14,6 +14,8 @@ import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
+//
+import ChatStackNavigator from "./src/navigation/ChatStackNavigator";
 // My imports
 import LoadingManager from "./src/components/LoadingManager";
 // My Components
@@ -140,6 +142,12 @@ export default function App() {
 						},
 						headerTintColor: "white",
 					}}
+				/>
+				<Stack.Screen
+					name="ChatStackNavigator"
+					component={ChatStackNavigator}
+					initialParams={{ user: userData }}
+					options={{ headerShown: false }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

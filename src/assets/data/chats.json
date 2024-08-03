@@ -4,44 +4,104 @@
       "username": "Alice Johnson",
       "userId": "5",
       "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-      "lastMessage": "¡Hola! ¿Cómo estás?",
-      "lastMessageTime": "15:30",
-      "unreadCount": 2
+      "unreadCount": 1,
+      "messages": [
+         {
+            "content": "¡Hola! ¿Cómo estás?",
+            "time": "2024-08-03T12:30:00",
+            "senderId": "5"
+         },
+         {
+            "content": "Bien, ¿y tú?",
+            "time": "2024-08-03T12:35:00",
+            "senderId": "other"
+         },
+         {
+            "content": "Estoy bien, trabajando en algunos proyectos.",
+            "time": "2024-08-03T12:45:00",
+            "senderId": "5"
+         }
+      ]
    },
    {
       "id": "2",
       "username": "Bob Smith",
       "userId": "2",
       "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-      "lastMessage": "¿Te gustaría ir al cine esta noche? Ha salido una nueva pelicula y tiene muy buena pinta. Avisame si quieres verla",
-      "lastMessageTime": "yesterday",
-      "unreadCount": 0
+      "unreadCount": 0,
+      "messages": [
+         {
+            "content": "¿Te gustaría ir al cine esta noche? Ha salido una nueva pelicula y tiene muy buena pinta.",
+            "time": "2023-08-02T17:00:00",
+            "senderId": "other"
+         },
+         {
+            "content": "Avisame si quieres verla",
+            "time": "2023-08-02T17:01:00",
+            "senderId": "other"
+         },
+         {
+            "content": "Claro, me encantaría ir. ¿A qué hora?",
+            "time": "2023-08-02T17:05:00",
+            "senderId": "2"
+         }
+      ]
    },
    {
       "id": "3",
       "username": "Carol White",
       "userId": "3",
       "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-      "lastMessage": "El proyecto se entregó con éxito. ¡Gracias!",
-      "lastMessageTime": "19:38",
-      "unreadCount": 1
+      "unreadCount": 0,
+      "messages": [
+         {
+            "content": "El proyecto se entregó con éxito. ¡Gracias!",
+            "time": "2024-08-03T11:38:00",
+            "senderId": "3"
+         },
+         {
+            "content": "¡Genial! Me alegra que todo saliera bien.",
+            "time": "2024-08-03T11:45:00",
+            "senderId": "other"
+         }
+      ]
    },
    {
       "id": "4",
       "username": "Dave Brown",
       "userId": "1",
       "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-      "lastMessage": "Voy en camino.",
-      "lastMessageTime": "yesterday",
-      "unreadCount": 0
+      "unreadCount": 3,
+      "messages": [
+         {
+            "content": "Voy en camino.",
+            "time": "2024-08-02T15:20:00",
+            "senderId": "1"
+         },
+         {
+            "content": "Perfecto, nos vemos en 10 minutos.",
+            "time": "2024-08-02T15:25:00",
+            "senderId": "other"
+         }
+      ]
    },
    {
       "id": "5",
       "username": "Eva Green",
       "userId": "4",
       "userPhoto": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
-      "lastMessage": "Adjunto el archivo que solicitaste.",
-      "lastMessageTime": "20:00",
-      "unreadCount": 3
+      "unreadCount": 2,
+      "messages": [
+         {
+            "content": "Adjunto el archivo que solicitaste.",
+            "time": "2024-08-03T10:00:00",
+            "senderId": "4"
+         },
+         {
+            "content": "Gracias, lo revisaré y te daré mi feedback.",
+            "time": "2024-08-03T10:05:00",
+            "senderId": "other"
+         }
+      ]
    }
 ]

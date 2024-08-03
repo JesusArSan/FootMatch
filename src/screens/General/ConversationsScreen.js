@@ -5,28 +5,26 @@ import ChatConver from "../../components/ChatConver";
 // Dummy data
 import chats1 from "../../assets/data/chats";
 
-const ConversationsScreen = ({ chats }) => {
-	const chatsDummy = chats1;
+const ConversationsScreen = ({ route }) => {
+	// Retrieve user and chat details from navigation route
+	const user = route.params.user;
+	const chats = route.params.chatInfo;
 
-	const getFullDate = (timeString) => {
-		const now = new Date();
-		let date;
+	console.log("User: ", user);
+	console.log("Chat: ", chats);
 
-		if (timeString === "yesterday") {
-			date = new Date(now.setDate(now.getDate() - 1)); // Yesterday
-		} else {
-			// Asume que el horario es para el día actual
-			const [hours, minutes] = timeString.split(":").map(Number);
-			date = new Date(now.setHours(hours, minutes, 0, 0));
-		}
-
-		return date;
+	// Convert ISO 8601 string to a Date object
+	const getFullDate = (isoTimeString) => {
+		return new Date(isoTimeString);
 	};
 
-	// Ordenar chats por lastMessageTime en orden descendente
-	const sortedChats = [...chatsDummy].sort((a, b) => {
-		const dateA = getFullDate(a.lastMessageTime).getTime();
-		const dateB = getFullDate(b.lastMessageTime).getTime();
+	// Sort chats based on the timestamp of the last message in each chat
+	const sortedChats = chats1.sort((a, b) => {
+		const lastMessageTimeA = a.messages[a.messages.length - 1].time;
+		const lastMessageTimeB = b.messages[b.messages.length - 1].time;
+
+		const dateA = getFullDate(lastMessageTimeA).getTime();
+		const dateB = getFullDate(lastMessageTimeB).getTime();
 		return dateB - dateA;
 	});
 
@@ -35,7 +33,7 @@ const ConversationsScreen = ({ chats }) => {
 			<FlatList
 				data={sortedChats}
 				renderItem={({ item }) => <ChatConver chat={item} />}
-				keyExtractor={(item) => item.id}
+				keyExtractor={(item) => item.id.toString()}
 			/>
 		</SafeAreaView>
 	);

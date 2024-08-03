@@ -63,6 +63,7 @@ const DrawerNavigator = ({ userData }) => {
 				drawerActiveTintColor: "#ffffff",
 				drawerInactiveTintColor: "#ffffff",
 				drawerItemStyle: { paddingLeft: 8 },
+				swipeEnabled: false, // Unable swipe
 			}}
 		>
 			<Drawer.Screen

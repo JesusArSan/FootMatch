@@ -11,6 +11,8 @@ import ConversationsScreen from "../screens/General/ConversationsScreen";
 import TabBarIconType from "../components/TabBarIconType";
 import HeaderConversations from "../components/headers/HeaderConversations";
 import HeaderCustom from "../components/headers/HeaderCustom";
+// Navigation imports
+import ChatStackNavigator from "./ChatStackNavigator";
 
 // Create the Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -57,7 +59,7 @@ const MainTabNavigator = ({ route }) => {
 						<HeaderCustom
 							{...props}
 							type={""}
-							screenRedirectedTo={"ConversationsScreen"}
+							screenRedirectedTo={"ChatStackNavigator"}
 						/>
 					),
 				}}
@@ -90,17 +92,6 @@ const MainTabNavigator = ({ route }) => {
 					headerTitle: (props) => (
 						<HeaderCustom {...props} type={"profile"} />
 					),
-				}}
-			/>
-			<Tab.Screen
-				name="ConversationsScreen"
-				component={ConversationsScreen}
-				initialParams={{ user: userData }}
-				options={{
-					headerTitle: (props) => (
-						<HeaderConversations {...props} text={"Chats"} />
-					),
-					tabBarButton: () => null,
 				}}
 			/>
 		</Tab.Navigator>
