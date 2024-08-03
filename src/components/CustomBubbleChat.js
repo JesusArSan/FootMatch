@@ -2,7 +2,7 @@
 import React from "react";
 import { Bubble } from "react-native-gifted-chat";
 
-const CustomBubbleChat = (props) => {
+const CustomBubbleChat = ( props ) => {
 	return (
 		<Bubble
 			{...props}

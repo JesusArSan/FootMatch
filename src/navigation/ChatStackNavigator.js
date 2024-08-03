@@ -5,7 +5,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import ChatScreen from "../screens/General/ChatScreen";
 import ConversationsScreen from "../screens/General/ConversationsScreen";
 // My Components
-import HeaderTitleScreen from "../components/headers/HeaderTitleScreen";
+import HeaderConversations from "../components/headers/HeaderConversations";
 
 // Create the Stack Navigator
 const ChatStack = createStackNavigator();
@@ -23,7 +23,7 @@ const ChatStackNavigator = ({ route }) => {
 				initialParams={{ user: userData }}
 				options={{
 					headerTitle: (props) => (
-						<HeaderTitleScreen {...props} text={"Chats"} />
+						<HeaderConversations {...props} text={"Chats"} />
 					),
 					headerStyle: {
 						backgroundColor: "#3562A6",
@@ -36,9 +36,6 @@ const ChatStackNavigator = ({ route }) => {
 				component={ChatScreen}
 				initialParams={{ user: userData }}
 				options={{
-					headerTitle: (props) => (
-						<HeaderTitleScreen {...props} text={"Chat"} />
-					),
 					headerStyle: {
 						backgroundColor: "#3562A6",
 					},

@@ -10,7 +10,7 @@ import AppIcon from "../icons/AppIcon";
 import Settings from "../icons/SettingsIcon";
 
 // Header Community
-const HeaderCustom = ({ props, type, screenRedirectedTo }) => {
+const HeaderCustom = ({ props = {}, type, screenRedirectedTo }) => {
 	// Navigation
 	const navigation = useNavigation();
 

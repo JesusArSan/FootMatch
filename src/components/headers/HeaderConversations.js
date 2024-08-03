@@ -5,19 +5,19 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import MagnifyingGlassIcon from "../icons/MagnifyingGlassIcon";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
-// Header Tab Tittle
-const HeaderMessage = ({ props, text = "Prueba" }) => {
+// HeaderConversations
+const HeaderConversations = ({ props, text = "Prueba" }) => {
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>{text}</Text>
 			<View style={styles.screenOptions}>
 				<TouchableOpacity>
-					<MagnifyingGlassIcon size={28} />
+					<MagnifyingGlassIcon size={25} />
 				</TouchableOpacity>
 				<TouchableOpacity>
 					<SimpleLineIcons
 						name="options-vertical"
-						size={25}
+						size={22}
 						color="#fafafa"
 						style={{ marginLeft: 20 }}
 					/>
@@ -27,7 +27,7 @@ const HeaderMessage = ({ props, text = "Prueba" }) => {
 	);
 };
 
-export default HeaderMessage;
+export default HeaderConversations;
 
 const styles = StyleSheet.create({
 	container: {
@@ -50,4 +50,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-// Name file: components/HeaderMessage.js
+// Name file: components/HeaderConversations.js

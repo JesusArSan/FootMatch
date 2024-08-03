@@ -1,13 +1,20 @@
 // React Imports
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+	useState,
+	useEffect,
+	useCallback,
+	useLayoutEffect,
+} from "react";
 import { View, Text, StyleSheet, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { GiftedChat, Send } from "react-native-gifted-chat";
 import CustomBubbleChat from "../../components/CustomBubbleChat";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 // My headers
-import HeaderCustom from "../../components/headers/HeaderCustom";
+import HeaderChat from "../../components/headers/HeaderChat";
 
 const ChatScreen = ({ route }) => {
+	const navigation = useNavigation();
 	const user = route.params.user;
 	const chat = route.params.chatInfo;
 	const [messages, setMessages] = useState([]);
@@ -38,20 +45,26 @@ const ChatScreen = ({ route }) => {
 		);
 	}, []);
 
-	const renderAvatar = (props) => {
-		return <Image source={{ uri: chat.userPhoto }} style={styles.avatar} />;
+	const renderAvatar = (props = {}) => {
+		return (
+			<Image
+				source={{ uri: chat.userPhoto }}
+				style={styles.avatar}
+				{...props}
+			/>
+		);
 	};
-	const renderBubble = (props) => {
+	const renderBubble = (props = {}) => {
 		return <CustomBubbleChat {...props} />;
 	};
-	const renderSend = (props) => {
+	const renderSend = (props = {}) => {
 		return (
 			<Send
 				{...props}
 				containerStyle={{
 					alignSelf: "flex-end",
 					marginRight: 10,
-               marginBottom: 5,
+					marginBottom: 5,
 				}}
 			>
 				<View>
@@ -70,9 +83,14 @@ const ChatScreen = ({ route }) => {
 		return <View style={{ height: 10 }} />;
 	};
 
+	useLayoutEffect(() => {
+		navigation.setOptions({
+			headerTitle: () => <HeaderChat userData={user} chatInfo={chat} />,
+		});
+	}, [navigation, user, chat]);
+
 	return (
 		<GiftedChat
-			plat
 			messages={messages}
 			onSend={(messages) => onSend(messages)}
 			user={{
