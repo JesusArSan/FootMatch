@@ -17,30 +17,32 @@ const CustomDrawerContent = (props) => {
 
 	return (
 		<DrawerContentScrollView {...props}>
-			<View style={styles.logoContainer}>
-				<View style={styles.logoApp}>
-					<AppIcon customHeight={45} customWidth={28} />
+			<View style={{ backgroundColor: "transparent" }}>
+				<View style={styles.logoContainer}>
+					<View style={styles.logoApp}>
+						<AppIcon customHeight={45} customWidth={28} />
+					</View>
+					<Text style={styles.textTitle}>OOTMATCH</Text>
 				</View>
-				<Text style={styles.textTitle}>OOTMATCH</Text>
-			</View>
-			<DrawerDivider />
-			<DrawerItemList {...props} />
-			<DrawerDivider />
-			<View style={styles.darkThemeContainer}>
-				{colorScheme === "dark" ? (
-					<MaterialIcons name="dark-mode" size={40} color="white" />
-				) : (
-					<MaterialIcons name="light-mode" size={40} color="white" />
-				)}
+				<DrawerDivider />
+				<DrawerItemList {...props} />
+				<DrawerDivider />
+				<View style={styles.darkThemeContainer}>
+					{colorScheme === "dark" ? (
+						<MaterialIcons name="dark-mode" size={40} color="white" />
+					) : (
+						<MaterialIcons name="light-mode" size={40} color="white" />
+					)}
 
-				<Switch
-					value={colorScheme === "dark"}
-					onValueChange={toggleColorScheme}
-					style={{ marginLeft: 10 }}
-					trackColor={{ false: "#3562A6", true: "#fafafa" }}
-					thumbColor={colorScheme === "dark" ? "#EEEEEE" : "#6594C0"}
-					ios_backgroundColor="#3e3e3e"
-				/>
+					<Switch
+						value={colorScheme === "dark"}
+						onValueChange={toggleColorScheme}
+						style={{ marginLeft: 10 }}
+						trackColor={{ false: "#3562A6", true: "#fafafa" }}
+						thumbColor={colorScheme === "dark" ? "#EEEEEE" : "#6594C0"}
+						ios_backgroundColor="#3e3e3e"
+					/>
+				</View>
 			</View>
 		</DrawerContentScrollView>
 	);
@@ -71,8 +73,8 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		alignSelf: "flex-start",
 		alignItems: "center",
-		marginLeft: 17,
+		marginLeft: 12,
+		marginTop: 5,
 		paddingHorizontal: 10,
-		marginTop: "100%",
 	},
 });

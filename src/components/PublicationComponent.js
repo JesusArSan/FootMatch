@@ -58,37 +58,38 @@ const PublicationContainer = ({ publication }) => {
 					{publication.user.username}
 				</Text>
 				<Text style={styles.textContent}>{publication.content}</Text>
-				<Text style={styles.likesCount}>
-					{publication.likesCount} Likes
-				</Text>
-			</View>
-
-			<View style={styles.buttonContainer}>
-				<Pressable onPress={handlePressLike}>
-					<LottieView
-						ref={animation}
-						source={require("../components/icons/like.json")}
-						autoPlay
-						loop={false}
-						style={styles.lottieStyle}
-					/>
-				</Pressable>
-				<Pressable onPress={handlePressComments}>
-					<FontAwesome
-						name="commenting-o"
-						size={26}
-						color="#4F4F4F"
-						style={styles.iconMarginTop}
-					/>
-				</Pressable>
-				<Pressable onPress={handlePressShare}>
-					<Ionicons
-						name="share-social-outline"
-						size={32}
-						color="#4F4F4F"
-						style={styles.iconMarginShare}
-					/>
-				</Pressable>
+				<View style={styles.buttonContainer}>
+					<View style={styles.likeContainer}>
+						<Pressable onPress={handlePressLike}>
+							<LottieView
+								ref={animation}
+								source={require("../components/icons/like.json")}
+								autoPlay
+								loop={false}
+								style={styles.lottieStyle}
+							/>
+						</Pressable>
+						<Text style={styles.likesCount}>
+							{publication.likesCount}
+						</Text>
+					</View>
+					<Pressable onPress={handlePressComments}>
+						<FontAwesome
+							name="commenting-o"
+							size={30}
+							color="#4F4F4F"
+							style={styles.commentIcon}
+						/>
+					</Pressable>
+					<Pressable onPress={handlePressShare}>
+						<Ionicons
+							name="share-social-outline"
+							size={32}
+							color="#4F4F4F"
+							style={styles.shareIcon}
+						/>
+					</Pressable>
+				</View>
 			</View>
 		</Pressable>
 	);
@@ -115,38 +116,43 @@ const styles = StyleSheet.create({
 		borderRadius: 25,
 	},
 	contentContainer: {
-		width: "68%",
-		marginBottom: 10,
+		width: "80%",
 		marginHorizontal: 15,
 	},
 	textContent: {
 		fontSize: 16,
 		textAlign: "justify",
-		fontFamily: "InriaSans-Regular",
-	},
-	likesCount: {
-		alignSelf: "flex-end",
+		alignSelf: "flex-start",
 		fontFamily: "InriaSans-Regular",
 	},
 	buttonContainer: {
-		flexDirection: "column",
-		width: 29,
-		height: 102,
-		marginVertical: 20,
+		flex: 1,
+		flexDirection: "row",
+		width: "47%",
+		marginVertical: 10,
+	},
+	likeContainer: {
+		flexDirection: "row",
+		width: "40%",
+		height: 43,
 	},
 	lottieStyle: {
-		width: 60,
-		height: 60,
+		width: 63,
+		height: 63,
 		position: "relative",
-		left: -16,
-		top: -20,
+		left: "-20%",
+		top: "-35%",
 	},
-	iconMarginTop: {
-		marginTop: -25,
+	likesCount: {
+		alignSelf: "center",
+		marginLeft: "-50%",
+		fontFamily: "InriaSans-Regular",
 	},
-	iconMarginShare: {
-		marginTop: 10,
-		marginLeft: -3,
+	commentIcon: {
+		marginLeft: 6,
+	},
+	shareIcon: {
+		marginLeft: 10,
 	},
 });
 

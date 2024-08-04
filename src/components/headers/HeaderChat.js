@@ -30,7 +30,12 @@ const HeaderChat = ({ props = {}, userData = {}, chatInfo = {} }) => {
 			</Pressable>
 			<View style={styles.utilitiesContainer}>
 				<TouchableOpacity onPress={handlePhonePress}>
-					<Entypo name="phone" size={28} color="#fafafa" />
+					<Entypo
+						name="phone"
+						size={28}
+						color="#fafafa"
+						style={{ transform: [{ rotate: "95deg" }] }}
+					/>
 				</TouchableOpacity>
 				<TouchableOpacity onPress={handleOptionsPress}>
 					<SimpleLineIcons
