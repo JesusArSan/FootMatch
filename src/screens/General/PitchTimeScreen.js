@@ -2,6 +2,8 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+// My components
+import Subscription from "../../components/SubscriptionCard";
 
 const PitchTimeScreen = ({ route }) => {
 	const pitchInfo = route.params.pitchInfo;
@@ -20,8 +22,15 @@ const PitchTimeScreen = ({ route }) => {
 					<Text style={styles.headerTitle}>Choose the best time</Text>
 					<Feather name="calendar" size={30} color="black" />
 				</View>
+				<View
+					style={{
+						marginTop: 20,
+						height: "14%",
+					}}
+				>
+					<Subscription />
+				</View>
 				{/* <DaySelector />
-				<Subscription />
 				<HoursAvailable />
 				<CheckoutButton /> */}
 			</View>

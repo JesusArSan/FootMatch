@@ -134,27 +134,33 @@ const FieldDetailsScreen = ({ route }) => {
 			</View>
 
 			<View style={styles.mainContainer}>
+				<Text style={styles.nameCenter}>{center.title}</Text>
+				<TouchableOpacity
+					style={styles.locationContainer}
+					onPress={handleGetDirections}
+				>
+					<FontAwesome6 name="location-dot" size={20} color="black" />
+					<Text style={styles.addressCenter}>{center.address}</Text>
+				</TouchableOpacity>
+
 				<ScrollView
+					style={{ marginTop: 10 }}
 					showsVerticalScrollIndicator={false}
 					showsHorizontalScrollIndicator={false}
 				>
-					<Text style={styles.nameCenter}>{center.title}</Text>
-					<TouchableOpacity
-						style={styles.locationContainer}
-						onPress={handleGetDirections}
-					>
-						<FontAwesome6 name="location-dot" size={20} color="black" />
-						<Text style={styles.addressCenter}>{center.address}</Text>
-					</TouchableOpacity>
 					<View style={styles.detailsContainer}>
 						<Text style={styles.titleContainer}>Details</Text>
 						<Text style={styles.detailsText}>{center.details}</Text>
 					</View>
+
 					<View style={styles.availablePitchesContainer}>
 						<Text style={styles.titleContainer}>Available Pitches</Text>
-						{center.pitches.map((pitch) =>
-							renderPitch({ centerInfo: center, pitch })
-						)}
+
+						<View>
+							{center.pitches.map((pitch) =>
+								renderPitch({ centerInfo: center, pitch })
+							)}
+						</View>
 					</View>
 				</ScrollView>
 			</View>
@@ -213,6 +219,7 @@ const styles = StyleSheet.create({
 		textAlign: "justify",
 	},
 	availablePitchesContainer: {
+		flex: 1,
 		marginTop: 20,
 		marginBottom: 20,
 	},
