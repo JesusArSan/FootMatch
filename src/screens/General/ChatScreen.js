@@ -5,7 +5,7 @@ import React, {
 	useCallback,
 	useLayoutEffect,
 } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Pressable, StyleSheet, Image, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { GiftedChat, Send } from "react-native-gifted-chat";
 import CustomBubbleChat from "../../components/CustomBubbleChat";
@@ -45,13 +45,19 @@ const ChatScreen = ({ route }) => {
 		);
 	}, []);
 
+	const handleUserPress = () => {
+		Alert.alert("User Pressed " + chat.username);
+	};
+
 	const renderAvatar = (props = {}) => {
 		return (
-			<Image
-				source={{ uri: chat.userPhoto }}
-				style={styles.avatar}
-				{...props}
-			/>
+			<Pressable onPress={handleUserPress}>
+				<Image
+					source={{ uri: chat.userPhoto }}
+					style={styles.avatar}
+					{...props}
+				/>
+			</Pressable>
 		);
 	};
 	const renderBubble = (props = {}) => {

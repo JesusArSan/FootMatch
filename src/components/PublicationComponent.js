@@ -63,7 +63,7 @@ const PublicationContainer = ({ publication }) => {
 						<Pressable onPress={handlePressLike}>
 							<LottieView
 								ref={animation}
-								source={require("../components/icons/like.json")}
+								source={require("../assets/animations/like.json")}
 								autoPlay
 								loop={false}
 								style={styles.lottieStyle}
@@ -76,7 +76,7 @@ const PublicationContainer = ({ publication }) => {
 					<Pressable onPress={handlePressComments}>
 						<FontAwesome
 							name="commenting-o"
-							size={30}
+							size={22}
 							color="#4F4F4F"
 							style={styles.commentIcon}
 						/>
@@ -84,7 +84,7 @@ const PublicationContainer = ({ publication }) => {
 					<Pressable onPress={handlePressShare}>
 						<Ionicons
 							name="share-social-outline"
-							size={32}
+							size={24}
 							color="#4F4F4F"
 							style={styles.shareIcon}
 						/>
@@ -133,15 +133,15 @@ const styles = StyleSheet.create({
 	},
 	likeContainer: {
 		flexDirection: "row",
-		width: "40%",
-		height: 43,
+		width: "32%",
+		height: 33,
 	},
 	lottieStyle: {
-		width: 63,
-		height: 63,
+		width: 50,
+		height: 50,
 		position: "relative",
-		left: "-20%",
-		top: "-35%",
+		left: "-25%",
+		top: "-38%",
 	},
 	likesCount: {
 		alignSelf: "center",
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 		marginLeft: 6,
 	},
 	shareIcon: {
-		marginLeft: 10,
+		marginLeft: 15,
 	},
 });
 

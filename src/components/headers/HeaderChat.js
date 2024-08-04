@@ -42,7 +42,7 @@ const HeaderChat = ({ props = {}, userData = {}, chatInfo = {} }) => {
 						name="options-vertical"
 						size={22}
 						color="#fafafa"
-						style={{ marginLeft: 15 }}
+						style={{ marginLeft: 20 }}
 					/>
 				</TouchableOpacity>
 			</View>
@@ -54,17 +54,14 @@ export default HeaderChat;
 
 const styles = StyleSheet.create({
 	container: {
-		// width: "100%",
-		// height: "100%",
 		flexDirection: "row",
-		// alignItems: "center",
-		// justifyContent: "space-between",
-		flex: 0,
 		margin: -20,
+		justifyContent: "space-between",
 	},
 	infoUser: {
 		flexDirection: "row",
 		alignItems: "center",
+		width: "76%",
 	},
 	avatar: {
 		width: 45,
@@ -80,7 +77,6 @@ const styles = StyleSheet.create({
 	utilitiesContainer: {
 		flexDirection: "row",
 		alignItems: "center",
-		marginLeft: 70,
 	},
 });
 
