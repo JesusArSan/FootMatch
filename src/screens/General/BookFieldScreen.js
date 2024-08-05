@@ -166,7 +166,7 @@ const BookFieldScreen = ({ route }) => {
 					name={center.title}
 					address={center.address}
 					distance={center.distance}
-					imgUrl={center.image}
+					imgUrl={center.images[0].uri}
 					isSelected={selectedCenterId === center.id}
 				/>
 			</TouchableOpacity>

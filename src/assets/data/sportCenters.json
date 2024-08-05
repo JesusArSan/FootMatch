@@ -7,7 +7,11 @@
       "title": "Granada Sports Arena",
       "numberOfStars": 4,
       "rating": 4.5,
-      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "images": [
+         { "id": "1", "uri": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg" },
+         { "id": "2", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "3", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Estrellas, S/N, Chana, 18015 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -109,7 +113,11 @@
       "title": "Albaicín Fitness Center",
       "numberOfStars": 5,
       "rating": 4.8,
-      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "images": [
+         { "id": "4", "uri": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg" },
+         { "id": "5", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "6", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Luna, S/N, Albaicín, 18010 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -189,7 +197,11 @@
       "title": "C. Deportivo La Chana",
       "numberOfStars": 3,
       "rating": 4.3,
-      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "images": [
+         { "id": "7", "uri": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg" },
+         { "id": "8", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "9", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Estrellas, S/N, Chana, 18015 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -269,7 +281,11 @@
       "title": "Polidep. Universitario",
       "numberOfStars": 4,
       "rating": 4.7,
-      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "images": [
+         { "id": "10", "uri": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg" },
+         { "id": "11", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "12", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Luna, S/N, Albaicín, 18010 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -349,7 +365,12 @@
       "title": "Centro Deportivo Loja",
       "numberOfStars": 3,
       "rating": 4.2,
-      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "images": [
+         { "id": "13", "uri": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg" },
+         { "id": "14", "uri": "https://www.palco23.com/files/2021/19_fitness/loja-980.jpg" },
+         { "id": "15", "uri": "https://www.bpxport.es/wp-content/uploads/2023/04/Pistas.jpg" },
+         { "id": "16", "uri": "https://lh5.googleusercontent.com/p/AF1QipPu-bQ78x02RU9zEsq7loaickYnpPBzBeuwC-MR=w426-h240-k-no" }
+      ],
       "address": "C. Estrellas, S/N, Chana, 18015 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -360,17 +381,36 @@
             "occupancy": [
                {
                   "day": "Monday",
-                  "date": "2023-07-29",
+                  "date": "2024-08-05",
                   "hours": [
                      { "time": "07:30 AM", "status": "occupied" },
-                     { "time": "09:30 AM", "status": "occupied" }
+                     { "time": "09:30 AM", "status": "occupied" },
+                     { "time": "11:30 AM", "status": "occupied" }
                   ]
                },
                {
                   "day": "Tuesday",
-                  "date": "2023-07-30",
+                  "date": "2024-08-06",
                   "hours": [
                      { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Tuesday",
+                  "date": "2024-08-06",
+                  "hours": [
+                     { "time": "08:30 AM", "status": "occupied" }
+                  ]
+               },
+               {
+                  "day": "Friday",
+                  "date": "2024-08-09",
+                  "hours": [
+                     { "time": "11:30 AM", "status": "occupied" },
+                     { "time": "03:30 PM", "status": "occupied" },
+                     { "time": "05:30 PM", "status": "occupied" },
+                     { "time": "07:30 PM", "status": "occupied" },
+                     { "time": "09:30 PM", "status": "occupied" }
                   ]
                }
             ]
@@ -382,7 +422,7 @@
             "occupancy": [
                {
                   "day": "Monday",
-                  "date": "2023-07-29",
+                  "date": "2024-08-05",
                   "hours": [
                      { "time": "07:30 AM", "status": "occupied" },
                      { "time": "09:30 AM", "status": "occupied" }
@@ -390,7 +430,7 @@
                },
                {
                   "day": "Tuesday",
-                  "date": "2023-07-30",
+                  "date": "2024-08-06",
                   "hours": [
                      { "time": "09:30 AM", "status": "occupied" }
                   ]
@@ -404,14 +444,14 @@
             "occupancy": [
                {
                   "day": "Monday",
-                  "date": "2023-07-29",
+                  "date": "2024-08-08",
                   "hours": [
                      { "time": "10:30 AM", "status": "occupied" }
                   ]
                },
                {
                   "day": "Tuesday",
-                  "date": "2023-07-30",
+                  "date": "2024-08-09",
                   "hours": [
                      { "time": "07:30 AM", "status": "occupied" },
                      { "time": "10:30 AM", "status": "occupied" }
@@ -426,7 +466,7 @@
             "occupancy": [
                {
                   "day": "Monday",
-                  "date": "2023-07-29",
+                  "date": "2024-08-10",
                   "hours": [
                      { "time": "07:30 AM", "status": "occupied" },
                      { "time": "09:30 AM", "status": "occupied" }
@@ -434,7 +474,7 @@
                },
                {
                   "day": "Tuesday",
-                  "date": "2023-07-30",
+                  "date": "2024-08-06",
                   "hours": [
                      { "time": "08:30 AM", "status": "occupied" }
                   ]
@@ -451,7 +491,11 @@
       "title": "Gimnasio FitLoja",
       "numberOfStars": 4,
       "rating": 4.6,
-      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "images": [
+         { "id": "17", "uri": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg" },
+         { "id": "18", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "19", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Luna, S/N, Albaicín, 18010 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -531,7 +575,11 @@
       "title": "Arena Sports Loja",
       "numberOfStars": 5,
       "rating": 4.9,
-      "image": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg",
+      "images": [
+         { "id": "20", "uri": "https://almazan.es/wp-content/uploads/2021/04/POLIDEPORTIVO-EL-FERIAL-Almazan-2.jpg" },
+         { "id": "21", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "22", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Estrellas, S/N, Chana, 18015 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [
@@ -611,7 +659,11 @@
       "title": "Health Club Loja",
       "numberOfStars": 4,
       "rating": 4.4,
-      "image": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg",
+      "images": [
+         { "id": "23", "uri": "https://elcirculo.es/wp-content/uploads/2022/03/Colegio-Circulo-ESO-BACH-CICLOS-COMEDOR-Y-POLIDEPORTIVO-08282020_081434.jpg" },
+         { "id": "24", "uri": "https://via.placeholder.com/600x400" },
+         { "id": "25", "uri": "https://via.placeholder.com/600x400" }
+      ],
       "address": "C. Luna, S/N, Albaicín, 18010 Granada",
       "details": "Granada Sports Arena offers top-notch facilities with a strong focus on football. The arena features several pitches, including 7-a-side, 5-a-side, and indoor futsal courts. Located in the heart of Granada.",
       "pitches": [

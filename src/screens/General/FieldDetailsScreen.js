@@ -15,7 +15,8 @@ import getDirections from "react-native-google-maps-directions";
 import {
 	Message,
 	useNotificationManager,
-} from "../../utils/NotificationService"; // Importa Message y NotificationManager
+} from "../../utils/NotificationService"; // Import Message y NotificationManager
+import ImageGallery from "../../components/ImageGallery";
 // React Icons
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -130,7 +131,7 @@ const FieldDetailsScreen = ({ route }) => {
 			</View>
 
 			<View style={styles.imageContainer}>
-				<Image source={{ uri: center.image }} style={styles.image} />
+				<ImageGallery images={center.images} />
 			</View>
 
 			<View style={styles.mainContainer}>
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	imageContainer: {
 		width: "100%",
-		height: "40%",
+		height: "35%",
 	},
 	image: {
 		width: "100%",

@@ -71,7 +71,7 @@ const MainHomeScreen = ({ route }) => {
 									<CustomCenter
 										name={center.title}
 										address={center.address}
-										imgUrl={center.image}
+										imgUrl={center.images[0].uri}
 										distance={center.distance}
 									/>
 								</TouchableOpacity>
