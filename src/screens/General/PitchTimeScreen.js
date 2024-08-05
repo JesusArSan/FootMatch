@@ -27,6 +27,7 @@ const PitchTimeScreen = ({ route }) => {
 				isSameDay(new Date(day.date), date)
 			);
 
+			// Hours are hardcoded for this example
 			const allSlots = [
 				"07:30 AM",
 				"08:30 AM",
