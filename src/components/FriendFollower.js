@@ -34,7 +34,7 @@ const FriendFollower = ({ userData }) => {
 						</Text>
 						<Text style={{ fontFamily: "InriaSans-Regular" }}>
 							{" "}
-							has sent you a friend request.
+							is now your Friend.
 						</Text>
 					</Text>
 				</View>

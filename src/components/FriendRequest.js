@@ -1,14 +1,19 @@
 // React Imports
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+// Import utils
+import { acceptFriendRequest } from "../utils/UserFunctions";
 
-const FriendRequest = ({ userData }) => {
+const FriendRequest = ({ requestData, updateFriendsData }) => {
 	const handlePressUser = () => {
-		console.log("User pressed: ", userData.id);
+		console.log("User pressed: ", requestData.sender_id);
 	};
 
-	const handlePressAccept = () => {
-		console.log("Accept button pressed for: ", userData.id);
+	const handlePressAccept = async () => {
+		// Accept friend request
+		await acceptFriendRequest(requestData.id);
+		// Update friends data
+		updateFriendsData();
 	};
 
 	return (
@@ -22,13 +27,13 @@ const FriendRequest = ({ userData }) => {
 							borderRadius: 25,
 							resizeMode: "cover",
 						}}
-						source={{ uri: userData.photo }}
+						source={{ uri: requestData.sender_photo }}
 					/>
 				</View>
 				<View style={styles.requestTextContainer}>
 					<Text style={styles.combinedText}>
 						<Text style={{ fontFamily: "InriaSans-Bold" }}>
-							{userData.username}
+							{requestData.username}
 						</Text>
 						<Text style={{ fontFamily: "InriaSans-Regular" }}>
 							{" "}

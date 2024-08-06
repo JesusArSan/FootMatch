@@ -1,5 +1,5 @@
 // React Imports
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -7,16 +7,29 @@ import {
 	SafeAreaView,
 	FlatList,
 	Dimensions,
+	RefreshControl,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // My imports
 import DrawerDivider from "../../components/DrawerDivider";
 import FriendRequest from "../../components/FriendRequest";
 import FriendFollower from "../../components/FriendFollower";
-// Dummy data
-import requestFriendsList from "../../assets/data/friends.json";
+import {
+	getFriendsList,
+	getFriendsRequests,
+} from "../../utils/UserFunctions.js";
 
-const FriendsScreen = () => {
+const FriendsScreen = ({ route }) => {
+	// User Data
+	const user = route.params.user;
+
+	// Friends
+	const [friendList, setFriendList] = useState([]);
+	// Friend Requests
+	const [friendsRequests, setFriendsRequests] = useState([]);
+	// Refreshing state
+	const [refreshing, setRefreshing] = useState(false);
+
 	// Safe Area
 	const insets = useSafeAreaInsets();
 	const screenHeight = Dimensions.get("window").height;
@@ -25,9 +38,21 @@ const FriendsScreen = () => {
 	const headerHeight = 100;
 	const availableHeight = screenHeight - insets.top - headerHeight;
 
+	// Get Friends List and FriendRequests
+	const updateFriendsData = async () => {
+		setRefreshing(true);
+		await getFriendsList(user.id, setFriendList);
+		await getFriendsRequests(user.id, setFriendsRequests);
+		setRefreshing(false);
+	};
+
+	useEffect(() => {
+		updateFriendsData();
+	}, []);
+
 	return (
 		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
-			{requestFriendsList.length === 0 ? null : (
+			{friendsRequests.length === 0 ? null : (
 				<View
 					style={[
 						styles.friendRequestContainer,
@@ -38,16 +63,27 @@ const FriendsScreen = () => {
 					<FlatList
 						showsHorizontalScrollIndicator={false}
 						showsVerticalScrollIndicator={false}
-						data={requestFriendsList}
+						data={friendsRequests}
 						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item }) => <FriendRequest userData={item} />}
+						renderItem={({ item }) => (
+							<FriendRequest
+								requestData={item}
+								updateFriendsData={updateFriendsData}
+							/>
+						)}
 						contentContainerStyle={{ paddingBottom: 10 }}
 						style={{ marginVertical: 10 }}
+						refreshControl={
+							<RefreshControl
+								refreshing={refreshing}
+								onRefresh={updateFriendsData}
+							/>
+						}
 					/>
 					<DrawerDivider color={"black"} customWidth="100%" />
 				</View>
 			)}
-			{requestFriendsList.length === 0 ? (
+			{friendList.length === 0 ? (
 				<View>
 					<Text style={styles.text}>You have no friends yet.</Text>
 				</View>
@@ -62,11 +98,17 @@ const FriendsScreen = () => {
 					<FlatList
 						showsHorizontalScrollIndicator={false}
 						showsVerticalScrollIndicator={false}
-						data={requestFriendsList}
+						data={friendList}
 						keyExtractor={(item) => item.id.toString()}
 						renderItem={({ item }) => <FriendFollower userData={item} />}
 						contentContainerStyle={{ paddingBottom: 10 }}
 						style={{ marginVertical: 10 }}
+						refreshControl={
+							<RefreshControl
+								refreshing={refreshing}
+								onRefresh={updateFriendsData}
+							/>
+						}
 					/>
 				</View>
 			)}
