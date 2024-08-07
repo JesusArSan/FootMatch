@@ -1,21 +1,49 @@
-// React Imports
-import React from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
-// My components
+import React, { useState, useEffect } from "react";
+import {
+	View,
+	TextInput,
+	StyleSheet,
+	FlatList,
+	TouchableOpacity,
+	BackHandler,
+	StatusBar,
+} from "react-native";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { useNavigation } from "@react-navigation/native";
+import MagnifyingGlassIcon from "../../components/icons/MagnifyingGlassIcon";
+import { getNonFriends, getFriendsList } from "../../utils/UserFunctions";
+import AddFriendComponent from "../../components/AddFriendComponent";
 import PublicationContainer from "../../components/PublicationComponent";
-import DrawerDivider from "../../components/DrawerDivider";
-// Dummy
 import friends from "../../assets/data/friends";
 import publications from "../../assets/data/publications";
 import likes from "../../assets/data/likes";
 
 const CommunityScreen = ({ route }) => {
-	// Get the user data from the route params
 	const userLogged = route.params.user || {};
-	// Set the publications data
-	const [publicationsData, setPublicationsData] = React.useState([]);
+	const [friendList, setFriendList] = useState([]);
+	const [filteredFriendList, setFilteredFriendList] = useState([]);
+	const [usersList, setUsersList] = useState([]);
+	const [filteredUsers, setFilteredUsers] = useState([]);
+	const [publicationsData, setPublicationsData] = useState([]);
+	const [showSearchBar, setShowSearchBar] = useState(false);
+	const [searchText, setSearchText] = useState("");
+	const navigation = useNavigation();
+	const tabBarHeight = useBottomTabBarHeight();
+	const headerHeight = useHeaderHeight();
 
-	React.useEffect(() => {
+	useEffect(() => {
+		// Fetch friends list
+		getFriendsList(userLogged.id, (friends) => {
+			setFriendList(friends);
+			setFilteredFriendList(friends);
+		});
+		// Fetch non-friend users
+		getNonFriends(userLogged.id, (users) => {
+			setUsersList(users);
+			setFilteredUsers(users);
+		});
+		// Map publications with additional data
 		const mappedPublications = publications.map((publication) => {
 			const publicationLikes = likes.filter(
 				(like) => like.post_id === publication.id
@@ -32,9 +60,9 @@ const CommunityScreen = ({ route }) => {
 				...publication,
 				likesCount: publicationLikes.length,
 				user: {
-					id: user.id,
-					username: user.username,
-					photo: user.photo,
+					id: user?.id,
+					username: user?.username,
+					photo: user?.photo,
 				},
 				isLiked: isLiked,
 			};
@@ -42,31 +70,163 @@ const CommunityScreen = ({ route }) => {
 		setPublicationsData(mappedPublications);
 	}, []);
 
+	// Toggle search bar visibility
+	const handleShowSearchBar = () => {
+		setShowSearchBar((prevShowSearchBar) => {
+			const newShowSearchBar = !prevShowSearchBar;
+			navigation.setOptions({
+				tabBarStyle: newShowSearchBar
+					? { height: 0, backgroundColor: "#3562A6", display: "none" }
+					: {
+							backgroundColor: "#3562A6",
+							height: "7.5%",
+							display: "flex",
+					  },
+				headerShown: !newShowSearchBar,
+			});
+			return newShowSearchBar;
+		});
+	};
+
+	// Handle back button press
+	const handleBackPress = () => {
+		if (showSearchBar) {
+			setShowSearchBar(false);
+			navigation.setOptions({
+				tabBarStyle: {
+					backgroundColor: "#3562A6",
+					height: "7.5%",
+					display: "flex",
+				},
+				headerShown: true,
+			});
+			return true;
+		}
+		return false;
+	};
+
+	useEffect(() => {
+		if (showSearchBar) {
+			BackHandler.addEventListener("hardwareBackPress", handleBackPress);
+		} else {
+			BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+		}
+		return () => {
+			BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+		};
+	}, [showSearchBar]);
+
+	useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					style={styles.headerRightContainer}
+					onPress={handleShowSearchBar}
+				>
+					<MagnifyingGlassIcon size={28} />
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation, showSearchBar]);
+
+	// Filter users based on search text
+	const handleSearch = (text) => {
+		setSearchText(text);
+		const filteredUsers = usersList.filter(
+			(userFilter) =>
+				userFilter.username &&
+				userFilter.username.toLowerCase().includes(text.toLowerCase())
+		);
+		setFilteredUsers(filteredUsers);
+	};
+
+	// Update users data
+	const updateUsersData = async () => {
+		getNonFriends(userLogged.id, (users) => {
+			setUsersList(users);
+			setFilteredUsers(users);
+		});
+	};
+
+	// Update users data if the user is added as a friend
+	useEffect(() => {
+		updateUsersData();
+	}, []);
+
 	return (
-		<View style={styles.container}>
-			<FlatList
-				data={publicationsData}
-				renderItem={({ item }) => (
-					<PublicationContainer publication={item} />
-				)}
-				keyExtractor={(item) => item.id.toString()}
-			/>
+		<View
+			style={[
+				styles.container,
+				showSearchBar && { paddingBottom: tabBarHeight },
+			]}
+		>
+			{showSearchBar ? (
+				<View
+					style={[
+						styles.searchBarContainer,
+						{ top: StatusBar.currentHeight || 0 },
+					]}
+				>
+					<TextInput
+						style={styles.searchBar}
+						placeholder="Search..."
+						value={searchText}
+						onChangeText={handleSearch}
+					/>
+					<FlatList
+						showsHorizontalScrollIndicator={false}
+						showsVerticalScrollIndicator={false}
+						data={filteredUsers}
+						keyExtractor={(item) => item.id.toString()}
+						renderItem={({ item }) => (
+							<AddFriendComponent
+								userSearched={item}
+								userLogged={userLogged}
+								updateUsersData={updateUsersData}
+							/>
+						)}
+						contentContainerStyle={{
+							paddingBottom: 10,
+							paddingHorizontal: 10,
+						}}
+						style={{ marginVertical: 10 }}
+					/>
+				</View>
+			) : (
+				<FlatList
+					data={publicationsData}
+					renderItem={({ item }) => (
+						<PublicationContainer publication={item} />
+					)}
+					keyExtractor={(item) => item.id.toString()}
+				/>
+			)}
 		</View>
 	);
 };
 
 const styles = StyleSheet.create({
+	headerRightContainer: {
+		paddingRight: 15,
+	},
 	container: {
 		flex: 1,
 	},
-	title: {
-		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 20,
+	searchBarContainer: {
+		position: "absolute",
+		left: 0,
+		right: 0,
+		padding: 10,
+		backgroundColor: "#f0f0f0",
+		zIndex: 10,
 	},
-	text: {
-		fontSize: 18,
-		textAlign: "center",
+	searchBar: {
+		height: 40,
+		backgroundColor: "#fff",
+		borderRadius: 20,
+		paddingHorizontal: 15,
+		borderWidth: 1,
+		borderColor: "#ddd",
 	},
 });
 

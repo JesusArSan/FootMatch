@@ -6,6 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import MyLastGame from "../../components/MyLastGame.js";
 import CustomActionApp from "../../components/CustomActionApp.js";
 import CustomCenter from "../../components/CustomCenter.js";
+import ChatStackNavigator from "../../navigation/ChatStackNavigator.js";
+// My icons
+import MessageIcon from "../../components/icons/MessageIcon.js";
 // My Styles
 import { ScrollView } from "react-native-gesture-handler";
 // Dummy Data
@@ -30,6 +33,24 @@ const MainHomeScreen = ({ route }) => {
 			centerInfo: center,
 		});
 	};
+
+	const handleMessagePress = () => {
+		navigation.navigate("ChatStackNavigator");
+	};
+
+	// Update navigation params to include the handler
+	React.useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					style={styles.headerRightContainer}
+					onPress={handleMessagePress}
+				>
+					<MessageIcon size={28} />
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation]);
 
 	return (
 		<View style={styles.totalContainer}>
@@ -89,6 +110,10 @@ const MainHomeScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	// Header right styles
+	headerRightContainer: {
+		paddingRight: 15,
+	},
 	// Main Container
 	totalContainer: {
 		backgroundColor: "#EEEEEE",

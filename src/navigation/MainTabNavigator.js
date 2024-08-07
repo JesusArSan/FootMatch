@@ -29,10 +29,11 @@ const MainTabNavigator = ({ route }) => {
 				headerStyle: {
 					backgroundColor: "#3562A6",
 				},
+				headerTitle: (props) => <HeaderCustom {...props} />,
 				// Background color of the tab and height
 				tabBarStyle: {
 					backgroundColor: "#3562A6",
-					height: 65,
+					height: "7.5%",
 				},
 				// Padding of the item tab
 				tabBarItemStyle: { paddingVertical: 6 },
@@ -48,51 +49,29 @@ const MainTabNavigator = ({ route }) => {
 				tabBarIcon: ({ color }) => (
 					<TabBarIconType name={route.name} color={color} />
 				),
+				// Hide the tab bar when the keyboard is open
+				//tabBarHideOnKeyboard: true,
 			})}
 		>
 			<Tab.Screen
 				name="Home"
 				component={MainHomeScreen}
 				initialParams={{ user: userData }}
-				options={{
-					headerTitle: (props) => (
-						<HeaderCustom
-							{...props}
-							type={""}
-							screenRedirectedTo={"ChatStackNavigator"}
-						/>
-					),
-				}}
 			/>
 			<Tab.Screen
 				name="Community"
 				component={CommunityScreen}
 				initialParams={{ user: userData }}
-				options={{
-					headerTitle: (props) => (
-						<HeaderCustom {...props} type={"community"} />
-					),
-				}}
 			/>
 			<Tab.Screen
 				name="Notifications"
 				component={NotificationsScreen}
 				initialParams={{ user: userData }}
-				options={{
-					headerTitle: (props) => (
-						<HeaderCustom {...props} type={"notifications"} />
-					),
-				}}
 			/>
 			<Tab.Screen
 				name="Profile"
 				component={UserProfileScreen}
 				initialParams={{ user: userData }}
-				options={{
-					headerTitle: (props) => (
-						<HeaderCustom {...props} type={"profile"} />
-					),
-				}}
 			/>
 		</Tab.Navigator>
 	);

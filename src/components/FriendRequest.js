@@ -46,7 +46,11 @@ const FriendRequest = ({ requestData, updateFriendsData }) => {
 						style={styles.acceptButton}
 						onPress={handlePressAccept}
 					>
-						<Text style={{ color: "white" }}>Accept</Text>
+						<Text
+							style={{ color: "white", fontFamily: "InriaSans-Bold" }}
+						>
+							Accept
+						</Text>
 					</Pressable>
 				</View>
 			</Pressable>
