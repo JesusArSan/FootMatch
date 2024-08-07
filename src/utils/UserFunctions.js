@@ -1,5 +1,39 @@
 import * as React from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { CommonActions } from "@react-navigation/native";
 import config from "../../config";
+
+// Logout handler
+export const handleLogout = async (navigation, route) => {
+	try {
+		// Remove the userToken and userData from AsyncStorage
+		await AsyncStorage.removeItem("@userToken");
+		await AsyncStorage.removeItem("@userData");
+		await AsyncStorage.removeItem("@userLocation");
+
+		// Remove data of route.params
+		route.params = {};
+
+		// Navigate to the Login screen, and reset the navigation stack
+		navigation.dispatch(
+			CommonActions.reset({
+				index: 0,
+				routes: [
+					{
+						name: "InitialScreen",
+						params: { user: null, tokenValid: false },
+					},
+				],
+			})
+		);
+	} catch (e) {
+		console.error("Error al cerrar sesión: ", e);
+		Alert.alert(
+			"Error",
+			"No se pudo cerrar la sesión. Por favor, intentalo de nuevo."
+		);
+	}
+};
 
 // Function to get the user's friends list
 export const getFriendsList = async (userId, setFriendList) => {
@@ -165,7 +199,7 @@ export const getNonFriends = async (userId, setUserFilterList) => {
 				// Return the user with the request info
 				return {
 					...nonFriend,
-					requestStatus: requestInfo.status
+					requestStatus: requestInfo.status,
 				};
 			})
 		);
@@ -179,3 +213,33 @@ export const getNonFriends = async (userId, setUserFilterList) => {
 };
 
 // Delete friend request
+export const deleteFriendRequest = async (sender_id, receiver_id) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/friend_requests/${sender_id}/${receiver_id}`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error deleting friend request: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the response data contains an error message
+		if (data.error) {
+			throw new Error(`Error del servidor: ${data.error}`);
+		}
+
+		console.log(data);
+	} catch (error) {
+		// Alert the user about the error
+		alert(`${error.message}`);
+	}
+};

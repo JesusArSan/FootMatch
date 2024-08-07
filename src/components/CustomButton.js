@@ -11,7 +11,7 @@ const CustomButton = ({
 	buttonWidth = "85%",
 	marginBottom = 0,
 }) => {
-	// Navegación entre pantallas
+	// Navigation hook
 	const navigation = useNavigation();
 
 	// ButtonStyle and TextStyle selected

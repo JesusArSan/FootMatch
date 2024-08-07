@@ -5,7 +5,7 @@ import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 // Utils
-import { sendFriendRequest } from "../utils/UserFunctions";
+import { sendFriendRequest, deleteFriendRequest } from "../utils/UserFunctions";
 
 const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 	const [requestStatus, setRequestStatus] = useState(
@@ -23,7 +23,7 @@ const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 				"Cancel friend request button pressed for: ",
 				userSearched.id
 			);
-			//await deleteFriendRequest(userLogged.id, userSearched.id);
+			await deleteFriendRequest(userLogged.id, userSearched.id);
 			setRequestStatus("none");
 			updateUsersData();
 		} else {
