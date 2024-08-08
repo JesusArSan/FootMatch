@@ -301,3 +301,25 @@ export const removeFriend = async (userId, friendId) => {
 		alert(`${error.message}`);
 	}
 };
+
+// Function to get a user by id
+export const getUserById = async (userId, setUserData) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/users/${userId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			throw new Error(`Error fetching user: ${response.status}`);
+		}
+
+		const userData = await response.json();
+		setUserData(userData);
+	} catch (error) {
+		console.error("Error fetching user:", error);
+		setUserData(null); // Optionally handle the error by setting user data to null
+	}
+};

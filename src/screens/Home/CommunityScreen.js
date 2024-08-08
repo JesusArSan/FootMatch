@@ -160,9 +160,7 @@ const CommunityScreen = ({ route }) => {
 
 	// Update users data
 	const updateUsersData = async () => {
-		getUsers(userLogged.id, (users) => {
-			setUsersList(users);
-		});
+		await getUsers(userLogged.id, setUsersList);
 	};
 
 	// Focus effect
@@ -173,6 +171,10 @@ const CommunityScreen = ({ route }) => {
 			handleShowSearchBar((show = false));
 		}, [])
 	);
+
+	useEffect(() => {
+		updateUsersData();
+	}, []);
 
 	return (
 		<View

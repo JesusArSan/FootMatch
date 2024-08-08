@@ -1,5 +1,5 @@
 // React Imports
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -9,10 +9,12 @@ import {
 	ImageBackground,
 	ScrollView,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 // My Utils
 import {
 	handleLogout,
+	getFriendsList,
 	sendFriendRequest,
 	deleteFriendRequest,
 } from "../../utils/UserFunctions";
@@ -23,6 +25,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 // Function to truncate text
 const truncate = (text, maxLength) => {
+	// Avoid undefined text
+	if (!text) {
+		return "";
+	}
 	return text.length > maxLength
 		? text.substring(0, maxLength - 3) + "..."
 		: text;
@@ -40,6 +46,27 @@ const UserProfileScreen = ({ route }) => {
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
 	const [typeStyle, setTypeStyle] = useState(
 		requestStatus === "pending" ? 3 : 1
+	);
+
+	// FriendList to know the number and other future features
+	const [friendList, setFriendList] = useState([]);
+	// Get Friend list and update it on Friends data of user stats
+	const fetchFriends = async () => {
+		if (userLogged) {
+			await getFriendsList(userLogged.id, setFriendList);
+		} else {
+			await getFriendsList(otherUser.id, setFriendList);
+		}
+	};
+	useEffect(() => {
+		fetchFriends();
+	}, [userLogged, otherUser]);
+	// Focus effect
+	useFocusEffect(
+		React.useCallback(() => {
+			console.log("Focus effect");
+			fetchFriends();
+		}, [])
 	);
 
 	// Handle button press
@@ -100,7 +127,7 @@ const UserProfileScreen = ({ route }) => {
 						<View style={styles.statsContainer}>
 							<View style={styles.statItem}>
 								<Text style={styles.statNumber}>
-									{user.friends || "0"}
+									{friendList.length}
 								</Text>
 								<Text style={styles.statLabel}>Friends</Text>
 							</View>
