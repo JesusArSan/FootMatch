@@ -14,6 +14,7 @@ import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
+import UserProfileScreen from "./src/screens/Home/UserProfileScreen";
 //
 import ChatStackNavigator from "./src/navigation/ChatStackNavigator";
 // My imports
@@ -142,6 +143,22 @@ export default function App() {
 						},
 						headerTintColor: "white",
 					}}
+				/>
+				<Stack.Screen
+					name="OtherUserProfile"
+					component={UserProfileScreen}
+					options={({ route }) => ({
+						headerTitle: (props) => (
+							<HeaderTitleScreen
+								{...props}
+								text={route.params.otherUser.username}
+							/>
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					})}
 				/>
 				<Stack.Screen
 					name="ChatStackNavigator"

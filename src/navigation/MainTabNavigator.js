@@ -71,7 +71,7 @@ const MainTabNavigator = ({ route }) => {
 			<Tab.Screen
 				name="Profile"
 				component={UserProfileScreen}
-				initialParams={{ user: userData }}
+				initialParams={{ userLogged: userData }}
 			/>
 		</Tab.Navigator>
 	);

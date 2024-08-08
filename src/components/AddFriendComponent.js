@@ -1,6 +1,7 @@
 // React Imports
 import React, { useState } from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // Icons
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -8,14 +9,24 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { sendFriendRequest, deleteFriendRequest } from "../utils/UserFunctions";
 
 const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
+	// Navigation hook
+	const navigation = useNavigation();
+
+	// Request status
 	const [requestStatus, setRequestStatus] = useState(
 		userSearched.requestStatus
 	);
 
+	// Handle press user
 	const handlePressUser = () => {
 		console.log("User pressed: ", userSearched.id);
+		navigation.navigate("OtherUserProfile", {
+			otherUser: userSearched,
+			userLogged: userLogged,
+		});
 	};
 
+	// Handle button press
 	const handleButtonPress = async () => {
 		if (requestStatus === "pending") {
 			// Delete friend request

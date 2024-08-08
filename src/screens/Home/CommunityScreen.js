@@ -8,6 +8,7 @@ import {
 	BackHandler,
 	StatusBar,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
@@ -71,21 +72,33 @@ const CommunityScreen = ({ route }) => {
 	}, []);
 
 	// Toggle search bar visibility
-	const handleShowSearchBar = () => {
-		setShowSearchBar((prevShowSearchBar) => {
-			const newShowSearchBar = !prevShowSearchBar;
+	const handleShowSearchBar = (show = null) => {
+		if (show === false) {
+			setShowSearchBar(false);
 			navigation.setOptions({
-				tabBarStyle: newShowSearchBar
-					? { height: 0, backgroundColor: "#3562A6", display: "none" }
-					: {
-							backgroundColor: "#3562A6",
-							height: "7.5%",
-							display: "flex",
-					  },
-				headerShown: !newShowSearchBar,
+				tabBarStyle: {
+					backgroundColor: "#3562A6",
+					height: "7.5%",
+					display: "flex",
+				},
+				headerShown: true,
 			});
-			return newShowSearchBar;
-		});
+		} else {
+			setShowSearchBar((prevShowSearchBar) => {
+				const newShowSearchBar = show !== null ? show : !prevShowSearchBar;
+				navigation.setOptions({
+					tabBarStyle: newShowSearchBar
+						? { height: 0, backgroundColor: "#3562A6", display: "none" }
+						: {
+								backgroundColor: "#3562A6",
+								height: "7.5%",
+								display: "flex",
+						  },
+					headerShown: !newShowSearchBar,
+				});
+				return newShowSearchBar;
+			});
+		}
 	};
 
 	// Handle back button press
@@ -148,10 +161,14 @@ const CommunityScreen = ({ route }) => {
 		});
 	};
 
-	// Update users data if the user is added as a friend
-	useEffect(() => {
-		updateUsersData();
-	}, []);
+	// Focus effect
+	useFocusEffect(
+		React.useCallback(() => {
+			console.log("Focus effect");
+			updateUsersData();
+			handleShowSearchBar((show = false));
+		}, [])
+	);
 
 	return (
 		<View

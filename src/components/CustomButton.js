@@ -8,6 +8,7 @@ const CustomButton = ({
 	dirNavigation = "",
 	onPress = null,
 	typeStyle = 1,
+	fontTam = 19,
 	buttonWidth = "85%",
 	marginBottom = 0,
 }) => {
@@ -17,7 +18,11 @@ const CustomButton = ({
 	// ButtonStyle and TextStyle selected
 	const buttonStyle = [
 		styles.buttonCommonStyle,
-		typeStyle == 2 ? styles.buttonSecondStyle : styles.buttonFirstStyle,
+		typeStyle == 1
+			? styles.buttonFirstStyle
+			: typeStyle == 2
+			? styles.buttonSecondStyle
+			: styles.buttonThirdStyle,
 		{ width: buttonWidth, marginBottom: marginBottom },
 	];
 	const textStyle = [
@@ -39,7 +44,7 @@ const CustomButton = ({
 			style={[buttonStyle, { width: buttonWidth }]}
 			onPress={handlePress}
 		>
-			<Text style={textStyle}> {text} </Text>
+			<Text style={[textStyle, { fontSize: fontTam }]}> {text} </Text>
 		</TouchableOpacity>
 	);
 };
@@ -74,9 +79,12 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		borderColor: "#3562A6",
 	},
+	buttonThirdStyle: {
+		backgroundColor: "#FFA500",
+		borderColor: "#FFA500",
+	},
 	textCommonStyle: {
 		fontFamily: "InriaSans-Bold",
-		fontSize: 19,
 	},
 	textFirstStyle: {
 		color: "white",
