@@ -100,7 +100,9 @@ const FriendsScreen = ({ route }) => {
 						showsVerticalScrollIndicator={false}
 						data={friendList}
 						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item }) => <FriendFollower userData={item} />}
+						renderItem={({ item }) => (
+							<FriendFollower userData={item} userLogged={user} />
+						)}
 						contentContainerStyle={{ paddingBottom: 10 }}
 						style={{ marginVertical: 10 }}
 						refreshControl={

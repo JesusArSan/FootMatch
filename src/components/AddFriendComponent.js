@@ -6,7 +6,11 @@ import { useNavigation } from "@react-navigation/native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 // Utils
-import { sendFriendRequest, deleteFriendRequest } from "../utils/UserFunctions";
+import {
+	sendFriendRequest,
+	deleteFriendRequest,
+	removeFriend,
+} from "../utils/UserFunctions";
 
 const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 	// Navigation hook
@@ -14,7 +18,7 @@ const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(
-		userSearched.requestStatus
+		userSearched.friendStatus ? "accepted" : userSearched.requestStatus
 	);
 
 	// Handle press user
@@ -29,16 +33,14 @@ const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 	// Handle button press
 	const handleButtonPress = async () => {
 		if (requestStatus === "pending") {
-			// Delete friend request
-			console.log(
-				"Cancel friend request button pressed for: ",
-				userSearched.id
-			);
 			await deleteFriendRequest(userLogged.id, userSearched.id);
 			setRequestStatus("none");
 			updateUsersData();
+		} else if (requestStatus === "accepted") {
+			await removeFriend(userLogged.id, userSearched.id);
+			setRequestStatus("none");
+			updateUsersData();
 		} else {
-			console.log("Add friend button pressed for: ", userSearched.id);
 			await sendFriendRequest(userLogged.id, userSearched.id);
 			setRequestStatus("pending");
 			updateUsersData();
@@ -49,6 +51,8 @@ const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 	const getButtonStyle = () => {
 		if (requestStatus === "pending") {
 			return { ...styles.addButton, ...styles.pendingButton };
+		} else if (requestStatus === "accepted") {
+			return { ...styles.addButton, ...styles.acceptedButton };
 		}
 		return styles.addButton;
 	};
@@ -57,9 +61,13 @@ const AddFriendComponent = ({ userLogged, userSearched, updateUsersData }) => {
 	const getButtonContent = () => {
 		if (requestStatus === "pending") {
 			return <MaterialIcons name="schedule-send" size={24} color="white" />;
+		} else if (requestStatus === "accepted") {
+			return <AntDesign name="checkcircle" size={24} color="white" />;
 		}
 		return <AntDesign name="adduser" size={24} color="white" />;
 	};
+
+	console.log("Request status: ", requestStatus);
 
 	return (
 		<View style={styles.friendContainer}>
@@ -132,5 +140,15 @@ const styles = StyleSheet.create({
 	},
 	userPhoto: {
 		marginRight: 10,
+	},
+	acceptedButton: {
+		backgroundColor: "#90EE90",
+		flexDirection: "row",
+		alignItems: "center",
+		paddingHorizontal: 20,
+		paddingVertical: 5,
+		borderRadius: 5,
+		alignContent: "center",
+		justifyContent: "center",
 	},
 });

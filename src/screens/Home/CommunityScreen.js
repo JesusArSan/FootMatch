@@ -13,7 +13,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import MagnifyingGlassIcon from "../../components/icons/MagnifyingGlassIcon";
-import { getNonFriends, getFriendsList } from "../../utils/UserFunctions";
+import { getUsers, getFriendsList, isFriend } from "../../utils/UserFunctions";
 import AddFriendComponent from "../../components/AddFriendComponent";
 import PublicationContainer from "../../components/PublicationComponent";
 import friends from "../../assets/data/friends";
@@ -40,7 +40,7 @@ const CommunityScreen = ({ route }) => {
 			setFilteredFriendList(friends);
 		});
 		// Fetch non-friend users
-		getNonFriends(userLogged.id, (users) => {
+		getUsers(userLogged.id, (users) => {
 			setUsersList(users);
 			setFilteredUsers(users);
 		});
@@ -145,19 +145,23 @@ const CommunityScreen = ({ route }) => {
 	// Filter users based on search text
 	const handleSearch = (text) => {
 		setSearchText(text);
-		const filteredUsers = usersList.filter(
-			(userFilter) =>
-				userFilter.username &&
-				userFilter.username.toLowerCase().includes(text.toLowerCase())
-		);
-		setFilteredUsers(filteredUsers);
+		if (text.trim() === "") {
+			setFilteredUsers([]);
+		} else {
+			const filteredUsers = usersList.filter(
+				(userFilter) =>
+					userFilter.username &&
+					userFilter.username.toLowerCase().includes(text.toLowerCase())
+			);
+
+			setFilteredUsers(filteredUsers);
+		}
 	};
 
 	// Update users data
 	const updateUsersData = async () => {
-		getNonFriends(userLogged.id, (users) => {
+		getUsers(userLogged.id, (users) => {
 			setUsersList(users);
-			setFilteredUsers(users);
 		});
 	};
 
@@ -190,24 +194,26 @@ const CommunityScreen = ({ route }) => {
 						value={searchText}
 						onChangeText={handleSearch}
 					/>
-					<FlatList
-						showsHorizontalScrollIndicator={false}
-						showsVerticalScrollIndicator={false}
-						data={filteredUsers}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item }) => (
-							<AddFriendComponent
-								userSearched={item}
-								userLogged={userLogged}
-								updateUsersData={updateUsersData}
-							/>
-						)}
-						contentContainerStyle={{
-							paddingBottom: 10,
-							paddingHorizontal: 10,
-						}}
-						style={{ marginVertical: 10 }}
-					/>
+					{searchText.trim() !== "" && (
+						<FlatList
+							showsHorizontalScrollIndicator={false}
+							showsVerticalScrollIndicator={false}
+							data={filteredUsers}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={({ item }) => (
+								<AddFriendComponent
+									userSearched={item}
+									userLogged={userLogged}
+									updateUsersData={updateUsersData}
+								/>
+							)}
+							contentContainerStyle={{
+								paddingBottom: 10,
+								paddingHorizontal: 10,
+							}}
+							style={{ marginVertical: 10 }}
+						/>
+					)}
 				</View>
 			) : (
 				<FlatList

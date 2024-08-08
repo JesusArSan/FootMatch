@@ -143,7 +143,7 @@ export const sendFriendRequest = async (sender_id, receiver_id) => {
 };
 
 // Function to get all users that are not friends and not the user itself
-export const getNonFriends = async (userId, setUserFilterList) => {
+export const getUsers = async (userId, setUserFilterList) => {
 	try {
 		// Fetch all users
 		const response = await fetch(`${config.serverUrl}/users`, {
@@ -159,21 +159,13 @@ export const getNonFriends = async (userId, setUserFilterList) => {
 
 		const users = await response.json();
 
-		// Fetch the user's friends
-		const friends = await new Promise((resolve, reject) => {
-			getFriendsList(userId, resolve);
-		});
-
-		// Filter out the current user and their friends
-		const nonFriends = users.filter(
-			(user) =>
-				user.id !== userId &&
-				!friends.some((friend) => friend.id === user.id)
-		);
+		// Delete the user itself from the list
+		const userIndex = users.findIndex((user) => user.id === userId);
+		users.splice(userIndex, 1);
 
 		// Fetch the friend request status for each non-friend user
-		const nonFriendsWithStatus = await Promise.all(
-			nonFriends.map(async (nonFriend) => {
+		const usersWithStatus = await Promise.all(
+			users.map(async (user) => {
 				const response = await fetch(
 					`${config.serverUrl}/users/friend_requests/status`,
 					{
@@ -183,7 +175,7 @@ export const getNonFriends = async (userId, setUserFilterList) => {
 						},
 						body: JSON.stringify({
 							sender_id: userId,
-							receiver_id: nonFriend.id,
+							receiver_id: user.id,
 						}),
 					}
 				);
@@ -196,16 +188,20 @@ export const getNonFriends = async (userId, setUserFilterList) => {
 				// Get the request info
 				const requestInfo = await response.json();
 
+				// Check if the user is a friend
+				const friendStatus = await isFriend(userId, user.id);
+
 				// Return the user with the request info
 				return {
-					...nonFriend,
+					...user,
 					requestStatus: requestInfo.status,
+					friendStatus: friendStatus,
 				};
 			})
 		);
 
 		// Set the final filtered user list with request status
-		setUserFilterList(nonFriendsWithStatus);
+		setUserFilterList(usersWithStatus);
 	} catch (error) {
 		console.error("Error fetching users:", error);
 		setUserFilterList([]); // Optionally set users to an empty array on error
@@ -228,6 +224,68 @@ export const deleteFriendRequest = async (sender_id, receiver_id) => {
 		if (!response.ok) {
 			// Handle HTTP errors
 			throw new Error(`Error deleting friend request: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the response data contains an error message
+		if (data.error) {
+			throw new Error(`Error del servidor: ${data.error}`);
+		}
+
+		console.log(data);
+	} catch (error) {
+		// Alert the user about the error
+		alert(`${error.message}`);
+	}
+};
+
+// Is friend
+export const isFriend = async (userId, friendId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/users/friends/`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ userId, friendId }),
+		});
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error checking friend: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the response data contains an error message
+		if (data.error) {
+			throw new Error(`Error del servidor: ${data.error}`);
+		}
+
+		return data.isFriend;
+	} catch (error) {
+		// Alert the user about the error
+		alert(`${error.message}`);
+	}
+};
+
+// Remove friend
+export const removeFriend = async (userId, friendId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/remove_friend/${userId}/${friendId}`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error removing friend: ${response.status}`);
 		}
 
 		const data = await response.json();

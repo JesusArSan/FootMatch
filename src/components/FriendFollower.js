@@ -1,12 +1,20 @@
 // React Imports
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // My icons
 import MessageIcon from "../components/icons/MessageIcon";
 
-const FriendFollower = ({ userData }) => {
+const FriendFollower = ({ userData, userLogged }) => {
+	// Navigation hook
+	const navigation = useNavigation();
+
 	const handlePressUser = () => {
 		console.log("User pressed: ", userData.id);
+		navigation.navigate("OtherUserProfile", {
+			otherUser: userData,
+			userLogged: userLogged,
+		});
 	};
 
 	const handlePressMsg = () => {

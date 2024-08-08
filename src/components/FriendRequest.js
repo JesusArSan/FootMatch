@@ -1,12 +1,20 @@
 // React Imports
 import React from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 // Import utils
 import { acceptFriendRequest } from "../utils/UserFunctions";
 
-const FriendRequest = ({ requestData, updateFriendsData }) => {
+const FriendRequest = ({ requestData, updateFriendsData, userLogged }) => {
+	// Navigation hook
+	const navigation = useNavigation();
+
 	const handlePressUser = () => {
-		console.log("User pressed: ", requestData.sender_id);
+		console.log("User pressed: ", userData.id);
+		navigation.navigate("OtherUserProfile", {
+			otherUser: userData,
+			userLogged: userLogged,
+		});
 	};
 
 	const handlePressAccept = async () => {
