@@ -16,12 +16,15 @@ import {
 	handleLogout,
 	getFriendsList,
 	sendFriendRequest,
+	isFriend,
+	removeFriend,
 	deleteFriendRequest,
 } from "../../utils/UserFunctions";
 // My components
 import CustomButton from "../../components/CustomButton";
 // Icons
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import AntDesign from "@expo/vector-icons/AntDesign";
 
 // Function to truncate text
 const truncate = (text, maxLength) => {
@@ -44,6 +47,7 @@ const UserProfileScreen = ({ route }) => {
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
+	const [isUserFriend, setIsFriend] = useState(user.friendStatus);
 	const [typeStyle, setTypeStyle] = useState(
 		requestStatus === "pending" ? 3 : 1
 	);
@@ -57,21 +61,40 @@ const UserProfileScreen = ({ route }) => {
 		} else {
 			await getFriendsList(otherUser.id, setFriendList);
 		}
+
+		if (otherUser && userLogged) {
+			setIsFriend(await isFriend(userLogged.id, otherUser.id));
+		}
 	};
-	useEffect(() => {
-		fetchFriends();
-	}, [userLogged, otherUser]);
+
 	// Focus effect
 	useFocusEffect(
 		React.useCallback(() => {
-			console.log("Focus effect");
 			fetchFriends();
 		}, [])
 	);
 
+	useEffect(() => {
+		if (isUserFriend === true) {
+			setRequestStatus("accepted");
+			setTypeStyle(4); // Verde para amigos confirmados
+		} else if (requestStatus === "pending") {
+			setTypeStyle(3); // Naranja para solicitudes pendientes
+		} else {
+			setTypeStyle(1); // Estilo predeterminado
+		}
+	}, [requestStatus, isUserFriend]);
+
 	// Handle button press
 	const handleButtonPress = async () => {
-		if (requestStatus === "pending") {
+		if (requestStatus === "accepted") {
+			console.log("Need to Delete friend request");
+			// Delete friend
+			await removeFriend(userLogged.id, otherUser.id);
+			setIsFriend(false);
+			setRequestStatus("none");
+			setTypeStyle(4);
+		} else if (requestStatus === "pending") {
 			// Delete friend request
 			await deleteFriendRequest(userLogged.id, otherUser.id);
 			setRequestStatus("none");
@@ -86,7 +109,9 @@ const UserProfileScreen = ({ route }) => {
 
 	// Get the content of the button
 	const getButtonContent = () => {
-		if (requestStatus === "pending") {
+		if (isUserFriend) {
+			return <AntDesign name="checkcircle" size={24} color="white" />;
+		} else if (requestStatus === "pending") {
 			return <MaterialIcons name="schedule-send" size={24} color="white" />;
 		}
 		return <Text style={styles.buttonText}>Be Friend</Text>;

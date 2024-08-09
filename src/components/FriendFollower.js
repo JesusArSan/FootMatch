@@ -1,24 +1,41 @@
 // React Imports
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+// Import utils
+import { isFriend } from "../utils/UserFunctions";
 // My icons
 import MessageIcon from "../components/icons/MessageIcon";
 
 const FriendFollower = ({ userData, userLogged }) => {
 	// Navigation hook
 	const navigation = useNavigation();
+	const [friendStatus, setFriendStatus] = useState(null);
 
-	const handlePressUser = () => {
-		console.log("User pressed: ", userData.id);
-		navigation.navigate("OtherUserProfile", {
-			otherUser: userData,
-			userLogged: userLogged,
-		});
+	// Reset the states when the screen is focused
+	useFocusEffect(
+		React.useCallback(() => {
+			setFriendStatus(null);
+		}, [])
+	);
+
+	const handlePressUser = async () => {
+		const isFriendStatus = await isFriend(userData.id, userLogged.id);
+		setFriendStatus(isFriendStatus);
 	};
 
+	useEffect(() => {
+		if (userData && friendStatus !== null) {
+			navigation.navigate("OtherUserProfile", {
+				otherUser: { ...userData, friendStatus },
+				userLogged: userLogged,
+			});
+		}
+	}, [userData, friendStatus]);
+
 	const handlePressMsg = () => {
-		console.log("Message button pressed for: ", userData.id);
+		//console.log("Message button pressed for: ", userData.id);
 	};
 
 	return (

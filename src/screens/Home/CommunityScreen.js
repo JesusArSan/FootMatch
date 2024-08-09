@@ -13,7 +13,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useNavigation } from "@react-navigation/native";
 import MagnifyingGlassIcon from "../../components/icons/MagnifyingGlassIcon";
-import { getUsers, getFriendsList, isFriend } from "../../utils/UserFunctions";
+import { getUsers, getFriendsList } from "../../utils/UserFunctions";
 import AddFriendComponent from "../../components/AddFriendComponent";
 import PublicationContainer from "../../components/PublicationComponent";
 import friends from "../../assets/data/friends";
@@ -42,7 +42,7 @@ const CommunityScreen = ({ route }) => {
 		// Fetch non-friend users
 		getUsers(userLogged.id, (users) => {
 			setUsersList(users);
-			setFilteredUsers(users);
+			setFilteredUsers([]);
 		});
 		// Map publications with additional data
 		const mappedPublications = publications.map((publication) => {
@@ -75,29 +75,8 @@ const CommunityScreen = ({ route }) => {
 	const handleShowSearchBar = (show = null) => {
 		if (show === false) {
 			setShowSearchBar(false);
-			navigation.setOptions({
-				tabBarStyle: {
-					backgroundColor: "#3562A6",
-					height: "7.5%",
-					display: "flex",
-				},
-				headerShown: true,
-			});
 		} else {
-			setShowSearchBar((prevShowSearchBar) => {
-				const newShowSearchBar = show !== null ? show : !prevShowSearchBar;
-				navigation.setOptions({
-					tabBarStyle: newShowSearchBar
-						? { height: 0, backgroundColor: "#3562A6", display: "none" }
-						: {
-								backgroundColor: "#3562A6",
-								height: "7.5%",
-								display: "flex",
-						  },
-					headerShown: !newShowSearchBar,
-				});
-				return newShowSearchBar;
-			});
+			setShowSearchBar((prevShowSearchBar) => !prevShowSearchBar);
 		}
 	};
 
@@ -105,14 +84,6 @@ const CommunityScreen = ({ route }) => {
 	const handleBackPress = () => {
 		if (showSearchBar) {
 			setShowSearchBar(false);
-			navigation.setOptions({
-				tabBarStyle: {
-					backgroundColor: "#3562A6",
-					height: "7.5%",
-					display: "flex",
-				},
-				headerShown: true,
-			});
 			return true;
 		}
 		return false;
@@ -142,6 +113,29 @@ const CommunityScreen = ({ route }) => {
 		});
 	}, [navigation, showSearchBar]);
 
+	// Update the navigation options when `showSearchBar` changes
+	useEffect(() => {
+		if (showSearchBar) {
+			navigation.setOptions({
+				tabBarStyle: {
+					height: 0,
+					backgroundColor: "#3562A6",
+					display: "none",
+				},
+				headerShown: false,
+			});
+		} else {
+			navigation.setOptions({
+				tabBarStyle: {
+					backgroundColor: "#3562A6",
+					height: "7.5%",
+					display: "flex",
+				},
+				headerShown: true,
+			});
+		}
+	}, [showSearchBar, navigation]);
+
 	// Filter users based on search text
 	const handleSearch = (text) => {
 		setSearchText(text);
@@ -153,7 +147,6 @@ const CommunityScreen = ({ route }) => {
 					userFilter.username &&
 					userFilter.username.toLowerCase().includes(text.toLowerCase())
 			);
-
 			setFilteredUsers(filteredUsers);
 		}
 	};
@@ -166,9 +159,8 @@ const CommunityScreen = ({ route }) => {
 	// Focus effect
 	useFocusEffect(
 		React.useCallback(() => {
-			console.log("Focus effect");
 			updateUsersData();
-			handleShowSearchBar((show = false));
+			handleShowSearchBar(false);
 		}, [])
 	);
 

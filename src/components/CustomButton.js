@@ -22,7 +22,9 @@ const CustomButton = ({
 			? styles.buttonFirstStyle
 			: typeStyle == 2
 			? styles.buttonSecondStyle
-			: styles.buttonThirdStyle,
+			: typeStyle == 3
+			? styles.buttonThirdStyle
+			: styles.buttonFourthStyle,
 		{ width: buttonWidth, marginBottom: marginBottom },
 	];
 	const textStyle = [
@@ -82,6 +84,10 @@ const styles = StyleSheet.create({
 	buttonThirdStyle: {
 		backgroundColor: "#FFA500",
 		borderColor: "#FFA500",
+	},
+	buttonFourthStyle: {
+		backgroundColor: "#90EE90",
+		borderColor: "#90EE90",
 	},
 	textCommonStyle: {
 		fontFamily: "InriaSans-Bold",

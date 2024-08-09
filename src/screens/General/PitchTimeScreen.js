@@ -1,6 +1,8 @@
+// Reacct Imports
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import { format, isSameDay } from "date-fns";
 // My components
 import Subscription from "../../components/SubscriptionCard";
 import DaySelector from "../../components/DaySelector";
@@ -10,12 +12,11 @@ import {
 	useNotificationManager,
 } from "../../utils/NotificationService"; // Import Message and NotificationManager
 import FloatButton from "../../components/FloatButton";
-import { format, isSameDay } from "date-fns";
 
 const PitchTimeScreen = ({ route }) => {
 	const pitchInfo = route.params.pitchInfo;
 	const center = route.params.centerInfo;
-	const { addMessage, messages, removeMessage } = useNotificationManager(); // Use NotificationManager
+	const { addMessage, messages, removeMessage } = useNotificationManager();
 
 	const [selectedTime, setSelectedTime] = useState(null);
 	const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
@@ -27,7 +28,7 @@ const PitchTimeScreen = ({ route }) => {
 				isSameDay(new Date(day.date), date)
 			);
 
-			// Hours are hardcoded for this example
+			// Available time slots
 			const allSlots = [
 				"07:30 AM",
 				"08:30 AM",

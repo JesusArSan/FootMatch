@@ -3,25 +3,32 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // Import utils
-import { acceptFriendRequest, getUserById } from "../utils/UserFunctions";
+import {
+	acceptFriendRequest,
+	getUserById,
+	isFriend,
+} from "../utils/UserFunctions";
 
 const FriendRequest = ({ requestData, updateFriendsData, userLogged }) => {
+	let friendStatus = false;
 	const [userData, setUserData] = useState(null);
 	// Navigation hook
 	const navigation = useNavigation();
 
 	useEffect(() => {
 		if (userData && Object.keys(userData).length > 0) {
-			console.log("User pressed: ", userData);
 			navigation.navigate("OtherUserProfile", {
-				otherUser: userData,
+				otherUser: { ...userData, friendStatus, requestStatus: "pending" },
 				userLogged: userLogged,
 			});
 		}
-	}, [userData]);
+	}, [userData, friendStatus]);
 
 	const handlePressUser = async () => {
 		await getUserById(requestData.sender_id, setUserData);
+		if (userData) {
+			friendStatus = await isFriend(userData.id, userLogged.id);
+		}
 	};
 
 	const handlePressAccept = async () => {

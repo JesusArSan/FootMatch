@@ -6,8 +6,9 @@ import {
 	StyleSheet,
 	FlatList,
 } from "react-native";
-import { format, addDays, startOfWeek } from "date-fns";
+import { format, addDays } from "date-fns";
 
+// Function to generate the days of the current week starting from today
 const getDaysOfWeek = (startDate) => {
 	const days = [];
 	for (let i = 0; i < 7; i++) {
@@ -40,8 +41,7 @@ const DaySelector = ({ selectedDate, onSelectDate }) => {
 
 	useEffect(() => {
 		const today = new Date();
-		const startOfWeekDate = startOfWeek(today, { weekStartsOn: 1 }); // weekStartsOn: 1 sets Monday as the first day of the week
-		const weekDays = getDaysOfWeek(startOfWeekDate);
+		const weekDays = getDaysOfWeek(today);
 		setDaysOfWeek(weekDays);
 	}, []);
 

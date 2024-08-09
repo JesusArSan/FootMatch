@@ -18,6 +18,8 @@ import {
 	getFriendsList,
 	getFriendsRequests,
 } from "../../utils/UserFunctions.js";
+// Icons
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const FriendsScreen = ({ route }) => {
 	// User Data
@@ -69,6 +71,7 @@ const FriendsScreen = ({ route }) => {
 							<FriendRequest
 								requestData={item}
 								updateFriendsData={updateFriendsData}
+								userLogged={user}
 							/>
 						)}
 						contentContainerStyle={{ paddingBottom: 10 }}
@@ -84,7 +87,13 @@ const FriendsScreen = ({ route }) => {
 				</View>
 			)}
 			{friendList.length === 0 ? (
-				<View>
+				<View style={{ alignSelf: "center", marginTop: "8%" }}>
+					<FontAwesome6
+						name="user-large-slash"
+						size={80}
+						color="black"
+						style={{ alignSelf: "center", marginBottom: "8%" }}
+					/>
 					<Text style={styles.text}>You have no friends yet.</Text>
 				</View>
 			) : (
@@ -132,7 +141,8 @@ const styles = StyleSheet.create({
 		fontFamily: "InriaSans-Bold",
 	},
 	text: {
-		fontSize: 18,
+		fontSize: 25,
+		fontFamily: "InriaSans-Bold",
 	},
 });
 
