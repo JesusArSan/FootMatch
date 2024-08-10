@@ -36,7 +36,7 @@ const MainTabNavigator = ({ route }) => {
 					height: "7.5%",
 				},
 				// Padding of the item tab
-				tabBarItemStyle: { paddingVertical: 6 },
+				tabBarItemStyle: { paddingVertical: 6, flexDirection: "column" },
 				// Font weight of the item tab's text
 				tabBarLabelStyle: {
 					fontFamily: "InriaSans-Bold",

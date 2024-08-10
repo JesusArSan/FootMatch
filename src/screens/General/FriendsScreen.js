@@ -1,4 +1,3 @@
-// React Imports
 import React, { useEffect, useState } from "react";
 import {
 	View,
@@ -52,42 +51,10 @@ const FriendsScreen = ({ route }) => {
 		updateFriendsData();
 	}, []);
 
-	return (
-		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
-			{friendsRequests.length === 0 ? null : (
-				<View
-					style={[
-						styles.friendRequestContainer,
-						{ maxHeight: availableHeight * 0.388 },
-					]}
-				>
-					<Text style={styles.title}>Friend Requests</Text>
-					<FlatList
-						showsHorizontalScrollIndicator={false}
-						showsVerticalScrollIndicator={false}
-						data={friendsRequests}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item }) => (
-							<FriendRequest
-								requestData={item}
-								updateFriendsData={updateFriendsData}
-								userLogged={user}
-							/>
-						)}
-						contentContainerStyle={{ paddingBottom: 10 }}
-						style={{ marginVertical: 10 }}
-						refreshControl={
-							<RefreshControl
-								refreshing={refreshing}
-								onRefresh={updateFriendsData}
-							/>
-						}
-					/>
-					<DrawerDivider color={"black"} customWidth="100%" />
-				</View>
-			)}
-			{friendList.length === 0 ? (
-				<View style={{ alignSelf: "center", marginTop: "8%" }}>
+	const renderContent = () => {
+		if (friendsRequests.length === 0 && friendList.length === 0) {
+			return (
+				<View style={styles.emptyContainer}>
 					<FontAwesome6
 						name="user-large-slash"
 						size={80}
@@ -96,33 +63,76 @@ const FriendsScreen = ({ route }) => {
 					/>
 					<Text style={styles.text}>You have no friends yet.</Text>
 				</View>
-			) : (
-				<View
-					style={[
-						styles.friendsContainer,
-						{ maxHeight: availableHeight * 0.81 },
-					]}
-				>
-					<Text style={styles.title}>My Friends</Text>
-					<FlatList
-						showsHorizontalScrollIndicator={false}
-						showsVerticalScrollIndicator={false}
-						data={friendList}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={({ item }) => (
-							<FriendFollower userData={item} userLogged={user} />
-						)}
-						contentContainerStyle={{ paddingBottom: 10 }}
-						style={{ marginVertical: 10 }}
-						refreshControl={
-							<RefreshControl
-								refreshing={refreshing}
-								onRefresh={updateFriendsData}
-							/>
-						}
+			);
+		}
+
+		return (
+			<View>
+				{friendsRequests.length > 0 && (
+					<View
+						style={[
+							styles.friendRequestContainer,
+							{ maxHeight: availableHeight * 0.388 },
+						]}
+					>
+						<Text style={styles.title}>Friend Requests</Text>
+						<FlatList
+							showsHorizontalScrollIndicator={false}
+							showsVerticalScrollIndicator={false}
+							data={friendsRequests}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={({ item }) => (
+								<FriendRequest
+									requestData={item}
+									updateFriendsData={updateFriendsData}
+									userLogged={user}
+								/>
+							)}
+							contentContainerStyle={{ paddingBottom: 10 }}
+							style={{ marginVertical: 10 }}
+						/>
+						<DrawerDivider color={"black"} customWidth="100%" />
+					</View>
+				)}
+				{friendList.length > 0 && (
+					<View
+						style={[
+							styles.friendsContainer,
+							{ maxHeight: availableHeight * 0.81 },
+						]}
+					>
+						<Text style={styles.title}>My Friends</Text>
+						<FlatList
+							showsHorizontalScrollIndicator={false}
+							showsVerticalScrollIndicator={false}
+							data={friendList}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={({ item }) => (
+								<FriendFollower userData={item} userLogged={user} />
+							)}
+							contentContainerStyle={{ paddingBottom: 10 }}
+							style={{ marginVertical: 10 }}
+						/>
+					</View>
+				)}
+			</View>
+		);
+	};
+
+	return (
+		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
+			<FlatList
+				data={[]} // Use an empty array to enable the FlatList
+				renderItem={null} // No rendering needed for the list itself
+				ListHeaderComponent={renderContent} // Render your content within ListHeaderComponent
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={updateFriendsData}
 					/>
-				</View>
-			)}
+				}
+				contentContainerStyle={{ flexGrow: 1 }} // Ensure it takes the full height
+			/>
 		</SafeAreaView>
 	);
 };
@@ -143,6 +153,13 @@ const styles = StyleSheet.create({
 	text: {
 		fontSize: 25,
 		fontFamily: "InriaSans-Bold",
+	},
+	emptyContainer: {
+		alignSelf: "center",
+		marginTop: "8%",
+		alignItems: "center",
+		justifyContent: "center",
+		flex: 1,
 	},
 });
 

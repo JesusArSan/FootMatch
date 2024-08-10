@@ -160,13 +160,10 @@ const CommunityScreen = ({ route }) => {
 	useFocusEffect(
 		React.useCallback(() => {
 			updateUsersData();
+			setSearchText("");
 			handleShowSearchBar(false);
 		}, [])
 	);
-
-	useEffect(() => {
-		updateUsersData();
-	}, []);
 
 	return (
 		<View
