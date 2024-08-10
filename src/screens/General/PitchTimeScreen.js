@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	flatListContainer: {
 		flex: 1,
-		marginTop: 20,
+		marginTop: 30,
 	},
 	hoursText: {
 		fontFamily: "InriaSans-Bold",
