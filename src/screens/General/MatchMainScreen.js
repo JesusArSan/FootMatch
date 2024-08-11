@@ -1,5 +1,5 @@
 // React Imports
-import React from "react";
+import React, { useState } from "react";
 import {
 	View,
 	Text,
@@ -12,6 +12,21 @@ import {
 // My components
 import CounterDownTimer from "../../components/CounterDownTimer";
 import MatchCustom from "../../components/MatchCustom";
+import PopUpModal from "../../components/PopUpModal";
+import UpdateGameResult from "../../components/UpdateGameResult";
+
+let teamA = {
+	name: "Team A",
+	image: "https://img2.freepnges.com/20180525/qt/avqo99htm.webp",
+};
+let teamB = {
+	name: "Team B",
+	image: "https://img2.freepnges.com/20181015/pav/kisspng-real-madrid-c-f-uefa-champions-league-2-1718-l-logo-512x512-dream-league-soccer-imagui-1713927693192.webp",
+};
+let result = {
+	A: 0,
+	B: 0,
+};
 
 const MatchMainScreen = ({ route }) => {
 	// User lider data
@@ -20,26 +35,20 @@ const MatchMainScreen = ({ route }) => {
 	const pitchInfo = route.params.reservation.pitch || {};
 	const dateReservation = route.params.reservation.date || {};
 
+	// useState
+	const [modalOpen, setModalOpen] = useState(false);
+
 	console.log("UserData en MatchMainScreen", user.id);
 	// console.log(centerInfo);
 	// console.log(pitchInfo);
 	console.log("Fecha Reserva:", dateReservation);
 
-	const handleUpdateResult = () => {
-		console.log("Update Result");
+	const handleOpenModal = () => {
+		setModalOpen(true);
 	};
 
-	const teamA = {
-		name: "Team A",
-		image: "https://img2.freepnges.com/20180525/qt/avqo99htm.webp",
-	};
-	const teamB = {
-		name: "Team B",
-		image: "https://img2.freepnges.com/20181015/pav/kisspng-real-madrid-c-f-uefa-champions-league-2-1718-l-logo-512x512-dream-league-soccer-imagui-1713927693192.webp",
-	};
-	const result = {
-		A: 0,
-		B: 0,
+	const handleCloseModal = () => {
+		setModalOpen(false);
 	};
 
 	return (
@@ -49,6 +58,14 @@ const MatchMainScreen = ({ route }) => {
 			}}
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
+			<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
+				<UpdateGameResult
+					teamA={teamA}
+					teamB={teamB}
+					result={result}
+					onPress={handleCloseModal}
+				/>
+			</PopUpModal>
 			<View style={styles.mainContainer}>
 				<View style={styles.topGameInfo}>
 					<Text style={styles.title}>COMING SOON</Text>
@@ -60,7 +77,7 @@ const MatchMainScreen = ({ route }) => {
 						<Text style={styles.text}>
 							Make sure to confirm the match score!{" "}
 						</Text>
-						<TouchableOpacity onPress={handleUpdateResult}>
+						<TouchableOpacity onPress={handleOpenModal}>
 							<Text
 								style={[
 									styles.text,
