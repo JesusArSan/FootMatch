@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
 	},
 	confirmResult: {
 		flexDirection: "row",
-		marginTop: 20,
+		marginTop: 30,
 	},
 	title: {
 		fontSize: 26,
