@@ -5,7 +5,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import BookFieldScreen from "../screens/General/BookFieldScreen";
 import FieldDetailsScreen from "../screens/General/FieldDetailsScreen";
 import PitchTimeScreen from "../screens/General/PitchTimeScreen";
-import MatchScreen from "../screens/General/MatchScreen";
+// Navigator
+import MatchTabNavigator from "./MatchTabNavigator";
 // My Components
 import HeaderTitleScreen from "../components/headers/HeaderTitleScreen";
 
@@ -60,8 +61,8 @@ const BookingStachNavigator = ({ route }) => {
 				}}
 			/>
 			<BookStack.Screen
-				name="MatchScreen"
-				component={MatchScreen}
+				name="MatchTabNavigator"
+				component={MatchTabNavigator}
 				initialParams={{ user: userData }}
 				options={{
 					headerTitle: (props) => (

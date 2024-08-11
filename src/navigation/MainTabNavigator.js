@@ -6,13 +6,9 @@ import MainHomeScreen from "../screens/Home/MainHomeScreen";
 import UserProfileScreen from "../screens/Home/UserProfileScreen";
 import NotificationsScreen from "../screens/Home/NotificationsScreen";
 import CommunityScreen from "../screens/Home/CommunityScreen";
-import ConversationsScreen from "../screens/General/ConversationsScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
-import HeaderConversations from "../components/headers/HeaderConversations";
 import HeaderCustom from "../components/headers/HeaderCustom";
-// Navigation imports
-import ChatStackNavigator from "./ChatStackNavigator";
 
 // Create the Tab Navigator
 const Tab = createBottomTabNavigator();

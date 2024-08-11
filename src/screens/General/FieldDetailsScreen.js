@@ -226,18 +226,21 @@ const styles = StyleSheet.create({
 	},
 	pitchContainer: {
 		marginTop: 8,
+		paddingHorizontal: 1,
 	},
 	pitchButton: {
 		backgroundColor: "white",
 		paddingVertical: 15,
 		paddingHorizontal: 20,
 		borderRadius: 15,
+		elevation: 1,
 	},
 	pitchButtonClosed: {
 		backgroundColor: "#FFD2DC",
 		paddingVertical: 15,
 		paddingHorizontal: 20,
 		borderRadius: 15,
+		elevation: 1,
 	},
 	pitchText: {
 		fontSize: 15,

@@ -94,11 +94,10 @@ const PitchTimeScreen = ({ route }) => {
 					combinedDateTime.getTimezoneOffset() * 60000
 			);
 
-			navigation.navigate("MatchScreen", {
+			const finalDate = utcDate.toISOString();
+			navigation.navigate("MatchTabNavigator", {
 				user: route.params.user,
-				centerInfo: center,
-				pitchInfo: pitchInfo,
-				dateReservation: utcDate.toISOString(), // Store UTC time
+				reservation: { pitch: pitchInfo, center: center, date: finalDate },
 			});
 		}
 	};
