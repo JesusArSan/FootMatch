@@ -31,15 +31,12 @@ const MainHomeScreen = ({ route }) => {
 		navigation.navigate("FieldDetailsScreen", {
 			centerInfo: center,
 		});
-<<<<<<< HEAD
-=======
 	};
 
 	const handleMessagePress = () => {
 		navigation.navigate("ChatStackNavigator", {
 			user: user,
 		});
->>>>>>> reserve_fields
 	};
 
 	// Update navigation params to include the handler
@@ -96,11 +93,7 @@ const MainHomeScreen = ({ route }) => {
 									<CustomCenter
 										name={center.title}
 										address={center.address}
-<<<<<<< HEAD
-										imgUrl={center.image}
-=======
 										imgUrl={center.images[0].uri}
->>>>>>> reserve_fields
 										distance={center.distance}
 									/>
 								</TouchableOpacity>
