@@ -6,6 +6,8 @@ import { useNavigation } from "@react-navigation/native";
 import MyLastGame from "../../components/MyLastGame.js";
 import CustomActionApp from "../../components/CustomActionApp.js";
 import CustomCenter from "../../components/CustomCenter.js";
+// My icons
+import MessageIcon from "../../components/icons/MessageIcon.js";
 // My Styles
 import { ScrollView } from "react-native-gesture-handler";
 // Dummy Data
@@ -29,7 +31,30 @@ const MainHomeScreen = ({ route }) => {
 		navigation.navigate("FieldDetailsScreen", {
 			centerInfo: center,
 		});
+<<<<<<< HEAD
+=======
 	};
+
+	const handleMessagePress = () => {
+		navigation.navigate("ChatStackNavigator", {
+			user: user,
+		});
+>>>>>>> reserve_fields
+	};
+
+	// Update navigation params to include the handler
+	React.useEffect(() => {
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity
+					style={styles.headerRightContainer}
+					onPress={handleMessagePress}
+				>
+					<MessageIcon size={28} />
+				</TouchableOpacity>
+			),
+		});
+	}, [navigation]);
 
 	return (
 		<View style={styles.totalContainer}>
@@ -47,12 +72,12 @@ const MainHomeScreen = ({ route }) => {
 				<View style={styles.actionsAppContainer}>
 					<Text style={styles.sectionTitle}>Time To Play!</Text>
 					<View style={[styles.actionsSpace, { marginBottom: 25 }]}>
-						<CustomActionApp actionType="1" />
-						<CustomActionApp actionType="2" />
+						<CustomActionApp actionType="1" user={user} />
+						<CustomActionApp actionType="2" user={user} />
 					</View>
 					<View style={styles.actionsSpace}>
-						<CustomActionApp actionType="3" />
-						<CustomActionApp actionType="4" />
+						<CustomActionApp actionType="3" user={user} />
+						<CustomActionApp actionType="4" user={user} />
 					</View>
 				</View>
 
@@ -71,7 +96,11 @@ const MainHomeScreen = ({ route }) => {
 									<CustomCenter
 										name={center.title}
 										address={center.address}
+<<<<<<< HEAD
 										imgUrl={center.image}
+=======
+										imgUrl={center.images[0].uri}
+>>>>>>> reserve_fields
 										distance={center.distance}
 									/>
 								</TouchableOpacity>
@@ -89,6 +118,10 @@ const MainHomeScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	// Header right styles
+	headerRightContainer: {
+		paddingRight: 15,
+	},
 	// Main Container
 	totalContainer: {
 		backgroundColor: "#EEEEEE",

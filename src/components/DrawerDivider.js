@@ -2,15 +2,18 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
-const DrawerDivider = () => <View style={styles.divider} />;
+const DrawerDivider = ({ color = "white", customWidth = "80%" }) => (
+	<View
+		style={[styles.divider, { backgroundColor: color, width: customWidth }]}
+	/>
+);
 
 const styles = StyleSheet.create({
 	divider: {
 		height: 1,
-		width: "80%",
-		backgroundColor: "#ffffff",
-		marginLeft: 27,
+		marginHorizontal: 27,
 		marginVertical: 5,
+		alignSelf: "center",
 	},
 });
 

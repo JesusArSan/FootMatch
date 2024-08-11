@@ -1,11 +1,7 @@
 // React Imports
 import React from "react";
-import { View, Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
-import {
-	createDrawerNavigator,
-	DrawerContentScrollView,
-	DrawerItemList,
-} from "@react-navigation/drawer";
+import { StyleSheet } from "react-native";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 // My Sreens
 import MainTabNavigator from "./MainTabNavigator";
 import ReservationsScreen from "../screens/General/ReservationsScreen";
@@ -16,7 +12,6 @@ import SettingsScreen from "../screens/General/SettingsScreen";
 import AboutScreen from "../screens/General/AboutScreen";
 import SupportScreen from "../screens/General/SupportScreen";
 // My icons
-import AppIcon from "../components/icons/AppIcon";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -24,33 +19,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 // My components
-import DrawerDivider from "../components/DrawerDivider";
+import CustomDrawerContent from "../components/CustomDrawerContent";
 
 // Create the Drawer Navigator
 const Drawer = createDrawerNavigator();
-
-const CustomDrawerContent = (props) => (
-	<DrawerContentScrollView {...props}>
-		<View style={styles.logoContainer}>
-			<View style={styles.logoApp}>
-				<AppIcon customHeight={45} customWidth={28} />
-			</View>
-			<Text style={styles.textTitle}>OOTMATCH</Text>
-		</View>
-		<DrawerDivider />
-		<DrawerItemList {...props} />
-		<DrawerDivider />
-		<View style={styles.darkIcon}>
-			<TouchableOpacity
-				onPress={() => {
-					Alert.alert("Information", "Dark Mode in development");
-				}}
-			>
-				<MaterialIcons name="dark-mode" size={40} color="white" />
-			</TouchableOpacity>
-		</View>
-	</DrawerContentScrollView>
-);
 
 const DrawerNavigator = ({ userData }) => {
 	return (
@@ -63,6 +35,7 @@ const DrawerNavigator = ({ userData }) => {
 				drawerActiveTintColor: "#ffffff",
 				drawerInactiveTintColor: "#ffffff",
 				drawerItemStyle: { paddingLeft: 8 },
+				swipeEnabled: false, // Unable swipe
 			}}
 		>
 			<Drawer.Screen
@@ -85,6 +58,7 @@ const DrawerNavigator = ({ userData }) => {
 			<Drawer.Screen
 				name="My Friends"
 				component={FriendsScreen}
+				initialParams={{ user: userData }}
 				options={{
 					drawerIcon: ({ color }) => (
 						<FontAwesome5 name="user-friends" size={24} color={color} />
@@ -156,29 +130,6 @@ const styles = StyleSheet.create({
 		fontFamily: "InriaSans-Bold",
 		color: "#ffffff",
 		marginLeft: -15,
-	},
-	logoContainer: {
-		flexDirection: "row",
-		marginTop: 8,
-		paddingLeft: 27,
-		paddingBottom: 13,
-		height: 60,
-	},
-	logoApp: {
-		width: 28,
-		height: 45,
-	},
-	textTitle: {
-		fontSize: 30,
-		fontFamily: "InriaSans-Bold",
-		color: "#ffffff",
-		alignSelf: "flex-end",
-		height: 32,
-	},
-	darkIcon: {
-		alignSelf: "flex-start",
-		marginLeft: 24,
-		marginTop: "100%",
 	},
 });
 

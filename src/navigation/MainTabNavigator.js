@@ -6,9 +6,13 @@ import MainHomeScreen from "../screens/Home/MainHomeScreen";
 import UserProfileScreen from "../screens/Home/UserProfileScreen";
 import NotificationsScreen from "../screens/Home/NotificationsScreen";
 import CommunityScreen from "../screens/Home/CommunityScreen";
+import ConversationsScreen from "../screens/General/ConversationsScreen";
 // My Componentes
 import TabBarIconType from "../components/TabBarIconType";
-import HeaderTabTitle from "../components/HeaderTabTitle";
+import HeaderConversations from "../components/headers/HeaderConversations";
+import HeaderCustom from "../components/headers/HeaderCustom";
+// Navigation imports
+import ChatStackNavigator from "./ChatStackNavigator";
 
 // Create the Tab Navigator
 const Tab = createBottomTabNavigator();
@@ -22,17 +26,17 @@ const MainTabNavigator = ({ route }) => {
 			screenOptions={({ route }) => ({
 				// Header personalized
 				headerShown: true,
-				headerTitle: () => <HeaderTabTitle />,
 				headerStyle: {
 					backgroundColor: "#3562A6",
 				},
+				headerTitle: (props) => <HeaderCustom {...props} />,
 				// Background color of the tab and height
 				tabBarStyle: {
 					backgroundColor: "#3562A6",
-					height: 65,
+					height: "7.5%",
 				},
 				// Padding of the item tab
-				tabBarItemStyle: { paddingVertical: 6 },
+				tabBarItemStyle: { paddingVertical: 6, flexDirection: "column" },
 				// Font weight of the item tab's text
 				tabBarLabelStyle: {
 					fontFamily: "InriaSans-Bold",
@@ -45,6 +49,8 @@ const MainTabNavigator = ({ route }) => {
 				tabBarIcon: ({ color }) => (
 					<TabBarIconType name={route.name} color={color} />
 				),
+				// Hide the tab bar when the keyboard is open
+				//tabBarHideOnKeyboard: true,
 			})}
 		>
 			<Tab.Screen
@@ -52,12 +58,20 @@ const MainTabNavigator = ({ route }) => {
 				component={MainHomeScreen}
 				initialParams={{ user: userData }}
 			/>
-			<Tab.Screen name="Community" component={CommunityScreen} />
-			<Tab.Screen name="Notifications" component={NotificationsScreen} />
+			<Tab.Screen
+				name="Community"
+				component={CommunityScreen}
+				initialParams={{ user: userData }}
+			/>
+			<Tab.Screen
+				name="Notifications"
+				component={NotificationsScreen}
+				initialParams={{ user: userData }}
+			/>
 			<Tab.Screen
 				name="Profile"
 				component={UserProfileScreen}
-				initialParams={{ user: userData }}
+				initialParams={{ userLogged: userData }}
 			/>
 		</Tab.Navigator>
 	);

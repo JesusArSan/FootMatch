@@ -15,7 +15,8 @@ import getDirections from "react-native-google-maps-directions";
 import {
 	Message,
 	useNotificationManager,
-} from "../../utils/NotificationService"; // Importa Message y NotificationManager
+} from "../../utils/NotificationService"; // Import Message y NotificationManager
+import ImageGallery from "../../components/ImageGallery";
 // React Icons
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -65,7 +66,7 @@ const FieldDetailsScreen = ({ route }) => {
 	};
 
 	// Handle Pitch Press
-	const handlePitchPress = (pitch) => {
+	const handlePitchPress = (center, pitch) => {
 		if (pitch.status === "closed") {
 			addMessage(`Sorry, Pitch ${pitch.id} is unavailable at this time. 😅`);
 		} else {
@@ -73,13 +74,14 @@ const FieldDetailsScreen = ({ route }) => {
 			console.log("Pitch " + pitch.id + " pressed");
 			// Go to the FieldDetailsScreen
 			navigation.navigate("PitchTimeScreen", {
+				centerInfo: center,
 				pitchInfo: pitch,
 			});
 		}
 	};
 
 	// Render the item for the ScrollView
-	const renderPitch = (pitch) => (
+	const renderPitch = ({ centerInfo, pitch }) => (
 		<View key={pitch.id} style={styles.pitchContainer}>
 			<TouchableOpacity
 				activeOpacity={0.5}
@@ -88,7 +90,7 @@ const FieldDetailsScreen = ({ route }) => {
 						? styles.pitchButtonClosed
 						: styles.pitchButton
 				}
-				onPress={() => handlePitchPress(pitch)}
+				onPress={() => handlePitchPress(centerInfo, pitch)}
 			>
 				<View style={styles.pitchRow}>
 					<View>
@@ -114,65 +116,57 @@ const FieldDetailsScreen = ({ route }) => {
 		</View>
 	);
 
-	if (!center) {
-		return (
-			<View
-				style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-			>
-				<Text>Field not found</Text>
+	return (
+		<View style={styles.container}>
+			<View style={styles.notificationContainer}>
+				{messages.map((message) => (
+					<Message
+						key={message.id}
+						message={message.text}
+						onHide={() => removeMessage(message.id)}
+						colorB={"#FF6464"}
+						colorF={"white"}
+					/>
+				))}
 			</View>
-		);
-	} else {
-		return (
-			<View style={styles.container}>
-				<View style={styles.notificationContainer}>
-					{messages.map((message) => (
-						<Message
-							key={message.id}
-							message={message.text}
-							onHide={() => removeMessage(message.id)}
-							colorB={"#FF6464"}
-							colorF={"white"}
-						/>
-					))}
-				</View>
 
-				<View style={styles.imageContainer}>
-					<Image source={{ uri: center.image }} style={styles.image} />
-				</View>
-
-				<View style={styles.mainContainer}>
-					<ScrollView
-						showsVerticalScrollIndicator={false}
-						showsHorizontalScrollIndicator={false}
-					>
-						<Text style={styles.nameCenter}>{center.title}</Text>
-						<TouchableOpacity
-							style={styles.locationContainer}
-							onPress={handleGetDirections}
-						>
-							<FontAwesome6
-								name="location-dot"
-								size={20}
-								color="black"
-							/>
-							<Text style={styles.addressCenter}>{center.address}</Text>
-						</TouchableOpacity>
-						<View style={styles.detailsContainer}>
-							<Text style={styles.titleContainer}>Details</Text>
-							<Text style={styles.detailsText}>{center.details}</Text>
-						</View>
-						<View style={styles.availablePitchesContainer}>
-							<Text style={styles.titleContainer}>
-								Available Pitches
-							</Text>
-							{center.pitches.map(renderPitch)}
-						</View>
-					</ScrollView>
-				</View>
+			<View style={styles.imageContainer}>
+				<ImageGallery images={center.images} />
 			</View>
-		);
-	}
+
+			<View style={styles.mainContainer}>
+				<Text style={styles.nameCenter}>{center.title}</Text>
+				<TouchableOpacity
+					style={styles.locationContainer}
+					onPress={handleGetDirections}
+				>
+					<FontAwesome6 name="location-dot" size={20} color="black" />
+					<Text style={styles.addressCenter}>{center.address}</Text>
+				</TouchableOpacity>
+
+				<ScrollView
+					style={{ marginTop: 10 }}
+					showsVerticalScrollIndicator={false}
+					showsHorizontalScrollIndicator={false}
+				>
+					<View style={styles.detailsContainer}>
+						<Text style={styles.titleContainer}>Details</Text>
+						<Text style={styles.detailsText}>{center.details}</Text>
+					</View>
+
+					<View style={styles.availablePitchesContainer}>
+						<Text style={styles.titleContainer}>Available Pitches</Text>
+
+						<View>
+							{center.pitches.map((pitch) =>
+								renderPitch({ centerInfo: center, pitch })
+							)}
+						</View>
+					</View>
+				</ScrollView>
+			</View>
+		</View>
+	);
 };
 
 const styles = StyleSheet.create({
@@ -182,7 +176,7 @@ const styles = StyleSheet.create({
 	},
 	imageContainer: {
 		width: "100%",
-		height: "40%",
+		height: "35%",
 	},
 	image: {
 		width: "100%",
@@ -226,6 +220,7 @@ const styles = StyleSheet.create({
 		textAlign: "justify",
 	},
 	availablePitchesContainer: {
+		flex: 1,
 		marginTop: 20,
 		marginBottom: 20,
 	},

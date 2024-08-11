@@ -1,19 +1,157 @@
-// React Imports
-import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+// Reacct Imports
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
+import { format, isSameDay } from "date-fns";
+import { useNavigation } from "@react-navigation/native";
+// My components
+import Subscription from "../../components/SubscriptionCard";
+import DaySelector from "../../components/DaySelector";
+import TimeSlot from "../../components/TimeSlot";
+import {
+	Message,
+	useNotificationManager,
+} from "../../utils/NotificationService"; // Import Message and NotificationManager
+import FloatButton from "../../components/FloatButton";
 
 const PitchTimeScreen = ({ route }) => {
+	const navigation = useNavigation();
 	const pitchInfo = route.params.pitchInfo;
+	const center = route.params.centerInfo;
+	const { addMessage, messages, removeMessage } = useNotificationManager();
 
-	// console.log("pitchInfo: ", pitchInfo);
+	const [selectedTime, setSelectedTime] = useState(null);
+	const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
+	const [timeSlots, setTimeSlots] = useState([]);
+
+	useEffect(() => {
+		const getTimeSlotsForDate = (date) => {
+			const dayOccupancy = pitchInfo.occupancy.find((day) =>
+				isSameDay(new Date(day.date), date)
+			);
+
+			// Available time slots
+			const allSlots = [
+				"07:30 AM",
+				"08:30 AM",
+				"09:30 AM",
+				"10:30 AM",
+				"11:30 AM",
+				"12:30 PM",
+				"01:30 PM",
+				"02:30 PM",
+				"03:30 PM",
+				"04:30 PM",
+				"05:30 PM",
+				"06:30 PM",
+				"07:30 PM",
+				"08:30 PM",
+				"09:30 PM",
+			];
+
+			if (dayOccupancy) {
+				return allSlots.map((slot) => {
+					const occupied = dayOccupancy.hours.some(
+						(hour) => hour.time === slot && hour.status === "occupied"
+					);
+					return { time: slot, occupied };
+				});
+			} else {
+				return allSlots.map((slot) => ({ time: slot, occupied: false }));
+			}
+		};
+
+		setTimeSlots(getTimeSlotsForDate(selectedDate));
+	}, [selectedDate, pitchInfo]);
+
+	const handleSelectTime = (time, occupied) => {
+		if (occupied) {
+			addMessage(`Time slot at ${time} is occupied.`);
+		} else {
+			setSelectedTime(time);
+		}
+	};
+
+	const handleReserve = () => {
+		if (!selectedDate || !selectedTime) {
+			addMessage("Please select both a date and a time slot.");
+		} else {
+			// Split time and period (AM/PM)
+			const [time, period] = selectedTime.split(" ");
+			const [hours, minutes] = time.split(":").map(Number);
+
+			// Adjust hours based on AM/PM
+			const adjustedHours =
+				period === "PM" && hours < 12 ? hours + 12 : hours;
+
+			// Create a new Date object with the selected date and time
+			const combinedDateTime = new Date(selectedDate);
+			combinedDateTime.setHours(adjustedHours, minutes, 0, 0);
+
+			// Convert combinedDateTime to UTC if needed
+			const utcDate = new Date(
+				combinedDateTime.getTime() -
+					combinedDateTime.getTimezoneOffset() * 60000
+			);
+
+			navigation.navigate("MatchScreen", {
+				user: route.params.user,
+				centerInfo: center,
+				pitchInfo: pitchInfo,
+				dateReservation: utcDate.toISOString(), // Store UTC time
+			});
+		}
+	};
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Pitch Time Screen.</Text>
-			<Text style={styles.text}>{pitchInfo.type}</Text>
-			<Text style={styles.text}>
-				Esta es la pantalla para elegir la fecha y hora de la reserva.
-			</Text>
+			<View style={styles.notificationContainer}>
+				{messages.map((message) => (
+					<Message
+						key={message.id}
+						message={message.text}
+						onHide={() => removeMessage(message.id)}
+						colorB={"#FF6464"}
+						colorF={"white"}
+					/>
+				))}
+			</View>
+
+			<View style={styles.mainContainer}>
+				<View style={styles.header}>
+					<Text style={styles.headerTitle}>Choose the best time</Text>
+					<Feather name="calendar" size={30} color="black" />
+				</View>
+				<View style={styles.daySelector}>
+					<DaySelector
+						selectedDate={selectedDate}
+						onSelectDate={setSelectedDate}
+					/>
+				</View>
+				<View style={styles.subCard}>
+					<Subscription />
+				</View>
+				<View style={styles.flatListContainer}>
+					<Text style={styles.hoursText}>Available Hours</Text>
+					<FlatList
+						data={timeSlots}
+						renderItem={({ item }) => (
+							<TimeSlot
+								time={item.time}
+								occupied={item.occupied}
+								selected={item.time === selectedTime}
+								onSelect={() =>
+									handleSelectTime(item.time, item.occupied)
+								}
+							/>
+						)}
+						keyExtractor={(item) => item.time}
+						contentContainerStyle={{ paddingBottom: 100 }} // Increase padding to avoid overlapping
+						showsVerticalScrollIndicator={false}
+					/>
+				</View>
+				<FloatButton title="Proceed to Reserve" onPress={handleReserve} />
+			</View>
 		</View>
 	);
 };
@@ -21,18 +159,48 @@ const PitchTimeScreen = ({ route }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		justifyContent: "center",
+		backgroundColor: "#EEEEEE",
+	},
+	notificationContainer: {
+		position: "absolute",
+		top: 0,
+		left: 0,
+		right: 0,
+		zIndex: 1000,
+	},
+	mainContainer: {
+		flex: 1,
+		marginTop: 10,
+		marginHorizontal: 20,
+		paddingHorizontal: 30,
+		paddingTop: 30,
+		borderTopLeftRadius: 20,
+		borderTopRightRadius: 20,
+		backgroundColor: "#fafafa",
+	},
+	header: {
+		flexDirection: "row",
+		justifyContent: "space-between",
 		alignItems: "center",
-		padding: 16,
 	},
-	title: {
-		fontSize: 24,
-		fontWeight: "bold",
-		marginBottom: 20,
+	headerTitle: {
+		fontSize: 22,
+		fontFamily: "InriaSans-Bold",
 	},
-	text: {
-		fontSize: 18,
-		textAlign: "center",
+	daySelector: {
+		marginTop: 20,
+	},
+	subCard: {
+		marginTop: 20,
+		height: "11%",
+	},
+	flatListContainer: {
+		flex: 1,
+		marginTop: 30,
+	},
+	hoursText: {
+		fontFamily: "InriaSans-Bold",
+		fontSize: 15,
 		marginBottom: 10,
 	},
 });
