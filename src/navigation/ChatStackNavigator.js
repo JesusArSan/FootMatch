@@ -13,8 +13,6 @@ const ChatStack = createStackNavigator();
 const ChatStackNavigator = ({ route }) => {
 	const userData = route.params.user || {};
 
-	console.log("userData: ", userData);
-
 	return (
 		<ChatStack.Navigator>
 			<ChatStack.Screen

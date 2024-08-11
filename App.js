@@ -15,8 +15,9 @@ import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
 import UserProfileScreen from "./src/screens/Home/UserProfileScreen";
-//
+// Navigation
 import ChatStackNavigator from "./src/navigation/ChatStackNavigator";
+import BookingStackNavigator from "./src/navigation/BookingStackNavigator";
 // My imports
 import LoadingManager from "./src/components/LoadingManager";
 // My Components
@@ -38,13 +39,13 @@ export default function App() {
 
 	if (!loadingComplete) {
 		return <LoadingManager onLoadingComplete={handleLoadingComplete} />;
-	} else {
-		console.log("userData: ", userData);
 	}
 
 	// If the token is valid and the user is not null, the initial route is MainNavigatorScreen
 	const initialRouteName =
 		userData && isTokenValid ? "MainNavigatorScreen" : "InitialScreen";
+
+	console.log("userData en app.js: ", userData);
 
 	return (
 		<NavigationContainer>
@@ -66,44 +67,9 @@ export default function App() {
 					}}
 				/>
 				<Stack.Screen
-					name="BookFieldScreen"
-					component={BookFieldScreen}
-					initialParams={{ user: userData }}
-					options={{
-						headerTitle: (props) => (
-							<HeaderTitleScreen {...props} text={"Book a Field"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
-				/>
-				<Stack.Screen
-					name="FieldDetailsScreen"
-					component={FieldDetailsScreen}
-					options={{
-						headerTitle: (props) => (
-							<HeaderTitleScreen {...props} text={"Field Details"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
-				/>
-				<Stack.Screen
-					name="PitchTimeScreen"
-					component={PitchTimeScreen}
-					options={{
-						headerTitle: (props) => (
-							<HeaderTitleScreen {...props} text={"Book a Field"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
+					name="BookingStackNavigator"
+					component={BookingStackNavigator}
+					options={{ headerShown: false }}
 				/>
 				<Stack.Screen
 					name="FindMatchScreen"
@@ -163,7 +129,6 @@ export default function App() {
 				<Stack.Screen
 					name="ChatStackNavigator"
 					component={ChatStackNavigator}
-					initialParams={{ user: userData }}
 					options={{ headerShown: false }}
 				/>
 			</Stack.Navigator>

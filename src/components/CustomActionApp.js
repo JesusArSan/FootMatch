@@ -6,8 +6,9 @@ import BallMagnifyingGlassIcon from "./icons/BallMagnifyingGlassIcon";
 import ShirtTeam from "./icons/ShirtTeam";
 import TrophyIcon from "./icons/TrophyIcon";
 import PeopleIcon from "./icons/PeopleIcon";
+import userLocation from "../utils/UserLocation";
 
-const CustomActionApp = ({ actionType }) => {
+const CustomActionApp = ({ actionType, user }) => {
 	// Navigation between screens
 	const navigation = useNavigation();
 
@@ -15,7 +16,11 @@ const CustomActionApp = ({ actionType }) => {
 		case "1":
 			return (
 				<TouchableOpacity
-					onPress={() => navigation.navigate("BookFieldScreen")}
+					onPress={() =>
+						navigation.navigate("BookingStackNavigator", {
+							user: user,
+						})
+					}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -31,7 +36,11 @@ const CustomActionApp = ({ actionType }) => {
 		case "2":
 			return (
 				<TouchableOpacity
-					onPress={() => navigation.navigate("FindMatchScreen")}
+					onPress={() =>
+						navigation.navigate("FindMatchScreen", {
+							user: user,
+						})
+					}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -47,7 +56,11 @@ const CustomActionApp = ({ actionType }) => {
 		case "3":
 			return (
 				<TouchableOpacity
-					onPress={() => navigation.navigate("JoinCompetScreen")}
+					onPress={() =>
+						navigation.navigate("JoinCompetScreen", {
+							user: user,
+						})
+					}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>
@@ -63,7 +76,11 @@ const CustomActionApp = ({ actionType }) => {
 		case "4":
 			return (
 				<TouchableOpacity
-					onPress={() => navigation.navigate("TeamsScreen")}
+					onPress={() =>
+						navigation.navigate("TeamsScreen", {
+							user: user,
+						})
+					}
 					style={styles.actionContainer}
 					activeOpacity={0.7}
 				>

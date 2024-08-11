@@ -10,8 +10,8 @@ const ConversationsScreen = ({ route }) => {
 	const user = route.params.user;
 	const chats = route.params.chatInfo;
 
-	console.log("User: ", user);
-	console.log("Chat: ", chats);
+	//console.log("User: ", user);
+	//console.log("Chat: ", chats);
 
 	// Convert ISO 8601 string to a Date object
 	const getFullDate = (isoTimeString) => {

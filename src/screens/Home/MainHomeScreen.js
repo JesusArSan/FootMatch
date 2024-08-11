@@ -6,7 +6,6 @@ import { useNavigation } from "@react-navigation/native";
 import MyLastGame from "../../components/MyLastGame.js";
 import CustomActionApp from "../../components/CustomActionApp.js";
 import CustomCenter from "../../components/CustomCenter.js";
-import ChatStackNavigator from "../../navigation/ChatStackNavigator.js";
 // My icons
 import MessageIcon from "../../components/icons/MessageIcon.js";
 // My Styles
@@ -35,7 +34,9 @@ const MainHomeScreen = ({ route }) => {
 	};
 
 	const handleMessagePress = () => {
-		navigation.navigate("ChatStackNavigator");
+		navigation.navigate("ChatStackNavigator", {
+			user: user,
+		});
 	};
 
 	// Update navigation params to include the handler
@@ -68,12 +69,12 @@ const MainHomeScreen = ({ route }) => {
 				<View style={styles.actionsAppContainer}>
 					<Text style={styles.sectionTitle}>Time To Play!</Text>
 					<View style={[styles.actionsSpace, { marginBottom: 25 }]}>
-						<CustomActionApp actionType="1" />
-						<CustomActionApp actionType="2" />
+						<CustomActionApp actionType="1" user={user} />
+						<CustomActionApp actionType="2" user={user} />
 					</View>
 					<View style={styles.actionsSpace}>
-						<CustomActionApp actionType="3" />
-						<CustomActionApp actionType="4" />
+						<CustomActionApp actionType="3" user={user} />
+						<CustomActionApp actionType="4" user={user} />
 					</View>
 				</View>
 

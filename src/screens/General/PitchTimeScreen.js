@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { format, isSameDay } from "date-fns";
+import { useNavigation } from "@react-navigation/native";
 // My components
 import Subscription from "../../components/SubscriptionCard";
 import DaySelector from "../../components/DaySelector";
@@ -14,6 +15,7 @@ import {
 import FloatButton from "../../components/FloatButton";
 
 const PitchTimeScreen = ({ route }) => {
+	const navigation = useNavigation();
 	const pitchInfo = route.params.pitchInfo;
 	const center = route.params.centerInfo;
 	const { addMessage, messages, removeMessage } = useNotificationManager();
@@ -70,16 +72,20 @@ const PitchTimeScreen = ({ route }) => {
 		}
 	};
 
-	const handleCheckout = () => {
+	const handleReserve = () => {
 		if (!selectedDate || !selectedTime) {
 			addMessage("Please select both a date and a time slot.");
 		} else {
 			console.log(
-				`Proceed to Checkout with: Date: ${format(
+				`Proceed to Reserve with: Date: ${format(
 					selectedDate,
 					"yyyy-MM-dd"
 				)}, Time: ${selectedTime}`
 			);
+			navigation.navigate("MatchScreen", {
+				user: route.params.user,
+				userid: route.params.user.id,
+			});
 		}
 	};
 
@@ -130,7 +136,7 @@ const PitchTimeScreen = ({ route }) => {
 						showsVerticalScrollIndicator={false}
 					/>
 				</View>
-				<FloatButton title="Proceed to Reserve" onPress={handleCheckout} />
+				<FloatButton title="Proceed to Reserve" onPress={handleReserve} />
 			</View>
 		</View>
 	);
