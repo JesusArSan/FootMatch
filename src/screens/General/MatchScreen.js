@@ -3,10 +3,17 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 const MatchScreen = ({ route }) => {
+	// User lider data
 	const user = route.params.user || {};
-	const userid = route.params.userid || {};
-	console.log(user.id);
-	console.log(userid);
+	const centerInfo = route.params.centerInfo || {};
+	const pitchInfo = route.params.pitchInfo || {};
+	const dateReservation = route.params.dateReservation || {};
+
+	console.log("UserData en MatchScreen", user.id);
+	// console.log(centerInfo);
+	// console.log(pitchInfo);
+	console.log("Fecha Reserva:", dateReservation);
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Match con lider: {user.id}</Text>

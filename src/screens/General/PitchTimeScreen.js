@@ -76,15 +76,29 @@ const PitchTimeScreen = ({ route }) => {
 		if (!selectedDate || !selectedTime) {
 			addMessage("Please select both a date and a time slot.");
 		} else {
-			console.log(
-				`Proceed to Reserve with: Date: ${format(
-					selectedDate,
-					"yyyy-MM-dd"
-				)}, Time: ${selectedTime}`
+			// Split time and period (AM/PM)
+			const [time, period] = selectedTime.split(" ");
+			const [hours, minutes] = time.split(":").map(Number);
+
+			// Adjust hours based on AM/PM
+			const adjustedHours =
+				period === "PM" && hours < 12 ? hours + 12 : hours;
+
+			// Create a new Date object with the selected date and time
+			const combinedDateTime = new Date(selectedDate);
+			combinedDateTime.setHours(adjustedHours, minutes, 0, 0);
+
+			// Convert combinedDateTime to UTC if needed
+			const utcDate = new Date(
+				combinedDateTime.getTime() -
+					combinedDateTime.getTimezoneOffset() * 60000
 			);
+
 			navigation.navigate("MatchScreen", {
 				user: route.params.user,
-				userid: route.params.user.id,
+				centerInfo: center,
+				pitchInfo: pitchInfo,
+				dateReservation: utcDate.toISOString(), // Store UTC time
 			});
 		}
 	};

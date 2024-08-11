@@ -13,8 +13,6 @@ const CustomDrawerContent = (props) => {
 	// Get the color scheme
 	const { colorScheme, toggleColorScheme } = useColorScheme();
 
-	console.log(colorScheme);
-
 	return (
 		<DrawerContentScrollView {...props}>
 			<View style={{ backgroundColor: "transparent" }}>

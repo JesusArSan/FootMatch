@@ -15,8 +15,6 @@ const BookStack = createStackNavigator();
 const BookingStachNavigator = ({ route }) => {
 	const userData = route.params.user || {};
 
-	console.log("userData en BookingStackNavigator: ", userData);
-
 	return (
 		<BookStack.Navigator initialRouteName="BookFieldScreen">
 			<BookStack.Screen
