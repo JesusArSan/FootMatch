@@ -23,7 +23,7 @@ const Modal = ({ isOpen, withInput, children, ...rest }) => {
 			style={{
 				justifyContent: "center",
 				flex: 1,
-				paddingHorizontal: 16,
+				paddingHorizontal: 10,
 				backgroundColor: "rgba(0, 0, 0, 0.4)",
 			}}
 		>

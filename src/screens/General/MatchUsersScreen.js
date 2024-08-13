@@ -13,44 +13,36 @@ import {
 import UserMatchItem from "../../components/UserMatchItem";
 import FloatButton from "../../components/FloatButton";
 import AddFriendButton from "../../components/AddFriendButton";
-import PopUpModal from "../../components/PopUpModal"; // PopUpModal
+import PopUpModal from "../../components/PopUpModal";
+import FriendInvitation from "../../components/FriendInvitation";
 // Dummy data
 import Friends from "../../assets/data/friends.json";
 
 const MatchUsersScreen = ({ route }) => {
-	// User lider data
 	const user = route.params.user || {};
-	const [users, setUsers] = useState(Friends); // Dummy data
-
-	// useState
+	const [users, setUsers] = useState(Friends);
 	const [modalOpen, setModalOpen] = useState(false);
 
-	console.log("UserData en MatchUsersScreen", user.id);
-
 	const handleRemoveUser = (userId) => {
-		// Function to remove user from the list
 		setUsers(users.filter((user) => user.id !== userId));
 	};
 
 	const handleRoomChat = () => {
-		// Function to handle room chat
 		Alert.alert("Room Chat", "Coming soon...");
 	};
 
 	const handleAddFriendPress = () => {
-		// Abre el modal para agregar un amigo
 		setModalOpen(true);
 	};
 
 	const handleCloseModal = () => {
-		// Cierra el modal
 		setModalOpen(false);
 	};
 
 	return (
 		<ImageBackground
 			source={{
-				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg?t=st=1723396538~exp=1723400138~hmac=d82321aa904617abebebaa6436b2f76b72acbfafaee89164349a45ba8908920e&w=740",
+				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg",
 			}}
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
@@ -58,27 +50,37 @@ const MatchUsersScreen = ({ route }) => {
 				<View style={styles.addFriendContainer}>
 					<AddFriendButton onPress={handleAddFriendPress} />
 				</View>
-				<View>
-					<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
-						<View style={styles.popUpAddFriend}>
-							<Text>Lista de amigos</Text>
-							{/* Flat List with my Frinds */}
-							<FlatList
-								data={users}
-								renderItem={({ item }) => <Text>{item.username}</Text>}
-								keyExtractor={(item) => item.id.toString()}
-								showsVerticalScrollIndicator={false}
-								style={{ marginHorizontal: 30 }}
-							/>
-							<Pressable
-								style={styles.closeButton}
-								onPress={handleCloseModal}
-							>
-								<Text style={styles.closeButtonText}>Close</Text>
-							</Pressable>
+				<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
+					<View style={styles.popUpAddFriend}>
+						<Text style={styles.title}>Friend List</Text>
+						<View style={styles.friendInvitationContainer}>
+							{users.length > 0 ? (
+								<FlatList
+									data={users}
+									renderItem={({ item }) => (
+										<View style={styles.gridItem}>
+											<FriendInvitation friend={item} />
+										</View>
+									)}
+									keyExtractor={(item) => item.id.toString()}
+									showsVerticalScrollIndicator={false}
+									numColumns={2}
+									columnWrapperStyle={styles.row}
+								/>
+							) : (
+								<Text style={styles.noFriendsText}>
+									No friends found
+								</Text>
+							)}
 						</View>
-					</PopUpModal>
-				</View>
+						<Pressable
+							style={styles.closeButton}
+							onPress={handleCloseModal}
+						>
+							<Text style={styles.closeButtonText}>Close</Text>
+						</Pressable>
+					</View>
+				</PopUpModal>
 				<FlatList
 					data={users}
 					renderItem={({ item }) => (
@@ -86,6 +88,7 @@ const MatchUsersScreen = ({ route }) => {
 					)}
 					keyExtractor={(item) => item.id.toString()}
 					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ paddingBottom: "30%" }}
 					style={{ marginHorizontal: 30 }}
 				/>
 				<FloatButton title="Room Chat" onPress={handleRoomChat} />
@@ -106,10 +109,10 @@ const styles = StyleSheet.create({
 		marginHorizontal: 20,
 	},
 	title: {
-		fontSize: 18,
+		fontSize: 22,
 		fontFamily: "InriaSans-Bold",
 		textAlign: "center",
-		marginBottom: 10,
+		marginVertical: 10,
 	},
 	addFriendContainer: {
 		alignSelf: "center",
@@ -117,31 +120,49 @@ const styles = StyleSheet.create({
 		marginBottom: 15,
 	},
 	popUpAddFriend: {
-		padding: 20,
+		flex: 1,
+		borderRadius: 20,
+		maxHeight: "50%",
 		justifyContent: "center",
 		alignItems: "center",
-		borderRadius: 20,
-		backgroundColor: "white",
+		backgroundColor: "#fafafa",
+	},
+	friendInvitationContainer: {
+		width: "95%",
+		height: "70%",
+	},
+	gridItem: {
+		margin: 3,
+		flexBasis: "48%",
+	},
+	row: {
+		justifyContent: "space-between",
+	},
+	noFriendsText: {
+		fontSize: 18,
+		fontFamily: "InriaSans-Bold",
+		color: "red",
+		textAlign: "center",
+		marginTop: 20,
 	},
 	closeButton: {
 		backgroundColor: "#D9534F",
 		paddingVertical: 10,
 		paddingHorizontal: 30,
+		width: "30%",
 		borderRadius: 5,
 		shadowColor: "#000",
-		shadowOffset: {
-			width: 0,
-			height: 2,
-		},
+		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.25,
 		shadowRadius: 3.84,
 		elevation: 5,
-		marginHorizontal: 10, // Space between buttons
+		marginTop: 10,
 	},
 	closeButtonText: {
 		color: "white",
 		fontSize: 16,
 		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
 	},
 });
 

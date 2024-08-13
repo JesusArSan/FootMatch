@@ -93,6 +93,7 @@ const MatchMainScreen = ({ route }) => {
 				<ScrollView
 					style={styles.scrollView}
 					showsVerticalScrollIndicator={false}
+					contentContainerStyle={{ paddingBottom: "30%" }} // Increase padding to avoid overlapping
 				>
 					{/* Game Details Section */}
 					<View style={styles.gameDetailsContainer}>

@@ -145,7 +145,7 @@ const PitchTimeScreen = ({ route }) => {
 							/>
 						)}
 						keyExtractor={(item) => item.time}
-						contentContainerStyle={{ paddingBottom: 100 }} // Increase padding to avoid overlapping
+						contentContainerStyle={{ paddingBottom: "35%" }} // Increase padding to avoid overlapping
 						showsVerticalScrollIndicator={false}
 					/>
 				</View>
