@@ -3,9 +3,18 @@ import { View, Text, StyleSheet } from "react-native";
 
 const CountDownTimer = ({ targetDate }) => {
 	const calculateTimeLeft = () => {
-		const now = Date.now(); // Utilizamos Date.now() para obtener la marca de tiempo actual en milisegundos
-		const target = new Date(targetDate).getTime(); // Convertimos targetDate a milisegundos
-		const difference = target - now;
+		const now = new Date();
+		const nowUTC = Date.UTC(
+			now.getFullYear(),
+			now.getMonth(),
+			now.getDate(),
+			now.getHours(),
+			now.getMinutes(),
+			now.getSeconds()
+		); // Get the current time in UTC milliseconds
+
+		const target = new Date(targetDate).getTime(); // Convert targetDate to milliseconds
+		const difference = target - nowUTC;
 
 		let timeLeft = {};
 
@@ -19,8 +28,6 @@ const CountDownTimer = ({ targetDate }) => {
 		} else {
 			timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 		}
-
-		console.log("TimeLeft", timeLeft);
 
 		return timeLeft;
 	};

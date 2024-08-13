@@ -2,51 +2,61 @@
 	{
 		"id": 1,
 		"username": "ester_exposito",
-		"photo": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg"
+		"photo": "https://pbs.twimg.com/profile_images/1183371288934531073/LR2heIM4_400x400.jpg",
+		"status": "Invited"
 	},
 	{
 		"id": 2,
 		"username": "bob_smith",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gen4fa732bb26c3e8561e4c8fd0c62a0e4a.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gen4fa732bb26c3e8561e4c8fd0c62a0e4a.jpg",
+		"status": "Confirmed"
 	},
 	{
 		"id": 3,
 		"username": "lana_rhoades",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-genf91af243c6a914eca4b9c2ab2bc076d7.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-genf91af243c6a914eca4b9c2ab2bc076d7.jpg",
+		"status": "Invited"
 	},
 	{
 		"id": 4,
 		"username": "carol_white",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-genf14363f648adcf5d24738b383fbf5a46.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-genf14363f648adcf5d24738b383fbf5a46.jpg",
+		"status": "Confirmed"
 	},
 	{
 		"id": 5,
 		"username": "dave_brown",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-geneecc00d9abfd151db98367ca0bd570ea.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-geneecc00d9abfd151db98367ca0bd570ea.jpg",
+		"status": "Invited"
 	},
 	{
 		"id": 6,
 		"username": "eva_green",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gena7bfbed0e5722272c2720dad67e06ada.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gena7bfbed0e5722272c2720dad67e06ada.jpg",
+		"status": "Invited"
 	},
 	{
 		"id": 7,
 		"username": "Emily_Watson",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gen98368d6695c9686c2b5051dcd9825e64.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gen98368d6695c9686c2b5051dcd9825e64.jpg",
+		"status": "Confirmed"
 	},
 	{
 		"id": 8,
 		"username": "Sophia_Martinez",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gen51f6a8fbd0d17aaca1680e10cb1a7dc7.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gen51f6a8fbd0d17aaca1680e10cb1a7dc7.jpg",
+		"status": "Invited"
 	},
 	{
 		"id": 9,
 		"username": "Hannah_Foster",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gen00ce9540f926edcd2ca550c975ceae5c.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gen00ce9540f926edcd2ca550c975ceae5c.jpg",
+		"status": "Confirmed"
 	},
 	{
 		"id": 10,
 		"username": "Grace_Thompson",
-		"photo": "https://this-person-does-not-exist.com/img/avatar-gende806c7eb007f7472dcdd17a1a9e6df8.jpg"
+		"photo": "https://this-person-does-not-exist.com/img/avatar-gende806c7eb007f7472dcdd17a1a9e6df8.jpg",
+		"status": "Invited"
 	}
 ]

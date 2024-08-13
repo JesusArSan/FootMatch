@@ -8,12 +8,14 @@ import {
 	Pressable,
 	TouchableOpacity,
 	Image,
+	ScrollView,
 } from "react-native";
 // My components
 import CounterDownTimer from "../../components/CounterDownTimer";
 import MatchCustom from "../../components/MatchCustom";
 import PopUpModal from "../../components/PopUpModal";
 import UpdateGameResult from "../../components/UpdateGameResult";
+import FloatButton from "../../components/FloatButton";
 
 let teamA = {
 	name: "Team A",
@@ -39,8 +41,6 @@ const MatchMainScreen = ({ route }) => {
 	const [modalOpen, setModalOpen] = useState(false);
 
 	console.log("UserData en MatchMainScreen", user.id);
-	// console.log(centerInfo);
-	// console.log(pitchInfo);
 	console.log("Fecha Reserva:", dateReservation);
 
 	const handleOpenModal = () => {
@@ -90,6 +90,57 @@ const MatchMainScreen = ({ route }) => {
 					</View>
 					<View style={styles.divider} />
 				</View>
+				<ScrollView
+					style={styles.scrollView}
+					showsVerticalScrollIndicator={false}
+				>
+					{/* Game Details Section */}
+					<View style={styles.gameDetailsContainer}>
+						<Text style={styles.sectionTitle}>Game Details</Text>
+						<Text style={styles.detailText}>Date: 10/08/2024</Text>
+						<Text style={styles.detailText}>Hour: 19:30</Text>
+						<Text style={styles.detailText}>
+							Location: Calle Granada, S/N, Chana, 18015 Granada
+						</Text>
+						<Text style={styles.detailText}>Duration: 1 hour</Text>
+						<Text style={styles.detailText}>Players: 5 vs 5</Text>
+						<Text style={styles.detailText}>Colour Kit - T.A: 🔴</Text>
+						<Text style={styles.detailText}>Colour Kit - T.B: 🟡</Text>
+						<Text style={styles.detailText}>League: NaN</Text>
+						<Text style={styles.detailText}>Championship: NaN</Text>
+						<Text style={styles.detailText}>Price per Person: 2$</Text>
+					</View>
+
+					{/* Teams Distribution Section */}
+					<View style={styles.teamsContainer}>
+						<View style={{ flexDirection: "row" }}>
+							<Text style={styles.sectionTitle}>
+								Automatic teams distribution
+							</Text>
+							<TouchableOpacity style={styles.doItNowButton}>
+								<Text style={styles.doItNowButtonText}>Do it now!</Text>
+							</TouchableOpacity>
+						</View>
+						<Text style={styles.detailText}>
+							Team A: Juan, Antonino, Roberto, Eustaquio, Paloma.
+						</Text>
+						<Text style={styles.detailText}>
+							Team B: Rocio, Manual, Talia, Ruben, Manuel.
+						</Text>
+					</View>
+
+					{/* Stats Section */}
+					<View style={styles.statsContainer}>
+						<Text style={styles.sectionTitle}>Stats</Text>
+						<Text style={styles.detailText}>
+							Goals: Antonio, Roberto, Rocio
+						</Text>
+						<Text style={styles.detailText}>
+							Assists: Juan, Talia, Paloma
+						</Text>
+					</View>
+				</ScrollView>
+				<FloatButton title="Match Ended" customOpacity={0.5} />
 			</View>
 		</ImageBackground>
 	);
@@ -129,6 +180,51 @@ const styles = StyleSheet.create({
 		borderBottomColor: "grey",
 		borderBottomWidth: 1,
 		width: "100%",
+	},
+	gameDetailsContainer: {
+		marginTop: 20,
+		paddingHorizontal: 10,
+	},
+	sectionTitle: {
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		color: "#353A50",
+		marginBottom: 10,
+	},
+	detailText: {
+		fontSize: 14,
+		fontFamily: "InriaSans-Regular",
+		color: "#353A50",
+		marginBottom: 5,
+	},
+	teamsContainer: {
+		marginTop: 20,
+		paddingHorizontal: 10,
+	},
+	doItNowButton: {
+		backgroundColor: "#091442",
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 20,
+		marginVertical: 10,
+		alignSelf: "center",
+		position: "absolute",
+		right: -9,
+		top: -10,
+	},
+	doItNowButtonText: {
+		color: "white",
+		fontSize: 10,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	statsContainer: {
+		marginTop: 20,
+		paddingHorizontal: 10,
+	},
+	scrollView: {
+		marginBottom: 0,
+		paddingHorizontal: 30,
 	},
 });
 

@@ -1,9 +1,12 @@
 import React from "react";
 import { Pressable, Text, StyleSheet } from "react-native";
 
-const FloatButton = ({ title, onPress }) => {
+const FloatButton = ({ title, onPress, customOpacity = 1 }) => {
 	return (
-		<Pressable style={styles.button} onPress={onPress}>
+		<Pressable
+			style={[styles.button, { opacity: customOpacity }]}
+			onPress={onPress}
+		>
 			<Text style={styles.buttonText}>{title}</Text>
 		</Pressable>
 	);
