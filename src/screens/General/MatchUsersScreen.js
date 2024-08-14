@@ -1,5 +1,5 @@
 // React Imports
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -15,12 +15,12 @@ import FloatButton from "../../components/FloatButton";
 import AddFriendButton from "../../components/AddFriendButton";
 import PopUpModal from "../../components/PopUpModal";
 import FriendInvitation from "../../components/FriendInvitation";
-// Dummy data
-import Friends from "../../assets/data/friends.json";
+// User Functions
+import { getFriendsList } from "../../utils/UserFunctions";
 
 const MatchUsersScreen = ({ route }) => {
 	const user = route.params.user || {};
-	const [users, setUsers] = useState(Friends);
+	const [users, setFriendList] = useState([]);
 	const [modalOpen, setModalOpen] = useState(false);
 
 	const handleRemoveUser = (userId) => {
@@ -38,6 +38,15 @@ const MatchUsersScreen = ({ route }) => {
 	const handleCloseModal = () => {
 		setModalOpen(false);
 	};
+
+	// Update the friends list
+	const updateFriendsList = async () => {
+		await getFriendsList(user.id, setFriendList);
+	};
+	// Update the friends list on component mount
+	useEffect(() => {
+		updateFriendsList();
+	},[]);
 
 	return (
 		<ImageBackground
