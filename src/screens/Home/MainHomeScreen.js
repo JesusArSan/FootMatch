@@ -1,5 +1,5 @@
 // React Imports
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // My components
@@ -10,21 +10,29 @@ import CustomCenter from "../../components/CustomCenter.js";
 import MessageIcon from "../../components/icons/MessageIcon.js";
 // My Styles
 import { ScrollView } from "react-native-gesture-handler";
+// Centers Functions
+import { getFavCenters } from "../../utils/CentersFunctions.js";
 // Dummy Data
 import centers from "../../assets/data/sportCenters.json";
 
 const MainHomeScreen = ({ route }) => {
-	// Initialize the filtered centers
-	let favCenters = [];
-	if (true) {
-		favCenters = centers;
-	}
+	// State to store the fav centers
+	const [favCenters, setCenters] = useState([]);
 
 	// Navigation between screens
 	const navigation = useNavigation();
 
 	// Get the user data from the route params
 	const user = route.params.user || {};
+
+	// Update the fav centers list
+	const updateCentersList = async () => {
+		await getFavCenters(user.id, setCenters);
+	};
+	// Update the fav centers list on component mount
+	useEffect(() => {
+		updateCentersList();
+	}, []);
 
 	const handleCenterPress = (center) => {
 		console.log("Center " + center.id + " pressed");
@@ -80,7 +88,7 @@ const MainHomeScreen = ({ route }) => {
 
 				{/* Some Nearby Centers */}
 				<View style={styles.centersContainer}>
-					<Text style={styles.sectionTitle}>Nearby Centers</Text>
+					<Text style={styles.sectionTitle}>Favourite Centers</Text>
 					{favCenters.length > 0 ? (
 						<View style={styles.centersSpace}>
 							{favCenters.map((center) => (
@@ -101,7 +109,7 @@ const MainHomeScreen = ({ route }) => {
 						</View>
 					) : (
 						<Text style={styles.noCentersText}>
-							There are no centers in your favorites list
+							There are no centers in your favorite list.
 						</Text>
 					)}
 				</View>
