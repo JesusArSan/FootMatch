@@ -3,7 +3,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 // Import Screens
 import BookFieldScreen from "../screens/General/BookFieldScreen";
-import FieldDetailsScreen from "../screens/General/FieldDetailsScreen";
+import CenterDetailsScreen from "../screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "../screens/General/PitchTimeScreen";
 // Navigator
 import MatchTabNavigator from "./MatchTabNavigator";
@@ -13,11 +13,18 @@ import HeaderTitleScreen from "../components/headers/HeaderTitleScreen";
 // Create the Stack Navigator
 const BookStack = createStackNavigator();
 
-const BookingStachNavigator = ({ route }) => {
+const BookingStackNavigator = ({ route }) => {
 	const userData = route.params.user || {};
+	const routeName = route.params.routeName || "BookFieldScreen";
+	const userLocation = route.params.userLocation || {};
+	let center = [];
+
+	if (routeName === "CenterDetailsScreen") {
+		center = route.params.centerInfo || {};
+	}
 
 	return (
-		<BookStack.Navigator initialRouteName="BookFieldScreen">
+		<BookStack.Navigator initialRouteName={routeName}>
 			<BookStack.Screen
 				name="BookFieldScreen"
 				component={BookFieldScreen}
@@ -33,12 +40,12 @@ const BookingStachNavigator = ({ route }) => {
 				}}
 			/>
 			<BookStack.Screen
-				name="FieldDetailsScreen"
-				component={FieldDetailsScreen}
-				initialParams={{ user: userData }}
+				name="CenterDetailsScreen"
+				component={CenterDetailsScreen}
+				initialParams={{ user: userData, centerInfo: center, userLocation: userLocation }}
 				options={{
 					headerTitle: (props) => (
-						<HeaderTitleScreen {...props} text={"Field Details"} />
+						<HeaderTitleScreen {...props} text={"Center Details"} />
 					),
 					headerStyle: {
 						backgroundColor: "#3562A6",
@@ -78,4 +85,4 @@ const BookingStachNavigator = ({ route }) => {
 	);
 };
 
-export default BookingStachNavigator;
+export default BookingStackNavigator;

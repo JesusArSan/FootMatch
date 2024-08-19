@@ -62,3 +62,33 @@ export const getFavCenters = async (userId, setFavCenters) => {
 		alert(`${error.message}`);
 	}
 };
+
+// Get pitch occupancy
+export const getPitchOccupancy = async (pitchId, setPitchOccupancy) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/centers/pitch/${pitchId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error fetching pitch occupancy: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the response data contains an error message
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		//console.log(data);
+		setPitchOccupancy(data);
+	} catch (error) {
+		// Alert the user about the error
+		alert(`${error.message}`);
+	}
+};

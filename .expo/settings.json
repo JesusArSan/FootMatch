@@ -5,5 +5,6 @@
   "minify": false,
   "urlRandomness": null,
   "https": false,
-  "scheme": "exp+footmatch"
+  "scheme": "exp+footmatch",
+  "devClient": false
 }

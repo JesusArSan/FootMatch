@@ -1,4 +1,4 @@
-// Reacct Imports
+// React Imports
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
@@ -13,6 +13,8 @@ import {
 	useNotificationManager,
 } from "../../utils/NotificationService"; // Import Message and NotificationManager
 import FloatButton from "../../components/FloatButton";
+// Centers functions
+import { getPitchOccupancy } from "../../utils/CentersFunctions";
 
 const PitchTimeScreen = ({ route }) => {
 	const navigation = useNavigation();
@@ -23,14 +25,29 @@ const PitchTimeScreen = ({ route }) => {
 	const [selectedTime, setSelectedTime] = useState(null);
 	const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
 	const [timeSlots, setTimeSlots] = useState([]);
+	const [occupancyData, setOccupancyData] = useState([]);
 
+	// useEffect to fetch occupancy data
+	useEffect(() => {
+		const fetchOccupancyData = async () => {
+			try {
+				await getPitchOccupancy(pitchInfo.id, setOccupancyData);
+			} catch (error) {
+				addMessage("Error loading pitch occupancy.");
+			}
+		};
+
+		// Ejecutar la función al cargar la pantalla
+		fetchOccupancyData();
+	}, [pitchInfo.id]);
+
+	// useEffect to update timeSlots when occupancyData or selectedDate changes
 	useEffect(() => {
 		const getTimeSlotsForDate = (date) => {
-			const dayOccupancy = pitchInfo.occupancy.find((day) =>
-				isSameDay(new Date(day.date), date)
+			const dayOccupancies = occupancyData.filter((occupancy) =>
+				isSameDay(new Date(occupancy.date_time), date)
 			);
 
-			// Available time slots
 			const allSlots = [
 				"07:30 AM",
 				"08:30 AM",
@@ -49,20 +66,24 @@ const PitchTimeScreen = ({ route }) => {
 				"09:30 PM",
 			];
 
-			if (dayOccupancy) {
-				return allSlots.map((slot) => {
-					const occupied = dayOccupancy.hours.some(
-						(hour) => hour.time === slot && hour.status === "occupied"
-					);
-					return { time: slot, occupied };
+			return allSlots.map((slot) => {
+				const occupied = dayOccupancies.some((occupancy) => {
+					// Convert the occupancy time to the same format as the slots
+					const occupancyTime = format(
+						new Date(occupancy.date_time),
+						"hh:mm a"
+					).toUpperCase();
+					return occupancyTime === slot.toUpperCase();
 				});
-			} else {
-				return allSlots.map((slot) => ({ time: slot, occupied: false }));
-			}
+				return { time: slot, occupied };
+			});
 		};
 
-		setTimeSlots(getTimeSlotsForDate(selectedDate));
-	}, [selectedDate, pitchInfo]);
+		// Update timeSlots only when there is occupancyData
+		if (occupancyData.length > 0) {
+			setTimeSlots(getTimeSlotsForDate(selectedDate));
+		}
+	}, [selectedDate, occupancyData]);
 
 	const handleSelectTime = (time, occupied) => {
 		if (occupied) {
@@ -135,14 +156,16 @@ const PitchTimeScreen = ({ route }) => {
 					<FlatList
 						data={timeSlots}
 						renderItem={({ item }) => (
-							<TimeSlot
-								time={item.time}
-								occupied={item.occupied}
-								selected={item.time === selectedTime}
-								onSelect={() =>
-									handleSelectTime(item.time, item.occupied)
-								}
-							/>
+							(
+								<TimeSlot
+									time={item.time}
+									occupied={item.occupied}
+									selected={item.time === selectedTime}
+									onSelect={() =>
+										handleSelectTime(item.time, item.occupied)
+									}
+								/>
+							)
 						)}
 						keyExtractor={(item) => item.time}
 						contentContainerStyle={{ paddingBottom: "35%" }} // Increase padding to avoid overlapping

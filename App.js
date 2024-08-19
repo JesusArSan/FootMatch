@@ -9,7 +9,7 @@ import RegisterScreen from "./src/screens/Auth/RegisterScreen";
 import LoginScreen from "./src/screens/Auth/LoginScreen";
 import MainNavigatorScreen from "./src/screens/Home/MainNavigatorScreen";
 import BookFieldScreen from "./src/screens/General/BookFieldScreen";
-import FieldDetailsScreen from "./src/screens/General/FieldDetailsScreen";
+import CenterDetailsScreen from "./src/screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";

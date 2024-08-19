@@ -24,8 +24,8 @@ import { Ionicons } from "@expo/vector-icons";
 
 const MAX_DISTANCE_WALK = 1000; // 1000 meters
 
-const FieldDetailsScreen = ({ route }) => {
-	const center = route.params.centerInfo;
+const CenterDetailsScreen = ({ route }) => {
+	const center = route.params.centerInfo || [];
 	const userLocation = route.params.userLocation;
 	const { addMessage, messages, removeMessage } = useNotificationManager();
 
@@ -33,35 +33,45 @@ const FieldDetailsScreen = ({ route }) => {
 	const navigation = useNavigation();
 
 	// Get Direction to the Center via Google Maps
-	handleGetDirections = () => {
-		// Update the travel mode based on the distance between the user and the center
+	const handleGetDirections = () => {
+		if (
+			!userLocation ||
+			!center ||
+			!userLocation.latitude ||
+			!userLocation.longitude ||
+			!center.latitude ||
+			!center.longitude
+		) {
+			addMessage("Unable to get directions. Missing location data.");
+			return;
+		}
+
+		// Configure the travel mode
 		let travelMode = "driving";
 		if (center.distance !== null && center.distance !== undefined) {
 			travelMode =
 				center.distance < MAX_DISTANCE_WALK ? "walking" : "driving";
 		}
 
+		// Data for the Google Maps Directions
 		const data = {
 			source: {
-				latitude: userLocation.latitude,
-				longitude: userLocation.longitude,
+				latitude: parseFloat(userLocation.latitude), // Asegúrate de que sea float
+				longitude: parseFloat(userLocation.longitude), // Asegúrate de que sea float
 			},
 			destination: {
-				latitude: center.latitude,
-				longitude: center.longitude,
+				latitude: parseFloat(center.latitude), // Asegúrate de que sea float
+				longitude: parseFloat(center.longitude), // Asegúrate de que sea float
 			},
 			params: [
 				{
 					key: "travelmode",
 					value: travelMode, // "walking", "bicycling" or "transit", driving
 				},
-				// {
-				// 	key: "dir_action",
-				// 	value: "navigate", // this instantly initializes navigation using the given travel mode
-				// },
 			],
 		};
 
+		// Get Directions
 		getDirections(data);
 	};
 
@@ -70,9 +80,7 @@ const FieldDetailsScreen = ({ route }) => {
 		if (pitch.status === "closed") {
 			addMessage(`Sorry, Pitch ${pitch.id} is unavailable at this time. 😅`);
 		} else {
-			// Navigate to the Pitch Details Screen
-			console.log("Pitch " + pitch.id + " pressed");
-			// Go to the FieldDetailsScreen
+			// Go to the CenterDetailsScreen
 			navigation.navigate("PitchTimeScreen", {
 				centerInfo: center,
 				pitchInfo: pitch,
@@ -81,7 +89,7 @@ const FieldDetailsScreen = ({ route }) => {
 	};
 
 	// Render the item for the ScrollView
-	const renderPitch = ({ centerInfo, pitch }) => (
+	const renderPitch = ({ center, pitch }) => (
 		<View key={pitch.id} style={styles.pitchContainer}>
 			<TouchableOpacity
 				activeOpacity={0.5}
@@ -90,7 +98,7 @@ const FieldDetailsScreen = ({ route }) => {
 						? styles.pitchButtonClosed
 						: styles.pitchButton
 				}
-				onPress={() => handlePitchPress(centerInfo, pitch)}
+				onPress={() => handlePitchPress(center, pitch)}
 			>
 				<View style={styles.pitchRow}>
 					<View>
@@ -131,7 +139,7 @@ const FieldDetailsScreen = ({ route }) => {
 			</View>
 
 			<View style={styles.imageContainer}>
-				<ImageGallery images={center.images} />
+				<ImageGallery images={center.images || []} />
 			</View>
 
 			<View style={styles.mainContainer}>
@@ -158,8 +166,14 @@ const FieldDetailsScreen = ({ route }) => {
 						<Text style={styles.titleContainer}>Available Pitches</Text>
 
 						<View>
-							{center.pitches.map((pitch) =>
-								renderPitch({ centerInfo: center, pitch })
+							{center.pitches && center.pitches.length > 0 ? (
+								center.pitches.map((pitch) =>
+									renderPitch({ center, pitch })
+								)
+							) : (
+								<Text style={styles.noPitchesText}>
+									No available pitches
+								</Text>
 							)}
 						</View>
 					</View>
@@ -257,4 +271,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default FieldDetailsScreen;
+export default CenterDetailsScreen;
