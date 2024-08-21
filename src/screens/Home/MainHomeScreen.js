@@ -51,10 +51,8 @@ const MainHomeScreen = ({ route }) => {
 					JSON.stringify({ latitude, longitude })
 				);
 
-				console.log("User antes:", user);
 				// Update the user object with the location
 				user = { ...user, location: { latitude, longitude } };
-				console.log("User despues:", user);
 			} catch (error) {
 				console.error("Error getting user location:", error);
 			}
