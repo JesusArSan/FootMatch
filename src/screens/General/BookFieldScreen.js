@@ -201,6 +201,7 @@ const BookFieldScreen = ({ route }) => {
 	const handleCenterPress = (center) => {
 		navigation.navigate("CenterDetailsScreen", {
 			centerInfo: center,
+			userData: userData,
 			userLocation: location,
 		});
 	};

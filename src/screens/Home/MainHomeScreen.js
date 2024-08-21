@@ -15,6 +15,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import { getFavCenters } from "../../utils/CentersFunctions.js";
 // User Location
 import UserLocation from "../../utils/UserLocation.js";
+import { useDrawerProgress } from "@react-navigation/drawer";
 
 const MainHomeScreen = ({ route }) => {
 	// State to store the fav centers
@@ -68,6 +69,7 @@ const MainHomeScreen = ({ route }) => {
 		navigation.navigate("BookingStackNavigator", {
 			centerInfo: center,
 			routeName: "CenterDetailsScreen",
+			user: user,
 			userLocation: user.location,
 		});
 	};

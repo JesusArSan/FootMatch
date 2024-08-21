@@ -42,7 +42,11 @@ const BookingStackNavigator = ({ route }) => {
 			<BookStack.Screen
 				name="CenterDetailsScreen"
 				component={CenterDetailsScreen}
-				initialParams={{ user: userData, centerInfo: center, userLocation: userLocation }}
+				initialParams={{
+					userData: userData,
+					centerInfo: center,
+					userLocation: userLocation,
+				}}
 				options={{
 					headerTitle: (props) => (
 						<HeaderTitleScreen {...props} text={"Center Details"} />

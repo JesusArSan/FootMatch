@@ -1,14 +1,15 @@
 // FieldDetailScreen.js
-import * as React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
 	View,
 	Text,
-	Image,
+	Pressable,
 	StyleSheet,
 	TouchableOpacity,
 	ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 // Google Maps Directions
 import getDirections from "react-native-google-maps-directions";
 // My imports
@@ -17,6 +18,8 @@ import {
 	useNotificationManager,
 } from "../../utils/NotificationService"; // Import Message y NotificationManager
 import ImageGallery from "../../components/ImageGallery";
+// Centers Functions
+import { getFavCenters } from "../../utils/CentersFunctions";
 // React Icons
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -26,11 +29,64 @@ const MAX_DISTANCE_WALK = 1000; // 1000 meters
 
 const CenterDetailsScreen = ({ route }) => {
 	const center = route.params.centerInfo || [];
+	const userData = route.params.userData || {};
 	const userLocation = route.params.userLocation;
 	const { addMessage, messages, removeMessage } = useNotificationManager();
+	const [favCenters, setFavCenters] = useState([]);
+	const [liked, setLiked] = useState(false);
+	const animation = useRef(null);
+	const isFirstRun = useRef(true);
 
 	// Navigation
 	const navigation = useNavigation();
+
+	// Get Fav Centers
+	const updateCentersList = async () => {
+		await getFavCenters(userData.id, setFavCenters);
+	};
+
+	// Update the fav centers list on component mount
+	useEffect(() => {
+		updateCentersList();
+	}, []);
+
+	// Effect to check if the center is in favCenters after they are loaded
+	useEffect(() => {
+		const isCenterLiked = favCenters.some(
+			(favCenter) => favCenter.id === center.id
+		);
+		setLiked(isCenterLiked);
+	}, [favCenters]);
+
+	// Animation Effect
+	useEffect(() => {
+		if (isFirstRun.current) {
+			if (liked) {
+				animation.current.play(100, 100);
+			} else {
+				animation.current.play(0, 0);
+			}
+			isFirstRun.current = false;
+		} else {
+			if (liked) {
+				animation.current.play(0, 100);
+			} else {
+				animation.current.play(0, 0);
+			}
+		}
+	}, [liked]);
+
+	// Handle Like Center
+	const handleLikeCenter = () => {
+		if (liked) {
+			addMessage("Center removed from favorites.");
+			// Remove from data base
+		} else {
+			// Add to data base
+			console.log("Liked center ID: ", center.id);
+		}
+		setLiked(!liked);
+	};
 
 	// Get Direction to the Center via Google Maps
 	const handleGetDirections = () => {
@@ -143,7 +199,18 @@ const CenterDetailsScreen = ({ route }) => {
 			</View>
 
 			<View style={styles.mainContainer}>
-				<Text style={styles.nameCenter}>{center.title}</Text>
+				<View style={{ flexDirection: "row" }}>
+					<Text style={styles.nameCenter}>{center.title}</Text>
+					<Pressable style={styles.likeButton} onPress={handleLikeCenter}>
+						<LottieView
+							ref={animation}
+							source={require("../../assets/animations/like.json")}
+							autoPlay
+							loop={false}
+							style={styles.lottieStyle}
+						/>
+					</Pressable>
+				</View>
 				<TouchableOpacity
 					style={styles.locationContainer}
 					onPress={handleGetDirections}
@@ -196,6 +263,15 @@ const styles = StyleSheet.create({
 		width: "100%",
 		height: "100%",
 	},
+	likeButton: {
+		position: "absolute",
+		top: -21,
+		right: -20,
+	},
+	lottieStyle: {
+		width: 70,
+		height: 70,
+	},
 	mainContainer: {
 		flex: 1,
 		marginTop: -30,
@@ -218,6 +294,7 @@ const styles = StyleSheet.create({
 	},
 	nameCenter: {
 		fontSize: 22,
+		width: "86%",
 		fontFamily: "InriaSans-Bold",
 	},
 	detailsContainer: {
