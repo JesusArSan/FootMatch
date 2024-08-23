@@ -1,7 +1,7 @@
 // React Imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
 import MyLastGame from "../../components/MyLastGame.js";
@@ -32,9 +32,11 @@ const MainHomeScreen = ({ route }) => {
 		await getFavCenters(user.id, setCenters);
 	};
 	// Update the fav centers list on component mount
-	useEffect(() => {
-		updateCentersList();
-	}, []);
+	useFocusEffect(
+		useCallback(() => {
+			updateCentersList();
+		}, [])
+	);
 
 	// If user.location do not exit, get it
 	useEffect(() => {
@@ -81,7 +83,7 @@ const MainHomeScreen = ({ route }) => {
 	};
 
 	// Update navigation params to include the handler
-	React.useEffect(() => {
+	useEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity

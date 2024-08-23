@@ -19,7 +19,11 @@ import {
 } from "../../utils/NotificationService"; // Import Message y NotificationManager
 import ImageGallery from "../../components/ImageGallery";
 // Centers Functions
-import { getFavCenters } from "../../utils/CentersFunctions";
+import {
+	getFavCenters,
+	setFavCenter,
+	deleteFavCenter,
+} from "../../utils/CentersFunctions";
 // React Icons
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -81,9 +85,11 @@ const CenterDetailsScreen = ({ route }) => {
 		if (liked) {
 			addMessage("Center removed from favorites.");
 			// Remove from data base
+			deleteFavCenter(userData.id, center.id);
 		} else {
 			// Add to data base
 			console.log("Liked center ID: ", center.id);
+			setFavCenter(userData.id, center.id);
 		}
 		setLiked(!liked);
 	};
