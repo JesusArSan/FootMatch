@@ -88,7 +88,6 @@ const CenterDetailsScreen = ({ route }) => {
 			deleteFavCenter(userData.id, center.id);
 		} else {
 			// Add to data base
-			console.log("Liked center ID: ", center.id);
 			setFavCenter(userData.id, center.id);
 		}
 		setLiked(!liked);
