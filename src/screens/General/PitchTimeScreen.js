@@ -115,6 +115,8 @@ const PitchTimeScreen = ({ route }) => {
 					combinedDateTime.getTimezoneOffset() * 60000
 			);
 
+			// Logic to save the reservation match in BD
+
 			const finalDate = utcDate.toISOString();
 			navigation.navigate("MatchTabNavigator", {
 				user: route.params.user,
@@ -156,16 +158,14 @@ const PitchTimeScreen = ({ route }) => {
 					<FlatList
 						data={timeSlots}
 						renderItem={({ item }) => (
-							(
-								<TimeSlot
-									time={item.time}
-									occupied={item.occupied}
-									selected={item.time === selectedTime}
-									onSelect={() =>
-										handleSelectTime(item.time, item.occupied)
-									}
-								/>
-							)
+							<TimeSlot
+								time={item.time}
+								occupied={item.occupied}
+								selected={item.time === selectedTime}
+								onSelect={() =>
+									handleSelectTime(item.time, item.occupied)
+								}
+							/>
 						)}
 						keyExtractor={(item) => item.time}
 						contentContainerStyle={{ paddingBottom: "35%" }} // Increase padding to avoid overlapping
