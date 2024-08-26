@@ -4,26 +4,22 @@ import { View, Text, StyleSheet } from "react-native";
 const CountDownTimer = ({ targetDate }) => {
 	const calculateTimeLeft = () => {
 		const now = new Date();
-		const nowUTC = Date.UTC(
-			now.getFullYear(),
-			now.getMonth(),
-			now.getDate(),
-			now.getHours(),
-			now.getMinutes(),
-			now.getSeconds()
-		); // Get the current time in UTC milliseconds
+		const nowLocal = now.getTime(); // Current time in milliseconds in local timezone
 
-		const target = new Date(targetDate).getTime(); // Convert targetDate to milliseconds
-		const difference = target - nowUTC;
+		// Convert targetDate to local time in milliseconds
+		const target = new Date(targetDate).getTime();
+		const difference = target - nowLocal;
 
 		let timeLeft = {};
 
 		if (difference > 0) {
 			timeLeft = {
 				days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-				hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-				minutes: Math.floor((difference / 1000 / 60) % 60),
-				seconds: Math.floor((difference / 1000) % 60),
+				hours: Math.floor(
+					(difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+				),
+				minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+				seconds: Math.floor((difference % (1000 * 60)) / 1000),
 			};
 		} else {
 			timeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };

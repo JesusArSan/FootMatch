@@ -1,6 +1,3 @@
-import * as React from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { CommonActions } from "@react-navigation/native";
 import config from "../../config";
 
 // Get all centers

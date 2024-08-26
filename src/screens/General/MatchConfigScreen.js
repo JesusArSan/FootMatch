@@ -1,12 +1,39 @@
 // React Imports
-import React from "react";
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, ImageBackground, Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+// My components
+import FloatButton from "../../components/FloatButton";
+import { cancelMatch } from "../../utils/MatchesFunctions";
 
 const MatchConfigScreen = ({ route }) => {
 	// User lider data
 	const user = route.params.user || {};
+	const reservation = route.params.reservation || {};
+	const matchId = route.params.matchId || {};
 
-	console.log("UserData en MatchConfigScreen", user.id);
+	const navigation = useNavigation();
+
+	const [cancelResult, setCancelResult] = useState(null);
+
+	const handleCancelMatch = async () => {
+		if (!matchId) {
+			Alert.alert("Error", "No match ID provided.");
+			return;
+		}
+
+		try {
+			const response = await cancelMatch(matchId);
+
+			// Alert, success
+			Alert.alert("Success", "Match canceled successfully");
+
+			// Navigate to home
+			navigation.navigate("MainNavigatorScreen");
+		} catch (error) {
+			Alert.alert("Error", `Error canceling match: ${error.message}`);
+		}
+	};
 
 	return (
 		<ImageBackground
@@ -17,6 +44,11 @@ const MatchConfigScreen = ({ route }) => {
 		>
 			<View style={styles.mainContainer}>
 				<Text>AJUSTES DEL PARTIDO</Text>
+				<FloatButton
+					title="Cancel Match"
+					backgroundCustomColor="red"
+					onPress={handleCancelMatch}
+				/>
 			</View>
 		</ImageBackground>
 	);

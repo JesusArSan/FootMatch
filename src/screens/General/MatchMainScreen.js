@@ -33,15 +33,15 @@ let result = {
 const MatchMainScreen = ({ route }) => {
 	// User lider data
 	const user = route.params.user || {};
-	const centerInfo = route.params.reservation.center || {};
-	const pitchInfo = route.params.reservation.pitch || {};
-	const dateReservation = route.params.reservation.date || {};
+	const reservationData = route.params.reservation || {};
+	const matchId = route.params.matchId || {};
+
+	console.log("UserData en MatchMainScreen", user.id);
+	console.log("ReservationData en MatchMainScreen", reservationData);
+	console.log("MatchId en MatchMainScreen:", matchId);
 
 	// useState
 	const [modalOpen, setModalOpen] = useState(false);
-
-	console.log("UserData en MatchMainScreen", user.id);
-	console.log("Fecha Reserva:", dateReservation);
 
 	const handleOpenModal = () => {
 		setModalOpen(true);
@@ -71,7 +71,7 @@ const MatchMainScreen = ({ route }) => {
 					<Text style={styles.title}>COMING SOON</Text>
 					<MatchCustom teamA={teamA} teamB={teamB} result={result} />
 					<View style={{ marginTop: 30 }}>
-						<CounterDownTimer targetDate={dateReservation} />
+						<CounterDownTimer targetDate={reservationData.matchDate} />
 					</View>
 					<View style={styles.confirmResult}>
 						<Text style={styles.text}>

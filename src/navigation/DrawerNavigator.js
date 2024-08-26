@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 // My Sreens
 import MainTabNavigator from "./MainTabNavigator";
-import ReservationsScreen from "../screens/General/ReservationsScreen";
+import MatchesListScreen from "../screens/General/MatchesListScreen";
 import FriendsScreen from "../screens/General/FriendsScreen";
 import TeamsScreen from "../screens/General/TeamsScreen";
 import StatisticsScreen from "../screens/General/StatisticsScreen";
@@ -47,8 +47,9 @@ const DrawerNavigator = ({ userData }) => {
 				}}
 			/>
 			<Drawer.Screen
-				name="My Reservations"
-				component={ReservationsScreen}
+				name="Matches"
+				component={MatchesListScreen}
+				initialParams={{ user: userData }}
 				options={{
 					drawerIcon: ({ color }) => (
 						<MaterialIcons name="date-range" size={30} color={color} />
@@ -56,7 +57,7 @@ const DrawerNavigator = ({ userData }) => {
 				}}
 			/>
 			<Drawer.Screen
-				name="My Friends"
+				name="Friends"
 				component={FriendsScreen}
 				initialParams={{ user: userData }}
 				options={{
@@ -66,7 +67,7 @@ const DrawerNavigator = ({ userData }) => {
 				}}
 			/>
 			<Drawer.Screen
-				name="My Teams"
+				name="Teams"
 				component={TeamsScreen}
 				options={{
 					drawerIcon: ({ color }) => (
@@ -79,7 +80,7 @@ const DrawerNavigator = ({ userData }) => {
 				}}
 			/>
 			<Drawer.Screen
-				name="My Statistics"
+				name="Statistics"
 				component={StatisticsScreen}
 				options={{
 					drawerIcon: ({ color }) => (

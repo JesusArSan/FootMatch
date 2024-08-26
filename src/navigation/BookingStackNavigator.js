@@ -71,7 +71,8 @@ const BookingStackNavigator = ({ route }) => {
 					headerTintColor: "white",
 				}}
 			/>
-			<BookStack.Screen
+			{/* MatchTabNavigator must be on app.js */}
+			{/* <BookStack.Screen
 				name="MatchTabNavigator"
 				component={MatchTabNavigator}
 				initialParams={{ user: userData }}
@@ -84,7 +85,7 @@ const BookingStackNavigator = ({ route }) => {
 					},
 					headerTintColor: "white",
 				}}
-			/>
+			/> */}
 		</BookStack.Navigator>
 	);
 };

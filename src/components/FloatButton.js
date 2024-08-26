@@ -1,20 +1,30 @@
 import React from "react";
 import { Pressable, Text, StyleSheet } from "react-native";
 
-const FloatButton = ({ title, onPress, customOpacity = 1 }) => {
+const FloatButton = ({
+	title,
+	onPress,
+	customOpacity = 1,
+	backgroundCustomColor = "#091442",
+	fontCustomColor = "white",
+}) => {
 	return (
 		<Pressable
-			style={[styles.button, { opacity: customOpacity }]}
+			style={[
+				styles.button,
+				{ opacity: customOpacity, backgroundColor: backgroundCustomColor },
+			]}
 			onPress={onPress}
 		>
-			<Text style={styles.buttonText}>{title}</Text>
+			<Text style={[styles.buttonText, { color: fontCustomColor }]}>
+				{title}
+			</Text>
 		</Pressable>
 	);
 };
 
 const styles = StyleSheet.create({
 	button: {
-		backgroundColor: "#091442",
 		paddingVertical: 15,
 		paddingHorizontal: 25,
 		borderRadius: 25,
@@ -28,7 +38,6 @@ const styles = StyleSheet.create({
 		shadowRadius: 3.84,
 	},
 	buttonText: {
-		color: "#fff",
 		fontSize: 16,
 		fontFamily: "InriaSans-Bold",
 		textAlign: "center",

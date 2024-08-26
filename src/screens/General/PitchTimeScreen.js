@@ -15,6 +15,7 @@ import {
 import FloatButton from "../../components/FloatButton";
 // Centers functions
 import { getPitchOccupancy } from "../../utils/CentersFunctions";
+import { createMatch } from "../../utils/MatchesFunctions";
 
 const PitchTimeScreen = ({ route }) => {
 	const navigation = useNavigation();
@@ -26,6 +27,8 @@ const PitchTimeScreen = ({ route }) => {
 	const [selectedDate, setSelectedDate] = useState(new Date()); // Initialize with today's date
 	const [timeSlots, setTimeSlots] = useState([]);
 	const [occupancyData, setOccupancyData] = useState([]);
+	const [reservationData, setReservationData] = useState({});
+	const [matchId, setMatchId] = useState(null);
 
 	// useEffect to fetch occupancy data
 	useEffect(() => {
@@ -37,7 +40,6 @@ const PitchTimeScreen = ({ route }) => {
 			}
 		};
 
-		// Ejecutar la función al cargar la pantalla
 		fetchOccupancyData();
 	}, [pitchInfo.id]);
 
@@ -68,7 +70,6 @@ const PitchTimeScreen = ({ route }) => {
 
 			return allSlots.map((slot) => {
 				const occupied = dayOccupancies.some((occupancy) => {
-					// Convert the occupancy time to the same format as the slots
 					const occupancyTime = format(
 						new Date(occupancy.date_time),
 						"hh:mm a"
@@ -79,7 +80,6 @@ const PitchTimeScreen = ({ route }) => {
 			});
 		};
 
-		// Update timeSlots only when there is occupancyData
 		if (occupancyData.length > 0) {
 			setTimeSlots(getTimeSlotsForDate(selectedDate));
 		}
@@ -93,37 +93,53 @@ const PitchTimeScreen = ({ route }) => {
 		}
 	};
 
-	const handleReserve = () => {
+	const handleReserve = async () => {
 		if (!selectedDate || !selectedTime) {
 			addMessage("Please select both a date and a time slot.");
-		} else {
-			// Split time and period (AM/PM)
-			const [time, period] = selectedTime.split(" ");
-			const [hours, minutes] = time.split(":").map(Number);
+			return;
+		}
 
-			// Adjust hours based on AM/PM
-			const adjustedHours =
-				period === "PM" && hours < 12 ? hours + 12 : hours;
+		const [time, period] = selectedTime.split(" ");
+		const [hours, minutes] = time.split(":").map(Number);
 
-			// Create a new Date object with the selected date and time
-			const combinedDateTime = new Date(selectedDate);
-			combinedDateTime.setHours(adjustedHours, minutes, 0, 0);
+		const adjustedHours = period === "PM" && hours < 12 ? hours + 12 : hours;
+		const finalHours = period === "AM" && hours === 12 ? 0 : adjustedHours;
 
-			// Convert combinedDateTime to UTC if needed
-			const utcDate = new Date(
-				combinedDateTime.getTime() -
-					combinedDateTime.getTimezoneOffset() * 60000
-			);
+		const combinedDateTime = new Date(selectedDate);
+		combinedDateTime.setHours(finalHours, minutes, 0, 0);
 
-			// Logic to save the reservation match in BD
+		const utcDate = new Date(
+			combinedDateTime.getTime() -
+				combinedDateTime.getTimezoneOffset() * 60000
+		);
 
-			const finalDate = utcDate.toISOString();
-			navigation.navigate("MatchTabNavigator", {
-				user: route.params.user,
-				reservation: { pitch: pitchInfo, center: center, date: finalDate },
-			});
+		const formattedDate = format(combinedDateTime, "yyyy-MM-dd HH:mm");
+
+		const dataReserve = {
+			userId: route.params.user.id,
+			pitchId: pitchInfo.id,
+			matchDate: formattedDate,
+		};
+		setReservationData(dataReserve);
+
+		try {
+			// Create the match and get the match ID
+			await createMatch(dataReserve, setMatchId);
+		} catch (error) {
+			addMessage(`Error creating match: ${error.message}`);
 		}
 	};
+
+	useEffect(() => {
+		if (matchId) {
+			// Navigate to the MatchTabNavigator only if the match is created successfully
+			navigation.navigate("MatchTabNavigator", {
+				user: route.params.user,
+				reservation: reservationData,
+				matchId: matchId,
+			});
+		}
+	}, [matchId]);
 
 	return (
 		<View style={styles.container}>
