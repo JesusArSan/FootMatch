@@ -9,15 +9,20 @@ import RegisterScreen from "./src/screens/Auth/RegisterScreen";
 import LoginScreen from "./src/screens/Auth/LoginScreen";
 import MainNavigatorScreen from "./src/screens/Home/MainNavigatorScreen";
 import BookFieldScreen from "./src/screens/General/BookFieldScreen";
-import FieldDetailsScreen from "./src/screens/General/FieldDetailsScreen";
+import CenterDetailsScreen from "./src/screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
+import UserProfileScreen from "./src/screens/Home/UserProfileScreen";
+import MatchTabNavigator from "./src/navigation/MatchTabNavigator";
+// Navigation
+import ChatStackNavigator from "./src/navigation/ChatStackNavigator";
+import BookingStackNavigator from "./src/navigation/BookingStackNavigator";
 // My imports
 import LoadingManager from "./src/components/LoadingManager";
 // My Components
-import TitleScreen from "./src/components/TitleScreen";
+import HeaderTitleScreen from "./src/components/headers/HeaderTitleScreen";
 
 // Stack Navigator
 const Stack = createStackNavigator();
@@ -35,13 +40,13 @@ export default function App() {
 
 	if (!loadingComplete) {
 		return <LoadingManager onLoadingComplete={handleLoadingComplete} />;
-	} else {
-		console.log("userData: ", userData);
 	}
 
 	// If the token is valid and the user is not null, the initial route is MainNavigatorScreen
 	const initialRouteName =
 		userData && isTokenValid ? "MainNavigatorScreen" : "InitialScreen";
+
+	console.log("userData en app.js: ", userData);
 
 	return (
 		<NavigationContainer>
@@ -63,51 +68,16 @@ export default function App() {
 					}}
 				/>
 				<Stack.Screen
-					name="BookFieldScreen"
-					component={BookFieldScreen}
-					initialParams={{ user: userData }}
-					options={{
-						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Book a Field"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
-				/>
-				<Stack.Screen
-					name="FieldDetailsScreen"
-					component={FieldDetailsScreen}
-					options={{
-						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Field Details"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
-				/>
-				<Stack.Screen
-					name="PitchTimeScreen"
-					component={PitchTimeScreen}
-					options={{
-						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Book a Field"} />
-						),
-						headerStyle: {
-							backgroundColor: "#3562A6",
-						},
-						headerTintColor: "white",
-					}}
+					name="BookingStackNavigator"
+					component={BookingStackNavigator}
+					options={{ headerShown: false }}
 				/>
 				<Stack.Screen
 					name="FindMatchScreen"
 					component={FindMatchScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Find a Match"} />
+							<HeaderTitleScreen {...props} text={"Find a Match"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -120,7 +90,7 @@ export default function App() {
 					component={JoinCompetScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Join Competitions"} />
+							<HeaderTitleScreen {...props} text={"Join Competitions"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
@@ -133,7 +103,42 @@ export default function App() {
 					component={TeamsScreen}
 					options={{
 						headerTitle: (props) => (
-							<TitleScreen {...props} text={"Teams"} />
+							<HeaderTitleScreen {...props} text={"Teams"} />
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					}}
+				/>
+				<Stack.Screen
+					name="OtherUserProfile"
+					component={UserProfileScreen}
+					options={({ route }) => ({
+						headerTitle: (props) => (
+							<HeaderTitleScreen
+								{...props}
+								text={route.params.otherUser.username}
+							/>
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					})}
+				/>
+				<Stack.Screen
+					name="ChatStackNavigator"
+					component={ChatStackNavigator}
+					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name="MatchTabNavigator"
+					component={MatchTabNavigator}
+					initialParams={{ user: userData }}
+					options={{
+						headerTitle: (props) => (
+							<HeaderTitleScreen {...props} text={"Match"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",

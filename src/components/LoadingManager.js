@@ -4,6 +4,7 @@ import { StatusBar } from "react-native";
 import { StyleSheet, Text, View, Image } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFonts } from "expo-font";
+import LottieView from "lottie-react-native";
 // My Imports
 import UserLocation from "../utils/UserLocation";
 import config from "../../config";
@@ -23,12 +24,12 @@ const LoadingManager = ({ onLoadingComplete }) => {
 	const [isTokenValid, setIsTokenValid] = useState(false);
 	const [location, setUserLocation] = useState(null);
 
-	// Timer 1.5s
+	// Timer 3.0s
 	useEffect(() => {
-		// 2 second timer
+		// 3.0 second timer
 		const timer = setTimeout(() => {
 			setShowLoadingScreen(false);
-		}, 2000);
+		}, 3000);
 
 		// Clear timeout
 		return () => clearTimeout(timer);
@@ -77,20 +78,26 @@ const LoadingManager = ({ onLoadingComplete }) => {
 		const loadUserLocation = async () => {
 			if (userData !== null) {
 				try {
-					const userLocation = await AsyncStorage.getItem("@userLocation");
-					if (userLocation !== null) {
-						setUserLocation(JSON.parse(userLocation));
+					const storedLocation = await AsyncStorage.getItem(
+						"@userLocation"
+					);
+					let location;
+
+					if (storedLocation !== null) {
+						location = JSON.parse(storedLocation);
 					} else {
-						// Get user location
-						const location = await UserLocation();
+						console.log("Getting user location from device....");
+						location = await UserLocation();
 						const { latitude, longitude } = location;
-						setUserLocation({ latitude, longitude });
-						// Storage
+						location = { latitude, longitude };
+
 						await AsyncStorage.setItem(
 							"@userLocation",
-							JSON.stringify({ latitude, longitude })
+							JSON.stringify(location)
 						);
 					}
+
+					setUserLocation(location);
 				} catch (error) {
 					console.error("Error loading user location", error);
 				}
@@ -110,19 +117,45 @@ const LoadingManager = ({ onLoadingComplete }) => {
 			// Pass location with UserData
 			if (location !== null) userData = { ...userData, location };
 
-			onLoadingComplete(isTokenValid, userData); // Pass additional parameters
+			onLoadingComplete(isTokenValid, userData);
 		}
 	}, [showLoadingScreen, fontsLoaded, userData, isTokenValid, location]);
 
 	// Load Screen
 	return (
 		<View style={styles.loadingContainer}>
-			<StatusBar translucent backgroundColor={"transparent"} />
+			{/* <StatusBar translucent backgroundColor={"transparent"} />
 			<Image
 				source={require("../assets/images/icons/logo.png")}
 				style={styles.logo}
 			/>
-			<Text style={styles.loadingText}>Cargando...</Text>
+			<Text style={styles.loadingText}>Cargando...</Text> */}
+			<LottieView
+				source={require("../assets/animations/loading.json")}
+				style={{
+					width: 550,
+					height: 550,
+					marginTop: 50,
+				}}
+				autoPlay
+				loop
+			/>
+			<LottieView
+				source={require("../assets/animations/loadingAuthor.json")}
+				style={[
+					styles.lottieView,
+					{
+						width: 400,
+						height: 300,
+						marginTop: -80,
+						marginLeft: 5,
+					},
+				]}
+				autoPlay
+				loop={false}
+			/>
+			<View style={[styles.waterMark, { top: 480, right: -75 }]} />
+			<View style={[styles.waterMark, { bottom: 5, right: 0 }]} />
 		</View>
 	);
 };
@@ -131,10 +164,9 @@ export default LoadingManager;
 
 const styles = StyleSheet.create({
 	loadingContainer: {
-		flex: 1,
-		backgroundColor: "grey", // Grey
+		backgroundColor: "#ecfaff",
 		alignItems: "center",
-		justifyContent: "center",
+		height: "100%",
 	},
 	logo: {
 		width: 100,
@@ -145,5 +177,13 @@ const styles = StyleSheet.create({
 		fontSize: 30,
 		fontWeight: "bold",
 		color: "white",
+	},
+	lottieView: {},
+	waterMark: {
+		width: 150,
+		height: 80,
+		position: "absolute",
+		backgroundColor: "#ecfaff",
+		borderTopLeftRadius: 20,
 	},
 });
