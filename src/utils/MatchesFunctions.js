@@ -58,3 +58,31 @@ export const cancelMatch = async (matchId) => {
 		throw error; // Re-throw the error to be handled in the component
 	}
 };
+
+// Get matches for a user
+export const getUserMatches = async (userId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/${userId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error getting matches: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data; // Return the response data
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};

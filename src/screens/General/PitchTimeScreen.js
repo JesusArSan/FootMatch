@@ -51,7 +51,6 @@ const PitchTimeScreen = ({ route }) => {
 			);
 
 			const allSlots = [
-				"07:30 AM",
 				"08:30 AM",
 				"09:30 AM",
 				"10:30 AM",
@@ -68,7 +67,34 @@ const PitchTimeScreen = ({ route }) => {
 				"09:30 PM",
 			];
 
-			return allSlots.map((slot) => {
+			// Get the current UTC time and adjust it based on the timezone offset
+			const now = new Date();
+			const localTime = new Date(
+				now.getTime() - now.getTimezoneOffset() * 60000
+			);
+
+			const isToday = isSameDay(localTime, date);
+
+			const filteredSlots = allSlots.filter((slot) => {
+				if (!isToday) {
+					return true; // If not today, return all slots
+				}
+
+				// Parse the slot time into a Date object for comparison
+				const [time, period] = slot.split(" ");
+				const [hours, minutes] = time.split(":").map(Number);
+				let slotDate = new Date(date);
+				let slotHours = period === "PM" && hours < 12 ? hours + 12 : hours;
+				slotHours = period === "AM" && hours === 12 ? 0 : slotHours;
+
+				slotDate.setHours(slotHours, minutes, 0, 0);
+
+				// Only return slots that are later than the current local time
+				return slotDate.getTime() > localTime.getTime();
+			});
+
+			// Check for occupancy and return slots
+			return filteredSlots.map((slot) => {
 				const occupied = dayOccupancies.some((occupancy) => {
 					const occupancyTime = format(
 						new Date(occupancy.date_time),
