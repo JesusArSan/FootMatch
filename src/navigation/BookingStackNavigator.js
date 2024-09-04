@@ -3,20 +3,28 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 // Import Screens
 import BookFieldScreen from "../screens/General/BookFieldScreen";
-import FieldDetailsScreen from "../screens/General/FieldDetailsScreen";
+import CenterDetailsScreen from "../screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "../screens/General/PitchTimeScreen";
-import MatchScreen from "../screens/General/MatchScreen";
+// Navigator
+import MatchTabNavigator from "./MatchTabNavigator";
 // My Components
 import HeaderTitleScreen from "../components/headers/HeaderTitleScreen";
 
 // Create the Stack Navigator
 const BookStack = createStackNavigator();
 
-const BookingStachNavigator = ({ route }) => {
+const BookingStackNavigator = ({ route }) => {
 	const userData = route.params.user || {};
+	const routeName = route.params.routeName || "BookFieldScreen";
+	const userLocation = route.params.userLocation || {};
+	let center = [];
+
+	if (routeName === "CenterDetailsScreen") {
+		center = route.params.centerInfo || {};
+	}
 
 	return (
-		<BookStack.Navigator initialRouteName="BookFieldScreen">
+		<BookStack.Navigator initialRouteName={routeName}>
 			<BookStack.Screen
 				name="BookFieldScreen"
 				component={BookFieldScreen}
@@ -32,12 +40,16 @@ const BookingStachNavigator = ({ route }) => {
 				}}
 			/>
 			<BookStack.Screen
-				name="FieldDetailsScreen"
-				component={FieldDetailsScreen}
-				initialParams={{ user: userData }}
+				name="CenterDetailsScreen"
+				component={CenterDetailsScreen}
+				initialParams={{
+					userData: userData,
+					centerInfo: center,
+					userLocation: userLocation,
+				}}
 				options={{
 					headerTitle: (props) => (
-						<HeaderTitleScreen {...props} text={"Field Details"} />
+						<HeaderTitleScreen {...props} text={"Center Details"} />
 					),
 					headerStyle: {
 						backgroundColor: "#3562A6",
@@ -59,9 +71,10 @@ const BookingStachNavigator = ({ route }) => {
 					headerTintColor: "white",
 				}}
 			/>
-			<BookStack.Screen
-				name="MatchScreen"
-				component={MatchScreen}
+			{/* MatchTabNavigator must be on app.js */}
+			{/* <BookStack.Screen
+				name="MatchTabNavigator"
+				component={MatchTabNavigator}
 				initialParams={{ user: userData }}
 				options={{
 					headerTitle: (props) => (
@@ -72,9 +85,9 @@ const BookingStachNavigator = ({ route }) => {
 					},
 					headerTintColor: "white",
 				}}
-			/>
+			/> */}
 		</BookStack.Navigator>
 	);
 };
 
-export default BookingStachNavigator;
+export default BookingStackNavigator;

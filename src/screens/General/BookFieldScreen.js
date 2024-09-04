@@ -1,5 +1,4 @@
-// React Imports
-import * as React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
 	BottomSheetModal,
 	BottomSheetModalProvider,
@@ -14,11 +13,12 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from "react-native-maps";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-// React Icons
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { FontAwesome6 } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import {
+	MaterialCommunityIcons,
+	FontAwesome6,
+	MaterialIcons,
+	Ionicons,
+} from "@expo/vector-icons";
 // My utils
 import UserLocation from "../../utils/UserLocation";
 import { applyFilters } from "../../utils/NearbyCenters";
@@ -26,16 +26,16 @@ import { applyFilters } from "../../utils/NearbyCenters";
 import CustomCenter from "../../components/CustomCenter";
 import StatusBar from "../../components/StatusBar";
 import BottomSheetContent from "../../components/BottomSheetContent";
-// Dummy Data
-import centers from "../../assets/data/sportCenters.json";
+// Centers Functions
+import { getCenters } from "../../utils/CentersFunctions";
 
 const LOCATION_KEY = "@userLocation";
 
 const BookFieldScreen = ({ route }) => {
 	// Refs
-	const mapRef = React.useRef(null);
-	const flatListRef = React.useRef(null);
-	const bottomSheetModalRef = React.useRef(null);
+	const mapRef = useRef(null);
+	const flatListRef = useRef(null);
+	const bottomSheetModalRef = useRef(null);
 
 	// Navigation
 	const navigation = useNavigation();
@@ -43,22 +43,69 @@ const BookFieldScreen = ({ route }) => {
 	// Get the user data from the route params
 	const userData = route.params.user || {};
 
+	// Centers
+	const [centers, setCenters] = useState([]);
+	const [filteredCenters, setFilteredCenters] = useState([]);
+
 	// Initialize the location of Spain
-	const [location, setLocation] = React.useState({
+	const [location, setLocation] = useState({
 		latitude: 40.4168,
 		longitude: -3.7038,
 		latitudeDelta: 8,
 		longitudeDelta: 8,
 	});
-	// Initialize the selected center
-	const [selectedCenterId, setSelectedCenterId] = React.useState(null);
-	// Initialize the filtered centers
-	const [filteredCenters, setFilteredCenters] = React.useState(centers);
-	// Initialize the distance
-	const [maxDistance, setMaxDistance] = React.useState(20000); // Initial distance state 20km
+	const [selectedCenterId, setSelectedCenterId] = useState(null);
+	const [maxDistance, setMaxDistance] = useState(20000); // Initial distance state 20km
 
-	// Check if the user has a location set and animate the map to that location
-	React.useEffect(() => {
+	// Fetch and set centers data
+	const updateCentersList = async () => {
+		await getCenters(setCenters); // Fetch centers
+	};
+
+	// Effect to fetch centers and update state
+	useEffect(() => {
+		const fetchCenters = async () => {
+			await updateCentersList();
+		};
+
+		fetchCenters();
+	}, []);
+
+	// Effect to update filtered centers and move the map
+	useEffect(() => {
+		if (centers.length > 0) {
+			// Filter centers based on location and distance
+			const filtered = applyFilters(centers, "", location, maxDistance);
+			setFilteredCenters(filtered);
+
+			// Move the map to the user location
+			if (mapRef.current) {
+				moveMapToUserLocation(mapRef, location, 1000);
+			}
+		}
+	}, [centers, location, maxDistance]);
+
+	const fetchLocation = async () => {
+		try {
+			// Obtain the user location
+			const location = await UserLocation();
+			const { latitude, longitude } = location;
+
+			// Save the location in AsyncStorage
+			await AsyncStorage.setItem(
+				"@userLocation",
+				JSON.stringify({ latitude, longitude })
+			);
+
+			// Update the location of the user
+			updateLocation(location);
+		} catch (error) {
+			console.error("Error getting user location:", error);
+		}
+	};
+
+	// Update the location of the user
+	useEffect(() => {
 		if (userData.location) {
 			const userLatitude = userData.location.latitude;
 			const userLongitude = userData.location.longitude;
@@ -72,22 +119,6 @@ const BookFieldScreen = ({ route }) => {
 			fetchLocation();
 		}
 	}, [userData.location]);
-
-	React.useEffect(
-		() => {
-			// Filter centers
-			const filtered = applyFilters(centers, "", location, maxDistance);
-			setFilteredCenters(filtered);
-
-			// Move the map to the user location
-			if (mapRef.current) {
-				moveMapToUserLocation(mapRef, location, 1000);
-			}
-		},
-		[location],
-		[mapRef],
-		[centers, location, maxDistance]
-	);
 
 	// Update the location of the user
 	const updateLocation = (newCoords) => {
@@ -104,27 +135,20 @@ const BookFieldScreen = ({ route }) => {
 		mapRef.current?.animateToRegion({ ...location }, timeAnimation);
 	};
 
-	// Fetch the user location and set iteam in AsyncStorage
-	const fetchLocation = async () => {
-		const coords = await UserLocation();
-		if (coords) {
-			// Latitud longitud San Francisco EEUU
-			// const coords = { latitude: 37.7749, longitude: -122.4194 };
-			// Update the location
-			updateLocation(coords);
+	// UseEffect to update the location of the user
+	useEffect(() => {
+		if (userData.location) {
+			const userLatitude = userData.location.latitude;
+			const userLongitude = userData.location.longitude;
 
-			// Store the location in AsyncStorage
-			const { latitude, longitude } = coords;
-			try {
-				await AsyncStorage.setItem(
-					LOCATION_KEY,
-					JSON.stringify({ latitude, longitude })
-				);
-			} catch (error) {
-				console.error("Error storing coordinates: ", error);
+			if (
+				location.latitude !== userLatitude ||
+				location.longitude !== userLongitude
+			) {
+				updateLocation(userData.location);
 			}
 		}
-	};
+	}, [userData.location]);
 
 	// Handle the search input
 	const handleSearchInput = (input) => {
@@ -150,7 +174,7 @@ const BookFieldScreen = ({ route }) => {
 	const handleFinalDistanceSelect = (distance) => {
 		setMaxDistance(distance);
 	};
-	React.useEffect(() => {
+	useEffect(() => {
 		const filtered = applyFilters(centers, "", location, maxDistance);
 		setFilteredCenters(filtered);
 	}, [maxDistance, location, centers]);
@@ -166,7 +190,7 @@ const BookFieldScreen = ({ route }) => {
 					name={center.title}
 					address={center.address}
 					distance={center.distance}
-					imgUrl={center.images[0].uri}
+					imgUrl={center.images[0]?.uri || ""}
 					isSelected={selectedCenterId === center.id}
 				/>
 			</TouchableOpacity>
@@ -175,12 +199,9 @@ const BookFieldScreen = ({ route }) => {
 
 	// Handle when center is pressed
 	const handleCenterPress = (center) => {
-		// Console log
-		console.log("Center " + center.id + " pressed");
-
-		// Go to the FieldDetailsScreen
-		navigation.navigate("FieldDetailsScreen", {
+		navigation.navigate("CenterDetailsScreen", {
 			centerInfo: center,
+			userData: userData,
 			userLocation: location,
 		});
 	};
@@ -207,7 +228,7 @@ const BookFieldScreen = ({ route }) => {
 									color="black"
 								/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={() => handlePresentModal()}>
+							<TouchableOpacity onPress={handlePresentModal}>
 								<Ionicons
 									name="options-sharp"
 									size={30}
@@ -239,11 +260,9 @@ const BookFieldScreen = ({ route }) => {
 								<Marker
 									key={center.id}
 									coordinate={{
-										latitude: center.latitude,
-										longitude: center.longitude,
+										latitude: parseFloat(center.latitude),
+										longitude: parseFloat(center.longitude),
 									}}
-									// title={center.title}
-									tracksViewChanges={false}
 									onPress={() => {
 										setSelectedCenterId(center.id);
 										handleMarkerPress(center.id);

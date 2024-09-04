@@ -1,7 +1,8 @@
 // React Imports
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // My components
 import MyLastGame from "../../components/MyLastGame.js";
 import CustomActionApp from "../../components/CustomActionApp.js";
@@ -10,26 +11,68 @@ import CustomCenter from "../../components/CustomCenter.js";
 import MessageIcon from "../../components/icons/MessageIcon.js";
 // My Styles
 import { ScrollView } from "react-native-gesture-handler";
-// Dummy Data
-import centers from "../../assets/data/sportCenters.json";
+// Centers Functions
+import { getFavCenters } from "../../utils/CentersFunctions.js";
+// User Location
+import UserLocation from "../../utils/UserLocation.js";
+import { useDrawerProgress } from "@react-navigation/drawer";
 
 const MainHomeScreen = ({ route }) => {
-	// Initialize the filtered centers
-	let favCenters = [];
-	if (true) {
-		favCenters = centers;
-	}
+	// State to store the fav centers
+	const [favCenters, setCenters] = useState([]);
 
 	// Navigation between screens
 	const navigation = useNavigation();
 
 	// Get the user data from the route params
-	const user = route.params.user || {};
+	let user = route.params.user || {};
+
+	// Update the fav centers list
+	const updateCentersList = async () => {
+		await getFavCenters(user.id, setCenters);
+	};
+	// Update the fav centers list on component mount
+	useFocusEffect(
+		useCallback(() => {
+			updateCentersList();
+		}, [])
+	);
+
+	// If user.location do not exit, get it
+	useEffect(() => {
+		const fetchUserLocation = async () => {
+			try {
+				console.log("Getting user location from device....");
+
+				// Get the user location
+				const location = await UserLocation();
+				const { latitude, longitude } = location;
+
+				// Save the user location in asyncStorage
+				await AsyncStorage.setItem(
+					"@userLocation",
+					JSON.stringify({ latitude, longitude })
+				);
+
+				// Update the user object with the location
+				user = { ...user, location: { latitude, longitude } };
+			} catch (error) {
+				console.error("Error getting user location:", error);
+			}
+		};
+
+		// If the user location is not defined, get it
+		if (user.location === undefined) {
+			fetchUserLocation();
+		}
+	}, [user]);
 
 	const handleCenterPress = (center) => {
-		console.log("Center " + center.id + " pressed");
-		navigation.navigate("FieldDetailsScreen", {
+		navigation.navigate("BookingStackNavigator", {
 			centerInfo: center,
+			routeName: "CenterDetailsScreen",
+			user: user,
+			userLocation: user.location,
 		});
 	};
 
@@ -40,7 +83,7 @@ const MainHomeScreen = ({ route }) => {
 	};
 
 	// Update navigation params to include the handler
-	React.useEffect(() => {
+	useEffect(() => {
 		navigation.setOptions({
 			headerRight: () => (
 				<TouchableOpacity
@@ -78,9 +121,9 @@ const MainHomeScreen = ({ route }) => {
 					</View>
 				</View>
 
-				{/* Some Nearby Centers */}
+				{/* Some Favourite Centers */}
 				<View style={styles.centersContainer}>
-					<Text style={styles.sectionTitle}>Nearby Centers</Text>
+					<Text style={styles.sectionTitle}>Favourite Centers</Text>
 					{favCenters.length > 0 ? (
 						<View style={styles.centersSpace}>
 							{favCenters.map((center) => (
@@ -101,7 +144,7 @@ const MainHomeScreen = ({ route }) => {
 						</View>
 					) : (
 						<Text style={styles.noCentersText}>
-							There are no centers in your favorites list
+							There are no centers in your favorite list.
 						</Text>
 					)}
 				</View>

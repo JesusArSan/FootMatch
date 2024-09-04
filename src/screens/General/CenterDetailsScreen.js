@@ -1,14 +1,15 @@
 // FieldDetailScreen.js
-import * as React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
 	View,
 	Text,
-	Image,
+	Pressable,
 	StyleSheet,
 	TouchableOpacity,
 	ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import LottieView from "lottie-react-native";
 // Google Maps Directions
 import getDirections from "react-native-google-maps-directions";
 // My imports
@@ -17,6 +18,12 @@ import {
 	useNotificationManager,
 } from "../../utils/NotificationService"; // Import Message y NotificationManager
 import ImageGallery from "../../components/ImageGallery";
+// Centers Functions
+import {
+	getFavCenters,
+	setFavCenter,
+	deleteFavCenter,
+} from "../../utils/CentersFunctions";
 // React Icons
 import { FontAwesome6 } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -24,44 +31,108 @@ import { Ionicons } from "@expo/vector-icons";
 
 const MAX_DISTANCE_WALK = 1000; // 1000 meters
 
-const FieldDetailsScreen = ({ route }) => {
-	const center = route.params.centerInfo;
+const CenterDetailsScreen = ({ route }) => {
+	const center = route.params.centerInfo || [];
+	const userData = route.params.userData || {};
 	const userLocation = route.params.userLocation;
 	const { addMessage, messages, removeMessage } = useNotificationManager();
+	const [favCenters, setFavCenters] = useState([]);
+	const [liked, setLiked] = useState(false);
+	const animation = useRef(null);
+	const isFirstRun = useRef(true);
 
 	// Navigation
 	const navigation = useNavigation();
 
+	// Get Fav Centers
+	const updateCentersList = async () => {
+		await getFavCenters(userData.id, setFavCenters);
+	};
+
+	// Update the fav centers list on component mount
+	useEffect(() => {
+		updateCentersList();
+	}, []);
+
+	// Effect to check if the center is in favCenters after they are loaded
+	useEffect(() => {
+		const isCenterLiked = favCenters.some(
+			(favCenter) => favCenter.id === center.id
+		);
+		setLiked(isCenterLiked);
+	}, [favCenters]);
+
+	// Animation Effect
+	useEffect(() => {
+		if (isFirstRun.current) {
+			if (liked) {
+				animation.current.play(100, 100);
+			} else {
+				animation.current.play(0, 0);
+			}
+			isFirstRun.current = false;
+		} else {
+			if (liked) {
+				animation.current.play(0, 100);
+			} else {
+				animation.current.play(0, 0);
+			}
+		}
+	}, [liked]);
+
+	// Handle Like Center
+	const handleLikeCenter = () => {
+		if (liked) {
+			addMessage("Center removed from favorites.");
+			// Remove from data base
+			deleteFavCenter(userData.id, center.id);
+		} else {
+			// Add to data base
+			setFavCenter(userData.id, center.id);
+		}
+		setLiked(!liked);
+	};
+
 	// Get Direction to the Center via Google Maps
-	handleGetDirections = () => {
-		// Update the travel mode based on the distance between the user and the center
+	const handleGetDirections = () => {
+		if (
+			!userLocation ||
+			!center ||
+			!userLocation.latitude ||
+			!userLocation.longitude ||
+			!center.latitude ||
+			!center.longitude
+		) {
+			addMessage("Unable to get directions. Missing location data.");
+			return;
+		}
+
+		// Configure the travel mode
 		let travelMode = "driving";
 		if (center.distance !== null && center.distance !== undefined) {
 			travelMode =
 				center.distance < MAX_DISTANCE_WALK ? "walking" : "driving";
 		}
 
+		// Data for the Google Maps Directions
 		const data = {
 			source: {
-				latitude: userLocation.latitude,
-				longitude: userLocation.longitude,
+				latitude: parseFloat(userLocation.latitude), // Asegúrate de que sea float
+				longitude: parseFloat(userLocation.longitude), // Asegúrate de que sea float
 			},
 			destination: {
-				latitude: center.latitude,
-				longitude: center.longitude,
+				latitude: parseFloat(center.latitude), // Asegúrate de que sea float
+				longitude: parseFloat(center.longitude), // Asegúrate de que sea float
 			},
 			params: [
 				{
 					key: "travelmode",
 					value: travelMode, // "walking", "bicycling" or "transit", driving
 				},
-				// {
-				// 	key: "dir_action",
-				// 	value: "navigate", // this instantly initializes navigation using the given travel mode
-				// },
 			],
 		};
 
+		// Get Directions
 		getDirections(data);
 	};
 
@@ -70,9 +141,7 @@ const FieldDetailsScreen = ({ route }) => {
 		if (pitch.status === "closed") {
 			addMessage(`Sorry, Pitch ${pitch.id} is unavailable at this time. 😅`);
 		} else {
-			// Navigate to the Pitch Details Screen
-			console.log("Pitch " + pitch.id + " pressed");
-			// Go to the FieldDetailsScreen
+			// Go to the CenterDetailsScreen
 			navigation.navigate("PitchTimeScreen", {
 				centerInfo: center,
 				pitchInfo: pitch,
@@ -81,7 +150,7 @@ const FieldDetailsScreen = ({ route }) => {
 	};
 
 	// Render the item for the ScrollView
-	const renderPitch = ({ centerInfo, pitch }) => (
+	const renderPitch = ({ center, pitch }) => (
 		<View key={pitch.id} style={styles.pitchContainer}>
 			<TouchableOpacity
 				activeOpacity={0.5}
@@ -90,7 +159,7 @@ const FieldDetailsScreen = ({ route }) => {
 						? styles.pitchButtonClosed
 						: styles.pitchButton
 				}
-				onPress={() => handlePitchPress(centerInfo, pitch)}
+				onPress={() => handlePitchPress(center, pitch)}
 			>
 				<View style={styles.pitchRow}>
 					<View>
@@ -131,11 +200,22 @@ const FieldDetailsScreen = ({ route }) => {
 			</View>
 
 			<View style={styles.imageContainer}>
-				<ImageGallery images={center.images} />
+				<ImageGallery images={center.images || []} />
 			</View>
 
 			<View style={styles.mainContainer}>
-				<Text style={styles.nameCenter}>{center.title}</Text>
+				<View style={{ flexDirection: "row" }}>
+					<Text style={styles.nameCenter}>{center.title}</Text>
+					<Pressable style={styles.likeButton} onPress={handleLikeCenter}>
+						<LottieView
+							ref={animation}
+							source={require("../../assets/animations/like.json")}
+							autoPlay
+							loop={false}
+							style={styles.lottieStyle}
+						/>
+					</Pressable>
+				</View>
 				<TouchableOpacity
 					style={styles.locationContainer}
 					onPress={handleGetDirections}
@@ -158,8 +238,14 @@ const FieldDetailsScreen = ({ route }) => {
 						<Text style={styles.titleContainer}>Available Pitches</Text>
 
 						<View>
-							{center.pitches.map((pitch) =>
-								renderPitch({ centerInfo: center, pitch })
+							{center.pitches && center.pitches.length > 0 ? (
+								center.pitches.map((pitch) =>
+									renderPitch({ center, pitch })
+								)
+							) : (
+								<Text style={styles.noPitchesText}>
+									No available pitches
+								</Text>
 							)}
 						</View>
 					</View>
@@ -181,6 +267,15 @@ const styles = StyleSheet.create({
 	image: {
 		width: "100%",
 		height: "100%",
+	},
+	likeButton: {
+		position: "absolute",
+		top: -21,
+		right: -20,
+	},
+	lottieStyle: {
+		width: 70,
+		height: 70,
 	},
 	mainContainer: {
 		flex: 1,
@@ -204,6 +299,7 @@ const styles = StyleSheet.create({
 	},
 	nameCenter: {
 		fontSize: 22,
+		width: "86%",
 		fontFamily: "InriaSans-Bold",
 	},
 	detailsContainer: {
@@ -226,18 +322,21 @@ const styles = StyleSheet.create({
 	},
 	pitchContainer: {
 		marginTop: 8,
+		paddingHorizontal: 1,
 	},
 	pitchButton: {
 		backgroundColor: "white",
 		paddingVertical: 15,
 		paddingHorizontal: 20,
 		borderRadius: 15,
+		elevation: 1,
 	},
 	pitchButtonClosed: {
 		backgroundColor: "#FFD2DC",
 		paddingVertical: 15,
 		paddingHorizontal: 20,
 		borderRadius: 15,
+		elevation: 1,
 	},
 	pitchText: {
 		fontSize: 15,
@@ -254,4 +353,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default FieldDetailsScreen;
+export default CenterDetailsScreen;

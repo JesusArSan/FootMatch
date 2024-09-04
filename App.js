@@ -9,12 +9,13 @@ import RegisterScreen from "./src/screens/Auth/RegisterScreen";
 import LoginScreen from "./src/screens/Auth/LoginScreen";
 import MainNavigatorScreen from "./src/screens/Home/MainNavigatorScreen";
 import BookFieldScreen from "./src/screens/General/BookFieldScreen";
-import FieldDetailsScreen from "./src/screens/General/FieldDetailsScreen";
+import CenterDetailsScreen from "./src/screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
 import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
 import UserProfileScreen from "./src/screens/Home/UserProfileScreen";
+import MatchTabNavigator from "./src/navigation/MatchTabNavigator";
 // Navigation
 import ChatStackNavigator from "./src/navigation/ChatStackNavigator";
 import BookingStackNavigator from "./src/navigation/BookingStackNavigator";
@@ -130,6 +131,20 @@ export default function App() {
 					name="ChatStackNavigator"
 					component={ChatStackNavigator}
 					options={{ headerShown: false }}
+				/>
+				<Stack.Screen
+					name="MatchTabNavigator"
+					component={MatchTabNavigator}
+					initialParams={{ user: userData }}
+					options={{
+						headerTitle: (props) => (
+							<HeaderTitleScreen {...props} text={"Match"} />
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					}}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>

@@ -78,20 +78,26 @@ const LoadingManager = ({ onLoadingComplete }) => {
 		const loadUserLocation = async () => {
 			if (userData !== null) {
 				try {
-					const userLocation = await AsyncStorage.getItem("@userLocation");
-					if (userLocation !== null) {
-						setUserLocation(JSON.parse(userLocation));
+					const storedLocation = await AsyncStorage.getItem(
+						"@userLocation"
+					);
+					let location;
+
+					if (storedLocation !== null) {
+						location = JSON.parse(storedLocation);
 					} else {
-						// Get user location
-						const location = await UserLocation();
+						console.log("Getting user location from device....");
+						location = await UserLocation();
 						const { latitude, longitude } = location;
-						setUserLocation({ latitude, longitude });
-						// Storage
+						location = { latitude, longitude };
+
 						await AsyncStorage.setItem(
 							"@userLocation",
-							JSON.stringify({ latitude, longitude })
+							JSON.stringify(location)
 						);
 					}
+
+					setUserLocation(location);
 				} catch (error) {
 					console.error("Error loading user location", error);
 				}
@@ -111,7 +117,7 @@ const LoadingManager = ({ onLoadingComplete }) => {
 			// Pass location with UserData
 			if (location !== null) userData = { ...userData, location };
 
-			onLoadingComplete(isTokenValid, userData); // Pass additional parameters
+			onLoadingComplete(isTokenValid, userData);
 		}
 	}, [showLoadingScreen, fontsLoaded, userData, isTokenValid, location]);
 
