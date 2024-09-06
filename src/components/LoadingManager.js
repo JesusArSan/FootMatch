@@ -109,7 +109,11 @@ const LoadingManager = ({ onLoadingComplete }) => {
 
 	// Loading Complete
 	useEffect(() => {
-		if (!showLoadingScreen && fontsLoaded && (userData || !isTokenValid)) {
+		if (
+			!showLoadingScreen &&
+			fontsLoaded &&
+			(userData || !isTokenValid)
+		) {
 			// Pass location with UserData
 			if (location !== null) userData = { ...userData, location };
 
