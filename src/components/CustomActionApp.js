@@ -127,9 +127,9 @@ const shadowStyles = {
 
 const styles = StyleSheet.create({
 	actionContainer: {
-		width: 166,
-		height: 166,
-		justifyContent: "flex-end",
+		width: "48%",
+		// width: 166,
+		// height: 166,
 		backgroundColor: "#FAFAFA",
 		borderRadius: 25,
 		padding: 16,
