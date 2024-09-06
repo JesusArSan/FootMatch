@@ -31,7 +31,7 @@ const MatchesListScreen = ({ route }) => {
 	const headerHeight = 100;
 	const availableHeight = screenHeight - insets.top - headerHeight;
 
-	// Fetch user matches on screen focus 
+	// Fetch user matches on screen focus
 	useFocusEffect(
 		useCallback(() => {
 			getUserMatches(user.id)
