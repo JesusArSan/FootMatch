@@ -62,7 +62,7 @@ const MatchesListScreen = ({ route }) => {
 			user,
 			reservation: {
 				matchDate: formattedDate,
-				pitch_id: null,
+				pitchId: item.pitch_id,
 				user_id: item.created_by_user_id,
 			}, // Use the formatted date here
 			matchId: item.id,
@@ -140,6 +140,7 @@ const MatchesListScreen = ({ route }) => {
 
 			{/* FlatList to render centers */}
 			<FlatList
+				showsVerticalScrollIndicator={false}
 				data={centers}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderItem}

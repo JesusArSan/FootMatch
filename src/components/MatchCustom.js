@@ -19,12 +19,16 @@ const MatchCustom = ({ teamA = {}, teamB = {}, result = {} }) => (
 			<Text style={styles.teamName}>
 				{teamA.name
 					? teamA.name.substring(0, NAME_LIMIT) +
-					  (teamA.name.length > NAME_LIMIT ? "." : "")
+						(teamA.name.length > NAME_LIMIT ? "." : "")
 					: "Team A"}
 			</Text>
 		</View>
 		<Text style={styles.vsText}>
-			{result.A >= 0 && result.B >= 0 ? result.A + " - " + result.B : "VS"}
+			{result.status === "completed" &&
+			result.teamA >= 0 &&
+			result.teamB >= 0
+				? `${result.teamA} - ${result.teamB}`
+				: "VS"}
 		</Text>
 		<View style={styles.teamContainer}>
 			<Image
@@ -38,7 +42,7 @@ const MatchCustom = ({ teamA = {}, teamB = {}, result = {} }) => (
 			<Text style={styles.teamName}>
 				{teamB.name
 					? teamB.name.substring(0, NAME_LIMIT) +
-					  (teamB.name.length > NAME_LIMIT ? "." : "")
+						(teamB.name.length > NAME_LIMIT ? "." : "")
 					: "Team B"}
 			</Text>
 		</View>

@@ -62,12 +62,15 @@ export const cancelMatch = async (matchId) => {
 // Get matches for a user
 export const getUserMatches = async (userId) => {
 	try {
-		const response = await fetch(`${config.serverUrl}/matches/${userId}`, {
-			method: "GET",
-			headers: {
-				"Content-Type": "application/json",
-			},
-		});
+		const response = await fetch(
+			`${config.serverUrl}/matches/user/${userId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
 
 		if (!response.ok) {
 			// Handle HTTP errors
@@ -81,6 +84,45 @@ export const getUserMatches = async (userId) => {
 		}
 
 		return data; // Return the response data
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
+// Get match details by id
+export const getMatchDetails = async (matchId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/${matchId}`, {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		});
+
+		// Check if the response is OK
+		if (!response.ok) {
+			throw new Error(`Error getting match details: ${response.status}`);
+		}
+
+		// Check if there is content in the response body
+		const text = await response.text(); // Read the response body as text first
+
+		// If the body is empty, handle it gracefully
+		if (!text) {
+			throw new Error("Empty response body from the server.");
+		}
+
+		// Attempt to parse the JSON from the response text
+		const data = JSON.parse(text);
+
+		// Handle potential server errors in the data
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		// Return the parsed data
+		return data;
 	} catch (error) {
 		console.error("Error:", error);
 		throw error;
