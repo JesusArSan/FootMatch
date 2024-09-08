@@ -27,7 +27,7 @@ export const createMatch = async (matchData, setMatchId) => {
 		setMatchId(data.matchId);
 	} catch (error) {
 		// Alert the user about the error
-		alert(`${error.message}`);
+		alert(`${error.message} ${error.name}`);
 	}
 };
 

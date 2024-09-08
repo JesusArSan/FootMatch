@@ -22,7 +22,7 @@ const MatchesListScreen = ({ route }) => {
 	// User data
 	const user = route.params.user || {};
 	// State to store matches
-	const [centers, setCenters] = useState([]);
+	const [matches, setMatches] = useState([]);
 	// Safe Area Insets
 	const insets = useSafeAreaInsets();
 	const screenHeight = Dimensions.get("window").height;
@@ -36,7 +36,11 @@ const MatchesListScreen = ({ route }) => {
 		useCallback(() => {
 			getUserMatches(user.id)
 				.then((data) => {
-					setCenters(data);
+					// Sort matches by date, with most recent matches first
+					const sortedMatches = data.sort(
+						(a, b) => new Date(b.match_date) - new Date(a.match_date)
+					);
+					setMatches(sortedMatches); // Set sorted matches
 				})
 				.catch((error) => {
 					console.error("Error getting user matches:", error);
@@ -128,8 +132,25 @@ const MatchesListScreen = ({ route }) => {
 						<Text style={styles.statusText}>{statusText}</Text>
 					</View>
 				</View>
-				{/* Show if the user is the leader */}
-				{isLeader && <Text style={styles.leaderText}>You are leader</Text>}
+				<View
+					style={[
+						styles.matchDate,
+						{ flexDirection: "row", justifyContent: "space-between" },
+					]}
+				>
+					<Text style={{ fontFamily: "InriaSans-Regular" }}>
+						{isSameDay(new Date(item.match_date), new Date()) // Check if the match is today
+							? `Today ${format(new Date(item.match_date), "HH:mm")}` // Show "Today" and the hour
+							: format(
+									new Date(item.match_date),
+									"dd/MM/yyyy HH:mm"
+								)}{" "}
+					</Text>
+					{/* Show if the user is the leader */}
+					{isLeader && (
+						<Text style={styles.leaderText}>You are leader</Text>
+					)}
+				</View>
 			</Pressable>
 		);
 	};
@@ -138,10 +159,10 @@ const MatchesListScreen = ({ route }) => {
 		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
 			<Text style={styles.title}>My Matches</Text>
 
-			{/* FlatList to render centers */}
+			{/* FlatList to render Matches */}
 			<FlatList
 				showsVerticalScrollIndicator={false}
-				data={centers}
+				data={matches}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderItem}
 				style={styles.list}
@@ -208,8 +229,11 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 		marginBottom: 5,
 	},
+	matchDate: {
+		marginTop: 5,
+	},
 	leaderText: {
-		fontSize: 13,
+		fontSize: 14,
 		fontFamily: "InriaSans-Regular",
 		color: "#0000FF",
 		alignSelf: "flex-end",
