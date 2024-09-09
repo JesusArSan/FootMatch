@@ -128,3 +128,33 @@ export const getMatchDetails = async (matchId) => {
 		throw error;
 	}
 };
+
+// get match participants by match id
+export const getMatchParticipants = async (matchId, setParticipants) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/participants/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error getting match participants: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		setParticipants(data); // Set the participants in the state
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};

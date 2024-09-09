@@ -17,14 +17,17 @@ import PopUpModal from "../../components/PopUpModal";
 import FriendInvitation from "../../components/FriendInvitation";
 // User Functions
 import { getFriendsList } from "../../utils/UserFunctions";
+import { getMatchParticipants } from "../../utils/MatchesFunctions";
 
-const MatchUsersScreen = ({ route }) => {
+const MatchfriendsScreen = ({ route }) => {
 	const user = route.params.user || {};
-	const [users, setFriendList] = useState([]);
+	const matchId = route.params.matchId || {};
+	const [friends, setFriendList] = useState([]);
+	const [participants, setParticipants] = useState([]);
 	const [modalOpen, setModalOpen] = useState(false);
 
 	const handleRemoveUser = (userId) => {
-		setUsers(users.filter((user) => user.id !== userId));
+		setfriends(friends.filter((user) => user.id !== userId));
 	};
 
 	const handleRoomChat = () => {
@@ -39,14 +42,15 @@ const MatchUsersScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
-	// Update the friends list
-	const updateFriendsList = async () => {
+	// Update the friends list and invitations list
+	const updateUsersList = async () => {
 		await getFriendsList(user.id, setFriendList);
+		await getMatchParticipants(matchId, setParticipants);
 	};
-	// Update the friends list on component mount
+	// Update the friends list on component mount and
 	useEffect(() => {
-		updateFriendsList();
-	},[]);
+		updateUsersList();
+	}, []);
 
 	return (
 		<ImageBackground
@@ -63,9 +67,9 @@ const MatchUsersScreen = ({ route }) => {
 					<View style={styles.popUpAddFriend}>
 						<Text style={styles.title}>Friend List</Text>
 						<View style={styles.friendInvitationContainer}>
-							{users.length > 0 ? (
+							{friends.length > 0 ? (
 								<FlatList
-									data={users}
+									data={friends}
 									renderItem={({ item }) => (
 										<View style={styles.gridItem}>
 											<FriendInvitation friend={item} />
@@ -91,7 +95,7 @@ const MatchUsersScreen = ({ route }) => {
 					</View>
 				</PopUpModal>
 				<FlatList
-					data={users}
+					data={participants}
 					renderItem={({ item }) => (
 						<UserMatchItem user={item} onRemove={handleRemoveUser} />
 					)}
@@ -175,4 +179,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default MatchUsersScreen;
+export default MatchfriendsScreen;
