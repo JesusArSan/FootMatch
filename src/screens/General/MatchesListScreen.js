@@ -14,7 +14,10 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { format, isSameDay } from "date-fns";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 // Matches Functions
-import { getUserMatches } from "../../utils/MatchesFunctions";
+import {
+	getUserMatches,
+	getUserMatchesByStatus,
+} from "../../utils/MatchesFunctions";
 
 const MatchesListScreen = ({ route }) => {
 	// Navigation
@@ -22,10 +25,16 @@ const MatchesListScreen = ({ route }) => {
 	// User data
 	const user = route.params.user || {};
 	// State to store matches
-	const [matches, setMatches] = useState([]);
+	const [invitedMatches, setInvitedMatches] = useState([]);
+	const [pendingMatches, setPendingMatches] = useState([]);
+	const [finishedMatches, setFinishedMatches] = useState([]);
 	// Safe Area Insets
 	const insets = useSafeAreaInsets();
 	const screenHeight = Dimensions.get("window").height;
+	// Boolean to use other style behind the preseable
+	const [invitedPressed, setInvitedPressed] = useState(true);
+	const [pendingPressed, setPendingPressed] = useState(false);
+	const [finishedPressed, setFinishedPressed] = useState(false);
 
 	// Calculate available height for content
 	const headerHeight = 100;
@@ -34,16 +43,28 @@ const MatchesListScreen = ({ route }) => {
 	// Fetch user matches on screen focus
 	useFocusEffect(
 		useCallback(() => {
-			getUserMatches(user.id)
+			getUserMatchesByStatus(user.id, "scheduled")
 				.then((data) => {
 					// Sort matches by date, with most recent matches first
 					const sortedMatches = data.sort(
 						(a, b) => new Date(b.match_date) - new Date(a.match_date)
 					);
-					setMatches(sortedMatches); // Set sorted matches
+					setPendingMatches(sortedMatches); // Set sorted matches
 				})
 				.catch((error) => {
 					console.error("Error getting user matches:", error);
+				});
+
+			getUserMatchesByStatus(user.id, "completed")
+				.then((data) => {
+					// Sort matches by date, with most recent matches first
+					const sortedMatches = data.sort(
+						(a, b) => new Date(b.match_date) - new Date(a.match_date)
+					);
+					setFinishedMatches(sortedMatches); // Set sorted matches
+				})
+				.catch((error) => {
+					console.error("Error getting user finished matches:", error);
 				});
 		}, [user.id])
 	);
@@ -71,6 +92,23 @@ const MatchesListScreen = ({ route }) => {
 			}, // Use the formatted date here
 			matchId: item.id,
 		});
+	};
+
+	// Set the button pressed
+	const setButtonPressed = (button) => {
+		if (button === "invited") {
+			setInvitedPressed(true);
+			setPendingPressed(false);
+			setFinishedPressed(false);
+		} else if (button === "pending") {
+			setInvitedPressed(false);
+			setPendingPressed(true);
+			setFinishedPressed(false);
+		} else {
+			setInvitedPressed(false);
+			setPendingPressed(false);
+			setFinishedPressed(true);
+		}
 	};
 
 	// Render item for FlatList
@@ -159,10 +197,51 @@ const MatchesListScreen = ({ route }) => {
 		<SafeAreaView style={[styles.container, { paddingTop: insets.top + 10 }]}>
 			<Text style={styles.title}>My Matches</Text>
 
+			<View style={styles.buttonFilter}>
+				<Pressable
+					style={
+						invitedPressed
+							? styles.buttonFilterPressed
+							: styles.buttonFilterNoPressed
+					}
+					onPress={() => setButtonPressed("invited")} // Toggle the state
+				>
+					<Text style={styles.textFilter}>Invited</Text>
+				</Pressable>
+				<Pressable
+					style={
+						pendingPressed
+							? styles.buttonFilterPressed
+							: styles.buttonFilterNoPressed
+					}
+					onPress={() => setButtonPressed("pending")} // Toggle the state
+				>
+					<Text style={styles.textFilter}>Pending</Text>
+				</Pressable>
+				<Pressable
+					style={
+						finishedPressed
+							? styles.buttonFilterPressed
+							: styles.buttonFilterNoPressed
+					}
+					onPress={() => setButtonPressed("finished")} // Toggle the state
+				>
+					<Text style={styles.textFilter}>Finished</Text>
+				</Pressable>
+			</View>
+
 			{/* FlatList to render Matches */}
 			<FlatList
 				showsVerticalScrollIndicator={false}
-				data={matches}
+				data={
+					invitedPressed
+						? invitedMatches
+						: pendingPressed
+							? pendingMatches
+							: finishedPressed
+								? finishedMatches
+								: [] // default empty array
+				}
 				keyExtractor={(item) => item.id.toString()}
 				renderItem={renderItem}
 				style={styles.list}
@@ -221,7 +300,7 @@ const styles = StyleSheet.create({
 		marginRight: 10,
 	},
 	teamName: {
-		fontSize: 18,
+		fontSize: 16,
 		fontFamily: "InriaSans-Bold",
 	},
 	centerName: {
@@ -245,11 +324,34 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		height: 40,
 		width: 80,
-		alignContent: "center",
-	},
-	statusText: {
-		fontSize: 14,
 		fontFamily: "InriaSans-Regular",
+	},
+	buttonFilter: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-between",
+		backgroundColor: "#3562A6",
+		height: "6%",
+		borderRadius: 20,
+		marginBottom: 20,
+		paddingHorizontal: 11,
+	},
+	textFilter: {
+		fontSize: 18,
+		fontFamily: "InriaSans-Regular",
+		color: "#fafafa",
+	},
+	buttonFilterPressed: {
+		backgroundColor: "#4A84DC",
+		borderRadius: 13,
+		paddingHorizontal: 16,
+		paddingVertical: 3,
+	},
+	buttonFilterNoPressed: {
+		backgroundColor: "#3562A6",
+		borderRadius: 13,
+		paddingHorizontal: 16,
+		paddingVertical: 3,
 	},
 });
 

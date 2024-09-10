@@ -90,6 +90,36 @@ export const getUserMatches = async (userId) => {
 	}
 };
 
+// GetUserMatches by user id and status
+export const getUserMatchesByStatus = async (userId, status) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/status/${userId}/${status}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error getting matches: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
 // Get match details by id
 export const getMatchDetails = async (matchId) => {
 	try {
