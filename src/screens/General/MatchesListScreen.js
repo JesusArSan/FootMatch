@@ -17,6 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
 	getUserMatches,
 	getUserMatchesByStatus,
+	getUserMatchInvitations,
 } from "../../utils/MatchesFunctions";
 
 const MatchesListScreen = ({ route }) => {
@@ -66,11 +67,23 @@ const MatchesListScreen = ({ route }) => {
 				.catch((error) => {
 					console.error("Error getting user finished matches:", error);
 				});
+			getUserMatchInvitations(user.id, "pending")
+				.then((data) => {
+					// Sort matches by date, with most recent matches first
+					const sortedMatches = data.sort(
+						(a, b) => new Date(b.match_date) - new Date(a.match_date)
+					);
+					setInvitedMatches(sortedMatches); // Set sorted matches
+				})
+				.catch((error) => {
+					console.error("Error getting user invited matches:", error);
+				});
 		}, [user.id])
 	);
 
 	// Handle match press
 	const handleMatchPress = (item) => {
+		console.log("Match pressed:", item);
 		// Extract and process match_date (assuming it is in the "2024-09-05T13:30:00.000Z" format)
 		const matchDateTime = new Date(item.match_date);
 

@@ -173,7 +173,9 @@ export const getMatchParticipants = async (matchId, setParticipants) => {
 		);
 
 		if (!response.ok) {
-			throw new Error(`Error getting match participants: ${response.status}`);
+			throw new Error(
+				`Error getting match participants: ${response.status}`
+			);
 		}
 
 		const data = await response.json();
@@ -183,6 +185,36 @@ export const getMatchParticipants = async (matchId, setParticipants) => {
 		}
 
 		setParticipants(data); // Set the participants in the state
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
+// Get list of matches that user is invited to join based on status
+export const getUserMatchInvitations = async (userId, status) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/invitations/${userId}/${status}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error getting match invitations: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data; // Return the list of match invitations
 	} catch (error) {
 		console.error("Error:", error);
 		throw error;
