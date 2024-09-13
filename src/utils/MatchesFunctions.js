@@ -220,3 +220,130 @@ export const getUserMatchInvitations = async (userId, status) => {
 		throw error;
 	}
 };
+
+// Send a friend invitation
+export const sendFriendInvitation = async (matchId, userId, senderId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/invitations`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				matchId: matchId,
+				userId: userId,
+				senderId: senderId,
+			}),
+		});
+
+		// Parse the response as JSON
+		const data = await response.json();
+
+		// Handle backend messages for known cases
+		if (!response.ok) {
+			if (data.message === "Invitation already exists for this user.") {
+				alert("Invitation already sent to this user.");
+				return data;
+			}
+			if (data.message === "User does not exist.") {
+				alert("User does not exist.");
+				return data;
+			}
+			if (data.message === "Match does not exist.") {
+				alert("Match does not exist.");
+				return data;
+			}
+
+			// Throw unexpected error
+			throw new Error(data.message || "Error sending invitation.");
+		}
+
+		// Return response data on success
+		return data;
+	} catch (error) {
+		// Handle unexpected errors
+		console.error("Error:", error);
+		alert("An unexpected error occurred.");
+		throw error;
+	}
+};
+
+// Get all match invitations from a match
+export const getAllMatchInvitations = async (matchId, setInvitations) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/invitations/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error getting match invitations: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		setInvitations(data);
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
+// Get Friends list that isnt invited to the match
+export const getFriendsNotInvited = async (
+	userId,
+	matchId,
+	setNotInvitedFriends
+) => {
+	try {
+		// Get all the user's friends
+		const friendsResponse = await fetch(
+			`${config.serverUrl}/users/friends/${userId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const friendsList = await friendsResponse.json();
+
+		// Get all the match invitations for this match
+		const invitationsResponse = await fetch(
+			`${config.serverUrl}/matches/invitations/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const matchInvitations = await invitationsResponse.json();
+
+		// Extract user IDs of already invited friends
+		const invitedUserIds = matchInvitations.map(
+			(invitation) => invitation.id
+		);
+
+		// Filter the friends who are not in the invited list
+		const notInvitedFriends = friendsList.filter(
+			(friend) => !invitedUserIds.includes(friend.id)
+		);
+
+		// Set the list of friends not invited
+		setNotInvitedFriends(notInvitedFriends);
+	} catch (error) {
+		console.error("Error getting friends not invited:", error);
+	}
+};

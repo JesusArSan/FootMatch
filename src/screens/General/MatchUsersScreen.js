@@ -17,7 +17,11 @@ import PopUpModal from "../../components/PopUpModal";
 import FriendInvitation from "../../components/FriendInvitation";
 // User Functions
 import { getFriendsList } from "../../utils/UserFunctions";
-import { getMatchParticipants } from "../../utils/MatchesFunctions";
+import {
+	getFriendsNotInvited,
+	getMatchParticipants,
+	sendFriendInvitation,
+} from "../../utils/MatchesFunctions";
 
 const MatchfriendsScreen = ({ route }) => {
 	const user = route.params.user || {};
@@ -36,6 +40,7 @@ const MatchfriendsScreen = ({ route }) => {
 
 	const handleAddFriendPress = () => {
 		setModalOpen(true);
+		updateUsersList();
 	};
 
 	const handleCloseModal = () => {
@@ -44,13 +49,19 @@ const MatchfriendsScreen = ({ route }) => {
 
 	// Update the friends list and invitations list
 	const updateUsersList = async () => {
-		await getFriendsList(user.id, setFriendList);
+		await getFriendsNotInvited(user.id, matchId, setFriendList);
 		await getMatchParticipants(matchId, setParticipants);
 	};
 	// Update the friends list on component mount and
 	useEffect(() => {
 		updateUsersList();
 	}, []);
+
+	// Handle the friend invitation
+	const handleFriendInvitation = async (friendId) => {
+		await sendFriendInvitation(matchId, friendId, user.id);
+		updateUsersList();
+	};
 
 	return (
 		<ImageBackground
@@ -72,7 +83,12 @@ const MatchfriendsScreen = ({ route }) => {
 									data={friends}
 									renderItem={({ item }) => (
 										<View style={styles.gridItem}>
-											<FriendInvitation friend={item} />
+											<FriendInvitation
+												friend={item}
+												onPress={() =>
+													handleFriendInvitation(item.id)
+												}
+											/>
 										</View>
 									)}
 									keyExtractor={(item) => item.id.toString()}
