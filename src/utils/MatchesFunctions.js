@@ -221,7 +221,7 @@ export const getUserMatchInvitations = async (userId, status) => {
 	}
 };
 
-// Send a friend invitation
+// Send a match invitation to a friend
 export const sendFriendInvitation = async (matchId, userId, senderId) => {
 	try {
 		const response = await fetch(`${config.serverUrl}/matches/invitations`, {
@@ -251,6 +251,10 @@ export const sendFriendInvitation = async (matchId, userId, senderId) => {
 			}
 			if (data.message === "Match does not exist.") {
 				alert("Match does not exist.");
+				return data;
+			}
+			if (data.message === "User is already a participant in the match.") {
+				alert("User is already a participant in the match.");
 				return data;
 			}
 
@@ -298,7 +302,7 @@ export const getAllMatchInvitations = async (matchId, setInvitations) => {
 	}
 };
 
-// Get Friends list that isnt invited to the match
+// Get Friends list that are not invited or already participating in the match
 export const getFriendsNotInvited = async (
 	userId,
 	matchId,
@@ -317,6 +321,7 @@ export const getFriendsNotInvited = async (
 		);
 
 		const friendsList = await friendsResponse.json();
+		console.log("Friends list:", friendsList);
 
 		// Get all the match invitations for this match
 		const invitationsResponse = await fetch(
@@ -330,20 +335,124 @@ export const getFriendsNotInvited = async (
 		);
 
 		const matchInvitations = await invitationsResponse.json();
+		console.log("Match invitations:", matchInvitations);
 
-		// Extract user IDs of already invited friends
+		// Get all participants for the match
+		const participantsResponse = await fetch(
+			`${config.serverUrl}/matches/participants/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		const matchParticipants = await participantsResponse.json();
+		console.log("Match participants:", matchParticipants);
+
+		// Extract user IDs of already invited friends and participants
 		const invitedUserIds = matchInvitations.map(
 			(invitation) => invitation.id
 		);
-
-		// Filter the friends who are not in the invited list
-		const notInvitedFriends = friendsList.filter(
-			(friend) => !invitedUserIds.includes(friend.id)
+		const participatingUserIds = matchParticipants.map(
+			(participant) => participant.id
 		);
 
-		// Set the list of friends not invited
+		// Filter the friends who are not in the invited list or participants list
+		const notInvitedFriends = friendsList.filter(
+			(friend) =>
+				!invitedUserIds.includes(friend.id) &&
+				!participatingUserIds.includes(friend.id)
+		);
+
+		console.log("Friends not invited:", notInvitedFriends);
+
+		// Set the list of friends not invited or already participating
 		setNotInvitedFriends(notInvitedFriends);
 	} catch (error) {
 		console.error("Error getting friends not invited:", error);
+	}
+};
+
+// Accept a match invitation
+export const acceptMatchInvitation = async (matchId, userId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/invitations/accept`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					matchId: matchId,
+					userId: userId,
+				}),
+			}
+		);
+
+		// Parse the response as JSON
+		const data = await response.json();
+
+		// Handle backend messages for known cases
+		if (!response.ok) {
+			if (data.message === "Invitation does not exist.") {
+				alert("The invitation does not exist.");
+				return data;
+			}
+
+			// Throw unexpected error
+			throw new Error(data.message || "Error accepting invitation.");
+		}
+
+		// Return response data on success
+		return data;
+	} catch (error) {
+		// Handle unexpected errors
+		console.error("Error:", error);
+		alert("An unexpected error occurred while accepting the invitation.");
+		throw error;
+	}
+};
+
+// Reject a match invitation
+export const rejectMatchInvitation = async (matchId, userId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/invitations/reject`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					matchId: matchId,
+					userId: userId,
+				}),
+			}
+		);
+
+		// Parse the response as JSON
+		const data = await response.json();
+
+		// Handle backend messages for known cases
+		if (!response.ok) {
+			if (data.message === "Invitation does not exist.") {
+				alert("The invitation does not exist.");
+				return data;
+			}
+
+			// Throw unexpected error
+			throw new Error(data.message || "Error rejecting invitation.");
+		}
+
+		// Return response data on success
+		return data;
+	} catch (error) {
+		// Handle unexpected errors
+		console.error("Error:", error);
+		alert("An unexpected error occurred while rejecting the invitation.");
+		throw error;
 	}
 };
