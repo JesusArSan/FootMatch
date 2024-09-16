@@ -18,7 +18,10 @@ import UpdateGameResult from "../../components/UpdateGameResult";
 import FloatButton from "../../components/FloatButton";
 // Center function
 import { getCenterByPitch } from "../../utils/CentersFunctions";
-import { getMatchDetails } from "../../utils/MatchesFunctions";
+import {
+	getMatchDetails,
+	setMatchCompleted,
+} from "../../utils/MatchesFunctions";
 
 const MatchMainScreen = ({ route }) => {
 	// User leader data
@@ -27,6 +30,11 @@ const MatchMainScreen = ({ route }) => {
 	const [date, hour] = reservationData.matchDate.split(" ");
 	const pitchId = route.params.reservation.pitchId || {};
 	const matchId = route.params.matchId || {};
+	// Bool userIsCreator
+	const userIsCreator = route.params.userIsCreator || false;
+	// No time left
+	const [noTimeLeft, setNoTimeLeft] = useState(false);
+	const [matchcompleted, setMatchcompleted] = useState(false);
 
 	// State to store data and loading state
 	const [center, setCenter] = useState(null);
@@ -73,6 +81,10 @@ const MatchMainScreen = ({ route }) => {
 					const matchData = await getMatchDetails(matchId);
 					setMatchDetails(matchData); // Store match data in state
 
+					matchData.status === "completed"
+						? setMatchcompleted(true)
+						: setMatchcompleted(false);
+
 					// Update teamA and teamB state
 					setTeamA({
 						name: matchData.team_a_name || "Team A",
@@ -102,8 +114,6 @@ const MatchMainScreen = ({ route }) => {
 		}, [matchId])
 	);
 
-	// console.log("matchDetails", matchDetails);
-
 	// State for modal
 	const [modalOpen, setModalOpen] = useState(false);
 
@@ -113,6 +123,18 @@ const MatchMainScreen = ({ route }) => {
 
 	const handleCloseModal = () => {
 		setModalOpen(false);
+	};
+
+	// Handle no time left
+	const handleNoTimeLeft = () => {
+		setNoTimeLeft(true);
+	};
+
+	const handleMatchcompleted = async () => {
+		setMatchcompleted(true);
+
+		// Make the match "completed"
+		await setMatchCompleted(matchId);
 	};
 
 	// Render loading state if data is still being fetched
@@ -143,26 +165,62 @@ const MatchMainScreen = ({ route }) => {
 			</PopUpModal>
 			<View style={styles.mainContainer}>
 				<View style={styles.topGameInfo}>
-					<Text style={styles.title}>COMING SOON</Text>
+					{/* Title */}
+					{noTimeLeft ? (
+						matchcompleted ? (
+							<Text style={styles.title}>Finished</Text>
+						) : (
+							<Text style={styles.title}>It's the Time!</Text>
+						)
+					) : (
+						<Text style={styles.title}>COMING SOON</Text>
+					)}
 					<MatchCustom teamA={teamA} teamB={teamB} result={result} />
 					<View style={{ marginTop: 30 }}>
-						<CounterDownTimer targetDate={reservationData.matchDate} />
+						<CounterDownTimer
+							targetDate={reservationData.matchDate}
+							handleNoTimeLeft={handleNoTimeLeft}
+						/>
 					</View>
-					<View style={styles.confirmResult}>
-						<Text style={styles.text}>
-							Make sure to confirm the match score!{" "}
-						</Text>
-						<TouchableOpacity onPress={handleOpenModal}>
-							<Text
-								style={[
-									styles.text,
-									{ color: "rgba(53, 98, 166, 0.6)" },
-								]}
-							>
-								Update now{" "}
-							</Text>
-						</TouchableOpacity>
-					</View>
+					{userIsCreator ? (
+						noTimeLeft ? (
+							<View style={styles.confirmResult}>
+								{matchcompleted ? (
+									<>
+										<Text style={styles.text}>
+											Make sure to confirm the match score!{" "}
+										</Text>
+										<TouchableOpacity onPress={handleOpenModal}>
+											<Text
+												style={[
+													styles.text,
+													{ color: "rgba(53, 98, 166, 0.6)" },
+												]}
+											>
+												Update now
+											</Text>
+										</TouchableOpacity>
+									</>
+								) : (
+									<>
+										<Text style={styles.text}>
+											Please update the match status to{" "}
+										</Text>
+										<TouchableOpacity onPress={handleMatchcompleted}>
+											<Text
+												style={[
+													styles.text,
+													{ color: "rgba(53, 98, 166, 0.6)" },
+												]}
+											>
+												"Finished"
+											</Text>
+										</TouchableOpacity>
+									</>
+								)}
+							</View>
+						) : null
+					) : null}
 					<View style={styles.divider} />
 				</View>
 				<ScrollView
@@ -193,9 +251,13 @@ const MatchMainScreen = ({ route }) => {
 							<Text style={styles.sectionTitle}>
 								Automatic teams distribution
 							</Text>
-							<TouchableOpacity style={styles.doItNowButton}>
-								<Text style={styles.doItNowButtonText}>Do it now!</Text>
-							</TouchableOpacity>
+							{userIsCreator ? (
+								<TouchableOpacity style={styles.doItNowButton}>
+									<Text style={styles.doItNowButtonText}>
+										Do it now!
+									</Text>
+								</TouchableOpacity>
+							) : null}
 						</View>
 						<Text style={styles.detailText}>
 							Team A: Juan, Antonino, Roberto, Eustaquio, Paloma.
@@ -262,9 +324,9 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		fontFamily: "InriaSans-Bold",
 		textAlign: "center",
-		marginBottom: 20,
 	},
 	divider: {
+		marginTop: 20,
 		borderBottomColor: "grey",
 		borderBottomWidth: 1,
 		width: "100%",

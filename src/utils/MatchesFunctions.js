@@ -321,7 +321,6 @@ export const getFriendsNotInvited = async (
 		);
 
 		const friendsList = await friendsResponse.json();
-		console.log("Friends list:", friendsList);
 
 		// Get all the match invitations for this match
 		const invitationsResponse = await fetch(
@@ -335,7 +334,6 @@ export const getFriendsNotInvited = async (
 		);
 
 		const matchInvitations = await invitationsResponse.json();
-		console.log("Match invitations:", matchInvitations);
 
 		// Get all participants for the match
 		const participantsResponse = await fetch(
@@ -349,7 +347,6 @@ export const getFriendsNotInvited = async (
 		);
 
 		const matchParticipants = await participantsResponse.json();
-		console.log("Match participants:", matchParticipants);
 
 		// Extract user IDs of already invited friends and participants
 		const invitedUserIds = matchInvitations.map(
@@ -365,8 +362,6 @@ export const getFriendsNotInvited = async (
 				!invitedUserIds.includes(friend.id) &&
 				!participatingUserIds.includes(friend.id)
 		);
-
-		console.log("Friends not invited:", notInvitedFriends);
 
 		// Set the list of friends not invited or already participating
 		setNotInvitedFriends(notInvitedFriends);
@@ -453,6 +448,70 @@ export const rejectMatchInvitation = async (matchId, userId) => {
 		// Handle unexpected errors
 		console.error("Error:", error);
 		alert("An unexpected error occurred while rejecting the invitation.");
+		throw error;
+	}
+};
+
+// Delete a match participant
+export const deleteMatchParticipant = async (matchId, userId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/participants`, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				matchId: matchId,
+				userId: userId,
+			}),
+		});
+
+		// Check if the response is ok (status code 2xx)
+		if (!response.ok) {
+			throw new Error(`Error deleting participant: ${response.statusText}`);
+		}
+
+		// Parse the JSON response
+		const result = await response.json();
+
+		// Return the result or a success message
+		return result;
+	} catch (error) {
+		// Handle any errors that occur during the request
+		console.error("Error in deleteMatchParticipant:", error);
+		throw error; // Propagate the error for handling further up
+	}
+};
+
+// Update match status to 'completed
+export const setMatchCompleted = async (matchId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/newstatus`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				matchId: matchId,
+				status: "completed",
+			}),
+		});
+
+		if (!response.ok) {
+			throw new Error(
+				`Error setting match as completed: ${response.status}`
+			);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Error:", error);
 		throw error;
 	}
 };

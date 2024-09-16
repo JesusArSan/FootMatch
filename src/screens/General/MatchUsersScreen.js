@@ -16,9 +16,10 @@ import AddFriendButton from "../../components/AddFriendButton";
 import PopUpModal from "../../components/PopUpModal";
 import FriendInvitation from "../../components/FriendInvitation";
 // User Functions
-import { getFriendsList } from "../../utils/UserFunctions";
 import {
+	deleteMatchParticipant,
 	getFriendsNotInvited,
+	getMatchDetails,
 	getMatchParticipants,
 	sendFriendInvitation,
 } from "../../utils/MatchesFunctions";
@@ -29,9 +30,14 @@ const MatchfriendsScreen = ({ route }) => {
 	const [friends, setFriendList] = useState([]);
 	const [participants, setParticipants] = useState([]);
 	const [modalOpen, setModalOpen] = useState(false);
+	// Match completed state
+	const [matchCompleted, setMatchcompleted] = useState(false);
 
-	const handleRemoveUser = (userId) => {
-		setfriends(friends.filter((user) => user.id !== userId));
+	const handleRemoveUser = async (userId) => {
+		setParticipants(participants.filter((user) => user.id !== userId));
+
+		// Delete participant from the match
+		await deleteMatchParticipant(matchId, userId);
 	};
 
 	const handleRoomChat = () => {
@@ -47,6 +53,11 @@ const MatchfriendsScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
+	// Get Match info
+	// const getMatchStatus = async (matchId) => {
+	// 	const matchData = await getMatchDetails(matchId);
+	// };
+
 	// Update the friends list and invitations list
 	const updateUsersList = async () => {
 		await getFriendsNotInvited(user.id, matchId, setFriendList);
@@ -55,6 +66,7 @@ const MatchfriendsScreen = ({ route }) => {
 	// Update the friends list on component mount and
 	useEffect(() => {
 		updateUsersList();
+		//getMatchStatus();
 	}, []);
 
 	// Handle the friend invitation
@@ -71,12 +83,16 @@ const MatchfriendsScreen = ({ route }) => {
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
 			<View style={styles.mainContainer}>
-				<View style={styles.addFriendContainer}>
-					<AddFriendButton onPress={handleAddFriendPress} />
-				</View>
+				{route.params.userIsCreator ? (
+					!matchCompleted ? (
+						<View style={styles.addFriendContainer}>
+							<AddFriendButton onPress={handleAddFriendPress} />
+						</View>
+					) : null
+				) : null}
 				<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
 					<View style={styles.popUpAddFriend}>
-						<Text style={styles.title}>Friend List</Text>
+						<Text style={styles.title}>Invite your Friends!</Text>
 						<View style={styles.friendInvitationContainer}>
 							{friends.length > 0 ? (
 								<FlatList
@@ -113,7 +129,11 @@ const MatchfriendsScreen = ({ route }) => {
 				<FlatList
 					data={participants}
 					renderItem={({ item }) => (
-						<UserMatchItem user={item} onRemove={handleRemoveUser} />
+						<UserMatchItem
+							user={item}
+							onRemove={handleRemoveUser}
+							userIsCreator={route.params.userIsCreator}
+						/>
 					)}
 					keyExtractor={(item) => item.id.toString()}
 					showsVerticalScrollIndicator={false}

@@ -13,6 +13,9 @@ import TabBarIconType from "../components/TabBarIconType";
 const TabNav = createBottomTabNavigator();
 
 const MatchTabNavigator = ({ route }) => {
+	// User creator match data for permissions
+	const userIsCreator = route.params.reservation.user_id === route.params.user.id;
+
 	return (
 		<TabNav.Navigator
 			initialRouteName="MatchMainScreen"
@@ -37,17 +40,17 @@ const MatchTabNavigator = ({ route }) => {
 			<TabNav.Screen
 				name="MatchMainScreen"
 				component={MatchMainScreen}
-				initialParams={route.params}
+				initialParams={{ ...route.params, userIsCreator }}
 			></TabNav.Screen>
 			<TabNav.Screen
 				name="MatchUsersScreen"
 				component={MatchUsersScreen}
-				initialParams={route.params}
+				initialParams={{ ...route.params, userIsCreator }}
 			></TabNav.Screen>
 			<TabNav.Screen
 				name="MatchConfigScreen"
 				component={MatchConfigScreen}
-				initialParams={route.params}
+				initialParams={{ ...route.params, userIsCreator }}
 			></TabNav.Screen>
 		</TabNav.Navigator>
 	);

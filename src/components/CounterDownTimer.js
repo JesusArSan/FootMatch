@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
-const CountDownTimer = ({ targetDate }) => {
+const CountDownTimer = ({ targetDate, handleNoTimeLeft }) => {
 	const calculateTimeLeft = () => {
 		const now = new Date();
 		const nowLocal = now.getTime(); // Current time in milliseconds in local timezone
@@ -32,7 +32,19 @@ const CountDownTimer = ({ targetDate }) => {
 
 	useEffect(() => {
 		const timer = setInterval(() => {
-			setTimeLeft(calculateTimeLeft());
+			const newTimeLeft = calculateTimeLeft();
+			setTimeLeft(newTimeLeft);
+
+			// Check if the time has reached 0
+			if (
+				newTimeLeft.days === 0 &&
+				newTimeLeft.hours === 0 &&
+				newTimeLeft.minutes === 0 &&
+				newTimeLeft.seconds === 0
+			) {
+				clearInterval(timer); // Stop the timer
+				handleNoTimeLeft(); // Call the callback when time is up
+			}
 		}, 1000);
 
 		return () => clearInterval(timer);

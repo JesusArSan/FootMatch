@@ -1,19 +1,27 @@
 // React Imports
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Alert } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	ImageBackground,
+	Alert,
+	TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // My components
 import FloatButton from "../../components/FloatButton";
 import { cancelMatch } from "../../utils/MatchesFunctions";
 
 const MatchConfigScreen = ({ route }) => {
+	// Navigation
+	const navigation = useNavigation();
 	// User lider data
 	const user = route.params.user || {};
 	const reservation = route.params.reservation || {};
 	const matchId = route.params.matchId || {};
 
-	const navigation = useNavigation();
-
+	// State to store the result of the cancel match
 	const [cancelResult, setCancelResult] = useState(null);
 
 	const handleCancelMatch = async () => {
@@ -42,13 +50,37 @@ const MatchConfigScreen = ({ route }) => {
 			}}
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
-			<View style={styles.mainContainer}>
-				<Text>AJUSTES DEL PARTIDO</Text>
-				<FloatButton
-					title="Cancel Match"
-					backgroundCustomColor="red"
-					onPress={handleCancelMatch}
-				/>
+			<View
+				style={[
+					styles.mainContainer,
+					{ paddingTop: "28%", paddingHorizontal: 30 },
+				]}
+			>
+				{/* Only for creators */}
+				{route.params.userIsCreator ? (
+					<View
+						style={{
+							width: "100%",
+							height: "100%",
+							paddingHorizontal: 10,
+						}}
+					>
+						{/* Finish a Match */}
+						<TouchableOpacity
+							style={styles.button}
+							// onPress={}
+						>
+							<Text style={styles.buttonText}>MATCH CONFIG</Text>
+						</TouchableOpacity>
+
+						{/* Cancel Match */}
+						<FloatButton
+							title="Cancel Match"
+							backgroundCustomColor="red"
+							onPress={handleCancelMatch}
+						/>
+					</View>
+				) : null}
 			</View>
 		</ImageBackground>
 	);

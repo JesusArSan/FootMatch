@@ -4,8 +4,8 @@ import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
 const UpdateGameResult = ({ teamA, teamB, result, onPress }) => {
 	// State to store the scores of Team A and Team B
-	const [scoreA, setScoreA] = useState(result.A);
-	const [scoreB, setScoreB] = useState(result.B);
+	const [scoreA, setScoreA] = useState(result.teamA);
+	const [scoreB, setScoreB] = useState(result.teamB);
 
 	// Handle close action
 	const handleClose = () => {

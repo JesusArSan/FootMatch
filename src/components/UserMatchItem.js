@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 
-const UserMatchItem = ({ user, onRemove }) => {
+const UserMatchItem = ({ user, onRemove, userIsCreator }) => {
 	return (
 		<View style={styles.container}>
 			<Image source={{ uri: user.photo }} style={styles.avatar} />
@@ -19,12 +19,15 @@ const UserMatchItem = ({ user, onRemove }) => {
 			>
 				{user.status}
 			</Text>
-			<TouchableOpacity
-				onPress={() => onRemove(user.id)}
-				style={styles.cancelContainer}
-			>
-				<Text style={styles.removeButton}>❌</Text>
-			</TouchableOpacity>
+
+			{userIsCreator ? (
+				<TouchableOpacity
+					onPress={() => onRemove(user.id)}
+					style={styles.cancelContainer}
+				>
+					<Text style={styles.removeButton}>❌</Text>
+				</TouchableOpacity>
+			) : null}
 		</View>
 	);
 };
