@@ -19,7 +19,6 @@ import FriendInvitation from "../../components/FriendInvitation";
 import {
 	deleteMatchParticipant,
 	getFriendsNotInvited,
-	getMatchDetails,
 	getMatchParticipants,
 	sendFriendInvitation,
 } from "../../utils/MatchesFunctions";
@@ -27,11 +26,10 @@ import {
 const MatchfriendsScreen = ({ route }) => {
 	const user = route.params.user || {};
 	const matchId = route.params.matchId || {};
+	const matchCompleted = route.params.matchCompleted || false;
 	const [friends, setFriendList] = useState([]);
 	const [participants, setParticipants] = useState([]);
 	const [modalOpen, setModalOpen] = useState(false);
-	// Match completed state
-	const [matchCompleted, setMatchcompleted] = useState(false);
 
 	const handleRemoveUser = async (userId) => {
 		setParticipants(participants.filter((user) => user.id !== userId));
@@ -53,11 +51,6 @@ const MatchfriendsScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
-	// Get Match info
-	// const getMatchStatus = async (matchId) => {
-	// 	const matchData = await getMatchDetails(matchId);
-	// };
-
 	// Update the friends list and invitations list
 	const updateUsersList = async () => {
 		await getFriendsNotInvited(user.id, matchId, setFriendList);
@@ -66,7 +59,6 @@ const MatchfriendsScreen = ({ route }) => {
 	// Update the friends list on component mount and
 	useEffect(() => {
 		updateUsersList();
-		//getMatchStatus();
 	}, []);
 
 	// Handle the friend invitation

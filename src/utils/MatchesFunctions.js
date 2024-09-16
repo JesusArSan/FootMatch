@@ -144,7 +144,7 @@ export const getMatchDetails = async (matchId) => {
 		}
 
 		// Attempt to parse the JSON from the response text
-		const data = JSON.parse(text);
+		const data = await JSON.parse(text);
 
 		// Handle potential server errors in the data
 		if (data.error) {
@@ -152,7 +152,7 @@ export const getMatchDetails = async (matchId) => {
 		}
 
 		// Return the parsed data
-		return data;
+		return(data);
 	} catch (error) {
 		console.error("Error:", error);
 		throw error;

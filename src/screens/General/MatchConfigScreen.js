@@ -12,6 +12,8 @@ import { useNavigation } from "@react-navigation/native";
 // My components
 import FloatButton from "../../components/FloatButton";
 import { cancelMatch } from "../../utils/MatchesFunctions";
+// Icons
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const MatchConfigScreen = ({ route }) => {
 	// Navigation
@@ -19,10 +21,17 @@ const MatchConfigScreen = ({ route }) => {
 	// User lider data
 	const user = route.params.user || {};
 	const reservation = route.params.reservation || {};
+	const matchCompleted = route.params.matchCompleted || false;
+	const userIsCreator = route.params.userIsCreator || false;
 	const matchId = route.params.matchId || {};
 
 	// State to store the result of the cancel match
 	const [cancelResult, setCancelResult] = useState(null);
+
+	// Handle leave match
+	const handleLeaveMatch = () => {
+		Alert.alert("Leave Match", "Coming soon...");
+	};
 
 	const handleCancelMatch = async () => {
 		if (!matchId) {
@@ -56,8 +65,20 @@ const MatchConfigScreen = ({ route }) => {
 					{ paddingTop: "28%", paddingHorizontal: 30 },
 				]}
 			>
+				{/* For all participants */}
+				<View>
+					{!matchCompleted && !userIsCreator ? (
+						<TouchableOpacity
+							style={styles.leaveButton}
+							onPress={handleLeaveMatch}
+						>
+							<FontAwesome6 name="door-open" size={35} color="tomato" />
+						</TouchableOpacity>
+					) : null}
+				</View>
+
 				{/* Only for creators */}
-				{route.params.userIsCreator ? (
+				{userIsCreator ? (
 					<View
 						style={{
 							width: "100%",
@@ -100,6 +121,10 @@ const styles = StyleSheet.create({
 		borderBottomColor: "grey",
 		borderBottomWidth: 1,
 		width: "100%",
+	},
+	leaveButton: {
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });
 

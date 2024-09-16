@@ -1,6 +1,6 @@
 // React imports
-import React, { useState } from "react";
-import { View, Animated, StyleSheet } from "react-native";
+import React, { useEffect, useState } from "react";
+import { View, Animated, StyleSheet, ActivityIndicator } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // Screens
 import MatchMainScreen from "../screens/General/MatchMainScreen";
@@ -8,13 +8,48 @@ import MatchUsersScreen from "../screens/General/MatchUsersScreen";
 import MatchConfigScreen from "../screens/General/MatchConfigScreen";
 // My Components
 import TabBarIconType from "../components/TabBarIconType";
+// Matches functions
+import { getMatchDetails } from "../utils/MatchesFunctions";
 
 // Tab Navigator
 const TabNav = createBottomTabNavigator();
 
 const MatchTabNavigator = ({ route }) => {
 	// User creator match data for permissions
-	const userIsCreator = route.params.reservation.user_id === route.params.user.id;
+	const userIsCreator =
+		route.params.reservation.user_id === route.params.user.id;
+
+	// Match completed state and loading state
+	const [matchCompleted, setMatchcompleted] = useState(false);
+	const [loading, setLoading] = useState(true); // New loading state
+
+	const matchId = route.params.matchId;
+
+	// Update match is completed
+	const verifyMatchIsCompleted = async () => {
+		try {
+			const matchData = await getMatchDetails(matchId);
+			setMatchcompleted(matchData.status == "completed");
+		} catch (error) {
+			console.error("Error fetching match details", error);
+		} finally {
+			setLoading(false); // Set loading to false once the data is fetched
+		}
+	};
+
+	// Verify if the match is completed
+	useEffect(() => {
+		verifyMatchIsCompleted();
+	}, []);
+
+	// Show a loading spinner until match details are fetched
+	if (loading) {
+		return (
+			<View style={styles.loadingContainer}>
+				<ActivityIndicator size="large" color="#0000ff" />
+			</View>
+		);
+	}
 
 	return (
 		<TabNav.Navigator
@@ -40,17 +75,17 @@ const MatchTabNavigator = ({ route }) => {
 			<TabNav.Screen
 				name="MatchMainScreen"
 				component={MatchMainScreen}
-				initialParams={{ ...route.params, userIsCreator }}
+				initialParams={{ ...route.params, userIsCreator, matchCompleted }}
 			></TabNav.Screen>
 			<TabNav.Screen
 				name="MatchUsersScreen"
 				component={MatchUsersScreen}
-				initialParams={{ ...route.params, userIsCreator }}
+				initialParams={{ ...route.params, userIsCreator, matchCompleted }}
 			></TabNav.Screen>
 			<TabNav.Screen
 				name="MatchConfigScreen"
 				component={MatchConfigScreen}
-				initialParams={{ ...route.params, userIsCreator }}
+				initialParams={{ ...route.params, userIsCreator, matchCompleted }}
 			></TabNav.Screen>
 		</TabNav.Navigator>
 	);
