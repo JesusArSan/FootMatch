@@ -18,6 +18,7 @@ import { getPitchOccupancy } from "../../utils/CentersFunctions";
 import { createMatch } from "../../utils/MatchesFunctions";
 
 const PitchTimeScreen = ({ route }) => {
+	const user = route.params.user || {};
 	const navigation = useNavigation();
 	const pitchInfo = route.params.pitchInfo;
 	const center = route.params.centerInfo;
@@ -152,7 +153,7 @@ const PitchTimeScreen = ({ route }) => {
 
 		try {
 			// Create the match and get the match ID
-			await createMatch(reservationData, setMatchId);
+			await createMatch(dataReserve, setMatchId);
 		} catch (error) {
 			addMessage(`Error creating match: ${error.message}`);
 		}
@@ -162,8 +163,12 @@ const PitchTimeScreen = ({ route }) => {
 		if (matchId) {
 			// Navigate to the MatchTabNavigator only if the match is created successfully
 			navigation.navigate("MatchTabNavigator", {
-				user: route.params.user,
-				reservation: reservationData,
+				user,
+				reservation: {
+					matchDate: reservationData.matchDate,
+					pitchId: reservationData.pitchId,
+					user_id: user.id,
+				},
 				matchId: matchId,
 			});
 		}
