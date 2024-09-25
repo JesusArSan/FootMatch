@@ -55,6 +55,7 @@ const MatchMainScreen = ({ route }) => {
 	const [result, setResult] = useState({
 		teamA: 0,
 		teamB: 0,
+		status: matchDetails?.status || "sheduled",
 	});
 
 	// Fetch center data on mount
@@ -125,6 +126,11 @@ const MatchMainScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
+	const handleSaveScoreModal = (scoreA, scoreB) => {
+		setResult({ teamA: scoreA, teamB: scoreB, status: "completed" });
+		setModalOpen(false);
+	};
+
 	// Handle no time left
 	const handleNoTimeLeft = () => {
 		setNoTimeLeft(true);
@@ -160,7 +166,8 @@ const MatchMainScreen = ({ route }) => {
 					teamA={teamA}
 					teamB={teamB}
 					result={result}
-					onPress={handleCloseModal}
+					onPressClose={handleCloseModal}
+					onPressSave={handleSaveScoreModal}
 				/>
 			</PopUpModal>
 			<View style={styles.mainContainer}>
