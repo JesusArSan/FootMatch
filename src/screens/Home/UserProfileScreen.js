@@ -8,7 +8,10 @@ import {
 	TouchableOpacity,
 	ImageBackground,
 	ScrollView,
+	Pressable,
+	TextInput,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 // My Utils
@@ -22,8 +25,10 @@ import {
 } from "../../utils/UserFunctions";
 // My components
 import CustomButton from "../../components/CustomButton";
+import PopUpModal from "../../components/PopUpModal";
 // Icons
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 // Function to truncate text
@@ -65,6 +70,49 @@ const UserProfileScreen = ({ route }) => {
 		if (otherUser && userLogged) {
 			setIsFriend(await isFriend(userLogged.id, otherUser.id));
 		}
+	};
+
+	// Image picker
+	const [selectedImage, setSelectedImage] = useState(null);
+	const pickImage = async () => {
+		// Solicitar permiso de acceso a la galería
+		let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		if (result.granted === false) {
+			alert("Se necesita acceso a la galería para seleccionar una imagen.");
+			return;
+		}
+
+		// Abrir el selector de imágenes
+		let pickerResult = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			quality: 1,
+		});
+
+		if (!pickerResult.canceled) {
+			setSelectedImage(pickerResult.assets[0].uri); // Guardar la URI de la imagen seleccionada
+		}
+	};
+
+	// Popup
+	const [modalOpen, setModalOpen] = useState(false);
+	const handleOpenModal = () => {
+		setModalOpen(true);
+	};
+	const handleCloseModal = () => {
+		setModalOpen(false);
+	};
+	const handleSaveModal = () => {
+		if (newUsername.trim() !== "") {
+			userLogged.name = newUsername;
+		}
+
+		if (selectedImage) {
+			userLogged.photo = selectedImage;
+		}
+
+		handleCloseModal();
 	};
 
 	// Focus effect
@@ -117,8 +165,70 @@ const UserProfileScreen = ({ route }) => {
 		return <Text style={styles.buttonText}>Be Friend</Text>;
 	};
 
+	// Modify user when the user is the logged user
+	useEffect(() => {
+		if (!otherUser) {
+			navigation.setOptions({
+				headerRight: () => (
+					<TouchableOpacity
+						style={styles.headerRightContainer}
+						onPress={handleOpenModal}
+					>
+						<View style={{ marginRight: "8%" }}>
+							<Feather name="edit" size={24} color="white" />
+						</View>
+					</TouchableOpacity>
+				),
+			});
+		}
+	}, [navigation, otherUser]);
+
 	return (
 		<View style={styles.container}>
+			<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
+				<View style={styles.popUpContainer}>
+					<View style={styles.formContainer}>
+						<Text style={styles.label}>Cambiar Username:</Text>
+						<TextInput
+							style={styles.input}
+							placeholder="Nuevo username"
+						/>
+
+						<Text style={styles.label}>Cambiar Imagen de Perfil:</Text>
+						<TouchableOpacity
+							style={styles.filePickerButton}
+							onPress={pickImage}
+						>
+							<Text style={styles.filePickerButtonText}>
+								Seleccionar Imagen
+							</Text>
+						</TouchableOpacity>
+						{selectedImage && (
+							<Image
+								source={{ uri: selectedImage }}
+								style={styles.previewImage}
+							/>
+						)}
+					</View>
+
+					<View style={styles.buttonBoxPopUp}>
+						<Pressable
+							style={styles.closeButton}
+							onPress={handleCloseModal}
+						>
+							<Text style={styles.closeButtonText}>Cerrar</Text>
+						</Pressable>
+
+						<Pressable
+							style={styles.saveButton}
+							onPress={handleSaveModal}
+						>
+							<Text style={styles.saveButtonText}>Guardar</Text>
+						</Pressable>
+					</View>
+				</View>
+			</PopUpModal>
+
 			<ImageBackground
 				source={{
 					uri:
@@ -348,6 +458,104 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontSize: 14,
 		fontFamily: "InriaSans-Regular",
+	},
+	popUpContainer: {
+		borderRadius: 20,
+		maxHeight: "40%",
+		justifyContent: "center",
+		alignItems: "center",
+		alignSelf: "center",
+		backgroundColor: "#fafafa",
+		padding: 20,
+		width: "90%",
+	},
+	formContainer: {
+		width: "100%",
+		justifyContent: "center",
+		alignItems: "flex-start",
+		marginBottom: 20,
+	},
+	input: {
+		height: 40,
+		width: "100%",
+		borderColor: "#ccc",
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		marginBottom: 15,
+		fontFamily: "InriaSans-Regular",
+	},
+	label: {
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		marginBottom: 5,
+		color: "#333",
+		textAlign: "left",
+		width: "100%",
+	},
+	buttonBoxPopUp: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		width: "80%",
+		marginTop: 10,
+	},
+	closeButton: {
+		width: 100,
+		backgroundColor: "#D9534F",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	closeButtonText: {
+		color: "white",
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	saveButton: {
+		width: 100,
+		backgroundColor: "#5cb85c",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	saveButtonText: {
+		color: "white",
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	filePickerButton: {
+		backgroundColor: "grey",
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 5,
+		marginBottom: 10,
+	},
+	filePickerButtonText: {
+		color: "white",
+		fontSize: 12,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	previewImage: {
+		width: 100,
+		height: 100,
+		borderRadius: 10,
+		marginTop: 10,
+		alignSelf: "left",
+		borderWidth: 1,
+		borderColor: "#ccc",
 	},
 });
 
