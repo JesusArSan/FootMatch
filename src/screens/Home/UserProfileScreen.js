@@ -6,12 +6,14 @@ import {
 	StyleSheet,
 	Image,
 	TouchableOpacity,
-	ImageBackground,
-	ScrollView,
 	Pressable,
 	TextInput,
+	Alert,
+	ImageBackground,
+	ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 // My Utils
@@ -20,9 +22,12 @@ import {
 	getFriendsList,
 	sendFriendRequest,
 	isFriend,
+	updateUser,
 	removeFriend,
+	updateProfilePhoto,
 	deleteFriendRequest,
 } from "../../utils/UserFunctions";
+import { uploadImage } from "../../utils/UploadImage";
 // My components
 import CustomButton from "../../components/CustomButton";
 import PopUpModal from "../../components/PopUpModal";
@@ -48,7 +53,7 @@ const UserProfileScreen = ({ route }) => {
 
 	// Get the user data from the route params
 	const { otherUser, userLogged } = route.params;
-	const user = otherUser || userLogged;
+	let user = otherUser || userLogged;
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
@@ -72,18 +77,22 @@ const UserProfileScreen = ({ route }) => {
 		}
 	};
 
-	// Image picker
+	// Image picker state and function
 	const [selectedImage, setSelectedImage] = useState(null);
+	// Update username
+	const [newUsername, setNewUsername] = useState("");
+
+	// Image picker
 	const pickImage = async () => {
-		// Solicitar permiso de acceso a la galería
+		// Request permission to access the gallery
 		let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
 		if (result.granted === false) {
-			alert("Se necesita acceso a la galería para seleccionar una imagen.");
+			alert("You need access to the gallery to select an image.");
 			return;
 		}
 
-		// Abrir el selector de imágenes
+		// Open the image picker
 		let pickerResult = await ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.Images,
 			allowsEditing: true,
@@ -91,7 +100,7 @@ const UserProfileScreen = ({ route }) => {
 		});
 
 		if (!pickerResult.canceled) {
-			setSelectedImage(pickerResult.assets[0].uri); // Guardar la URI de la imagen seleccionada
+			setSelectedImage(pickerResult.assets[0].uri); // Save the selected image URI
 		}
 	};
 
@@ -102,17 +111,46 @@ const UserProfileScreen = ({ route }) => {
 	};
 	const handleCloseModal = () => {
 		setModalOpen(false);
+
+		// Reset the selected image
+		setSelectedImage(null);
 	};
-	const handleSaveModal = () => {
-		if (newUsername.trim() !== "") {
-			userLogged.name = newUsername;
+
+	const handleSaveModal = async () => {
+		let updatedData = {}; // Object to store updated fields
+
+		// Check if username has been changed
+		if (newUsername.trim()) {
+			updatedData.username = newUsername;
 		}
 
+		// First, upload the image if a new one is selected
 		if (selectedImage) {
-			userLogged.photo = selectedImage;
+			try {
+				const newImageUrl = await uploadImage(selectedImage); // Upload the image
+				await updateProfilePhoto(userLogged.id, newImageUrl); // Update the photo separately
+				user.photo = newImageUrl; // Update local user photo URL
+			} catch (error) {
+				alert("Error uploading image");
+				return;
+			}
 		}
 
-		handleCloseModal();
+		// Then, update user information if there are any changes
+		if (Object.keys(updatedData).length > 0) {
+			try {
+				await updateUser(userLogged.id, updatedData); // Call `updateUser` for other user info
+
+				// Update local user data if username changed
+				if (updatedData.username) user.username = updatedData.username;
+
+				alert("User updated successfully!");
+			} catch (error) {
+				alert("Error updating user.");
+			}
+		}
+
+		handleCloseModal(); // Close the modal
 	};
 
 	// Focus effect
@@ -188,13 +226,16 @@ const UserProfileScreen = ({ route }) => {
 			<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
 				<View style={styles.popUpContainer}>
 					<View style={styles.formContainer}>
-						<Text style={styles.label}>Cambiar Username:</Text>
+						<Text style={styles.label}>Change Username:</Text>
 						<TextInput
 							style={styles.input}
-							placeholder="Nuevo username"
+							placeholder="New username"
+							value={newUsername}
+							onChangeText={setNewUsername}
+							autoCapitalize="none"
 						/>
 
-						<Text style={styles.label}>Cambiar Imagen de Perfil:</Text>
+						<Text style={styles.label}>Change Profile Image:</Text>
 						<TouchableOpacity
 							style={styles.filePickerButton}
 							onPress={pickImage}
