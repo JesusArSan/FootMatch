@@ -357,6 +357,7 @@ export const updateProfilePhoto = async (userId, photoUrl) => {
 	}
 };
 
+// Update user
 export const updateUser = async (userId, updatedData) => {
 	try {
 		const response = await fetch(`${config.serverUrl}/users/${userId}`, {
@@ -380,6 +381,37 @@ export const updateUser = async (userId, updatedData) => {
 		console.log("User updated successfully", data);
 	} catch (error) {
 		console.error("Error updating user:", error);
+		throw error;
+	}
+};
+
+// update user role
+export const updateUserRole = async (userId, roleId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/${userId}/update_role`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ role_id: roleId }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error updating user role: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		console.log("User role updated successfully", data);
+	} catch (error) {
+		console.error("Error updating user role:", error);
 		throw error;
 	}
 };

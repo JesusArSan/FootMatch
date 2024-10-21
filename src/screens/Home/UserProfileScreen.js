@@ -26,6 +26,7 @@ import {
 	removeFriend,
 	updateProfilePhoto,
 	deleteFriendRequest,
+	updateUserRole,
 } from "../../utils/UserFunctions";
 import { uploadImage } from "../../utils/UploadImage";
 // My components
@@ -35,6 +36,7 @@ import PopUpModal from "../../components/PopUpModal";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 // Function to truncate text
 const truncate = (text, maxLength) => {
@@ -54,6 +56,7 @@ const UserProfileScreen = ({ route }) => {
 	// Get the user data from the route params
 	const { otherUser, userLogged } = route.params;
 	let user = otherUser || userLogged;
+	const isAdmin = userLogged.role_id === 1;
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
@@ -221,6 +224,57 @@ const UserProfileScreen = ({ route }) => {
 		}
 	}, [navigation, otherUser]);
 
+	// State to manage the second pop-up visibility
+	const [secondModalOpen, setSecondModalOpen] = useState(false);
+
+	// Functions to handle opening and closing the second pop-up
+	const handleOpenSecondModal = () => {
+		setSecondModalOpen(true);
+	};
+	const handleCloseSecondModal = () => {
+		setSecondModalOpen(false);
+	};
+
+	// State to manage selected role
+	const [selectedRole, setSelectedRole] = useState("User"); // Default is "User"
+
+	// Update selectedRole only when otherUser exists
+	useEffect(() => {
+		if (otherUser) {
+			if (otherUser.role_id === 1) {
+				setSelectedRole("Admin");
+			} else if (otherUser.role_id === 2) {
+				setSelectedRole("Moderator");
+			} else {
+				setSelectedRole("User");
+			}
+		}
+	}, [otherUser]);
+
+	// Handle role change
+	const handleRoleChange = (role) => {
+		setSelectedRole(role);
+	};
+
+	const handleSaveSecondModal = async () => {
+		let updatedData = { role: selectedRole }; // Save selected role
+
+		console.log("Updated data: ", updatedData);
+
+		try {
+			await updateUserRole(
+				otherUser.id,
+				selectedRole === "Admin" ? 1 : selectedRole === "Moderator" ? 2 : 3
+			);
+
+			alert("Role updated successfully!");
+			handleCloseSecondModal(); // Close the modal after saving
+		} catch (error) {
+			alert("Error updating role.");
+			console.error("Error updating role:", error);
+		}
+	};
+
 	return (
 		<View style={styles.container}>
 			<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
@@ -270,6 +324,67 @@ const UserProfileScreen = ({ route }) => {
 				</View>
 			</PopUpModal>
 
+			<PopUpModal isOpen={secondModalOpen} setIsOpen={setSecondModalOpen}>
+				<View style={styles.popUpContainer}>
+					<Text style={styles.label}>Change User Role</Text>
+
+					<View style={styles.dropdownContainer}>
+						<TouchableOpacity onPress={() => handleRoleChange("Admin")}>
+							<Text
+								style={
+									selectedRole === "Admin"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								Admin
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => handleRoleChange("Moderator")}
+						>
+							<Text
+								style={
+									selectedRole === "Moderator"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								Moderator
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => handleRoleChange("User")}>
+							<Text
+								style={
+									selectedRole === "User"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								User
+							</Text>
+						</TouchableOpacity>
+					</View>
+
+					{/* Button Box with Close and Save options */}
+					<View style={styles.buttonBoxPopUp}>
+						<Pressable
+							style={styles.closeButton}
+							onPress={handleCloseSecondModal}
+						>
+							<Text style={styles.closeButtonText}>Close</Text>
+						</Pressable>
+
+						<Pressable
+							style={styles.saveButton}
+							onPress={handleSaveSecondModal}
+						>
+							<Text style={styles.saveButtonText}>Save</Text>
+						</Pressable>
+					</View>
+				</View>
+			</PopUpModal>
+
 			<ImageBackground
 				source={{
 					uri:
@@ -278,6 +393,17 @@ const UserProfileScreen = ({ route }) => {
 				}} // Back url image
 				style={styles.backgroundImage}
 			>
+				{isAdmin && otherUser && (
+					<View style={styles.boxButtonRol}>
+						<TouchableOpacity
+							style={styles.buttonRol}
+							onPress={handleOpenSecondModal}
+						>
+							<FontAwesome name="exchange" size={24} color="black" />
+							<Text>Role</Text>
+						</TouchableOpacity>
+					</View>
+				)}
 				<ScrollView
 					contentContainerStyle={styles.scrollViewContent}
 					showsVerticalScrollIndicator={false}
@@ -597,6 +723,50 @@ const styles = StyleSheet.create({
 		alignSelf: "left",
 		borderWidth: 1,
 		borderColor: "#ccc",
+	},
+	boxButtonRol: {
+		width: "15%",
+		height: "6%",
+		justifyContent: "flex-start",
+		alignItems: "center",
+		alignSelf: "flex-end",
+		margin: "2%",
+		marginBottom: "-10%",
+	},
+	buttonRol: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 10,
+		backgroundColor: "#fff",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	dropdownContainer: {
+		backgroundColor: "#f9f9f9",
+		borderRadius: 8,
+		paddingVertical: 10,
+		paddingHorizontal: 5,
+		marginVertical: 10,
+		width: "100%",
+		borderWidth: 1,
+		borderColor: "#ddd",
+	},
+	roleOption: {
+		fontSize: 16,
+		color: "#333",
+		paddingHorizontal: 5,
+		paddingVertical: 12,
+		borderBottomWidth: 1,
+		borderBottomColor: "#eee",
+	},
+	selectedRole: {
+		fontSize: 16,
+		color: "#fff",
+		paddingHorizontal: 5,
+		paddingVertical: 12,
+		backgroundColor: "#007BFF",
+		fontWeight: "bold",
+		borderRadius: 4,
 	},
 });
 
