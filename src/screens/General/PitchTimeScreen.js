@@ -18,6 +18,7 @@ import { getPitchOccupancy } from "../../utils/CentersFunctions";
 import { createMatch } from "../../utils/MatchesFunctions";
 
 const PitchTimeScreen = ({ route }) => {
+	const user = route.params.user || {};
 	const navigation = useNavigation();
 	const pitchInfo = route.params.pitchInfo;
 	const center = route.params.centerInfo;
@@ -43,13 +44,17 @@ const PitchTimeScreen = ({ route }) => {
 		fetchOccupancyData();
 	}, [pitchInfo.id]);
 
-	// useEffect to update timeSlots when occupancyData or selectedDate changes
+	// Update the time slots whenever selectedDate or occupancyData changes
 	useEffect(() => {
 		const getTimeSlotsForDate = (date) => {
-			const dayOccupancies = occupancyData.filter((occupancy) =>
-				isSameDay(new Date(occupancy.date_time), date)
-			);
+			// Ensure occupancyData is an array before using filter
+			const dayOccupancies = Array.isArray(occupancyData)
+				? occupancyData.filter((occupancy) =>
+						isSameDay(new Date(occupancy.date_time), date)
+					)
+				: []; // If not an array, initialize dayOccupancies as an empty array.
 
+			// Define all available time slots
 			const allSlots = [
 				"08:30 AM",
 				"09:30 AM",
@@ -64,20 +69,19 @@ const PitchTimeScreen = ({ route }) => {
 				"06:30 PM",
 				"07:30 PM",
 				"08:30 PM",
-				"09:30 PM",
 			];
 
-			// Get the current UTC time and adjust it based on the timezone offset
+			// Get the current local time
 			const now = new Date();
-			const localTime = new Date(
-				now.getTime() - now.getTimezoneOffset() * 60000
-			);
+			const localTime = now;
 
+			// Check if the selected date is today
 			const isToday = isSameDay(localTime, date);
 
+			// Filter only slots after the current time if it's today
 			const filteredSlots = allSlots.filter((slot) => {
 				if (!isToday) {
-					return true; // If not today, return all slots
+					return true; // If not today, show all slots
 				}
 
 				// Parse the slot time into a Date object for comparison
@@ -89,11 +93,11 @@ const PitchTimeScreen = ({ route }) => {
 
 				slotDate.setHours(slotHours, minutes, 0, 0);
 
-				// Only return slots that are later than the current local time
+				// Only return slots later than the current local time
 				return slotDate.getTime() > localTime.getTime();
 			});
 
-			// Check for occupancy and return slots
+			// Mark slots as occupied or not
 			return filteredSlots.map((slot) => {
 				const occupied = dayOccupancies.some((occupancy) => {
 					const occupancyTime = format(
@@ -106,9 +110,8 @@ const PitchTimeScreen = ({ route }) => {
 			});
 		};
 
-		if (occupancyData.length > 0) {
-			setTimeSlots(getTimeSlotsForDate(selectedDate));
-		}
+		// Always update timeSlots, even if occupancyData is empty
+		setTimeSlots(getTimeSlotsForDate(selectedDate));
 	}, [selectedDate, occupancyData]);
 
 	const handleSelectTime = (time, occupied) => {
@@ -160,8 +163,12 @@ const PitchTimeScreen = ({ route }) => {
 		if (matchId) {
 			// Navigate to the MatchTabNavigator only if the match is created successfully
 			navigation.navigate("MatchTabNavigator", {
-				user: route.params.user,
-				reservation: reservationData,
+				user,
+				reservation: {
+					matchDate: reservationData.matchDate,
+					pitchId: reservationData.pitchId,
+					user_id: user.id,
+				},
 				matchId: matchId,
 			});
 		}

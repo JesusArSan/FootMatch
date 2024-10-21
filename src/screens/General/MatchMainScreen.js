@@ -1,46 +1,121 @@
-// React Imports
-import React, { useState } from "react";
+// React imports
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	View,
 	Text,
 	StyleSheet,
 	ImageBackground,
-	Pressable,
 	TouchableOpacity,
-	Image,
 	ScrollView,
+	ActivityIndicator,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 // My components
 import CounterDownTimer from "../../components/CounterDownTimer";
 import MatchCustom from "../../components/MatchCustom";
 import PopUpModal from "../../components/PopUpModal";
 import UpdateGameResult from "../../components/UpdateGameResult";
 import FloatButton from "../../components/FloatButton";
-
-let teamA = {
-	name: "Team A",
-	image: "https://img2.freepnges.com/20180525/qt/avqo99htm.webp",
-};
-let teamB = {
-	name: "Team B",
-	image: "https://img2.freepnges.com/20181015/pav/kisspng-real-madrid-c-f-uefa-champions-league-2-1718-l-logo-512x512-dream-league-soccer-imagui-1713927693192.webp",
-};
-let result = {
-	A: 0,
-	B: 0,
-};
+// Center function
+import { getCenterByPitch } from "../../utils/CentersFunctions";
+import {
+	getMatchDetails,
+	setMatchCompleted,
+} from "../../utils/MatchesFunctions";
 
 const MatchMainScreen = ({ route }) => {
-	// User lider data
+	// User leader data
 	const user = route.params.user || {};
 	const reservationData = route.params.reservation || {};
+	const [date, hour] = reservationData.matchDate.split(" ");
+	const pitchId = route.params.reservation.pitchId || {};
 	const matchId = route.params.matchId || {};
+	// Bool userIsCreator
+	const userIsCreator = route.params.userIsCreator || false;
+	// No time left
+	const [noTimeLeft, setNoTimeLeft] = useState(false);
+	const [matchcompleted, setMatchcompleted] = useState(false);
 
-	console.log("UserData en MatchMainScreen", user.id);
-	console.log("ReservationData en MatchMainScreen", reservationData);
-	console.log("MatchId en MatchMainScreen:", matchId);
+	// State to store data and loading state
+	const [center, setCenter] = useState(null);
+	const [matchDetails, setMatchDetails] = useState(null);
+	const [loading, setLoading] = useState(true); // Loading state
 
-	// useState
+	// Declare states for teamA, teamB, and result
+	const [teamA, setTeamA] = useState({
+		name: "Team A",
+		image: "https://espndeportes.espn.com/i/teamlogos/soccer/500/default-team-logo-500.png?h=100&w=100",
+	});
+
+	const [teamB, setTeamB] = useState({
+		name: "Team B",
+		image: "https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
+	});
+
+	const [result, setResult] = useState({
+		teamA: 0,
+		teamB: 0,
+		status: matchDetails?.status || "sheduled",
+	});
+
+	// Fetch center data on mount
+	useEffect(() => {
+		const fetchCenterData = async () => {
+			try {
+				await getCenterByPitch(pitchId, setCenter);
+
+				setLoading(false); // Set loading to false once data is fetched
+			} catch (error) {
+				alert("Error loading data.");
+				setLoading(false); // Set loading to false even on error
+			}
+		};
+
+		fetchCenterData();
+	}, [pitchId]);
+
+	// useFocusEffect to get info from the match all data using the matchId
+	useFocusEffect(
+		useCallback(() => {
+			const fetchMatchData = async () => {
+				try {
+					const matchData = await getMatchDetails(matchId);
+					setMatchDetails(matchData); // Store match data in state
+
+					matchData.status === "completed"
+						? setMatchcompleted(true)
+						: setMatchcompleted(false);
+
+					// Update teamA and teamB state
+					setTeamA({
+						name: matchData.team_a_name || "Team A",
+						image:
+							matchData.team_a_logo ||
+							"https://espndeportes.espn.com/i/teamlogos/soccer/500/default-team-logo-500.png?h=100&w=100",
+					});
+
+					setTeamB({
+						name: matchData.team_b_name || "Team B",
+						image:
+							matchData.team_b_logo ||
+							"https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
+					});
+
+					// Update result state
+					setResult({
+						teamA: matchData.team_a_score || 0,
+						teamB: matchData.team_b_score || 0,
+						status: matchData.status || "sheduled",
+					});
+				} catch (error) {
+					console.error("Error fetching match data:", error);
+				}
+			};
+			fetchMatchData();
+		}, [matchId])
+	);
+
+	// State for modal
 	const [modalOpen, setModalOpen] = useState(false);
 
 	const handleOpenModal = () => {
@@ -51,6 +126,34 @@ const MatchMainScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
+	const handleSaveScoreModal = (scoreA, scoreB) => {
+		setResult({ teamA: scoreA, teamB: scoreB, status: "completed" });
+		setModalOpen(false);
+	};
+
+	// Handle no time left
+	const handleNoTimeLeft = () => {
+		setNoTimeLeft(true);
+	};
+
+	const handleMatchcompleted = async () => {
+		setMatchcompleted(true);
+
+		// Make the match "completed"
+		await setMatchCompleted(matchId);
+	};
+
+	// Render loading state if data is still being fetched
+	if (loading) {
+		return (
+			<View style={styles.loadingContainer}>
+				<ActivityIndicator size="large" color="#0000ff" />
+				<Text style={styles.loadingText}>Loading match details...</Text>
+			</View>
+		);
+	}
+
+	// Render actual screen content once data is available
 	return (
 		<ImageBackground
 			source={{
@@ -63,31 +166,68 @@ const MatchMainScreen = ({ route }) => {
 					teamA={teamA}
 					teamB={teamB}
 					result={result}
-					onPress={handleCloseModal}
+					onPressClose={handleCloseModal}
+					onPressSave={handleSaveScoreModal}
 				/>
 			</PopUpModal>
 			<View style={styles.mainContainer}>
 				<View style={styles.topGameInfo}>
-					<Text style={styles.title}>COMING SOON</Text>
+					{/* Title */}
+					{noTimeLeft ? (
+						matchcompleted ? (
+							<Text style={styles.title}>Finished</Text>
+						) : (
+							<Text style={styles.title}>It's the Time!</Text>
+						)
+					) : (
+						<Text style={styles.title}>COMING SOON</Text>
+					)}
 					<MatchCustom teamA={teamA} teamB={teamB} result={result} />
 					<View style={{ marginTop: 30 }}>
-						<CounterDownTimer targetDate={reservationData.matchDate} />
+						<CounterDownTimer
+							targetDate={reservationData.matchDate}
+							handleNoTimeLeft={handleNoTimeLeft}
+						/>
 					</View>
-					<View style={styles.confirmResult}>
-						<Text style={styles.text}>
-							Make sure to confirm the match score!{" "}
-						</Text>
-						<TouchableOpacity onPress={handleOpenModal}>
-							<Text
-								style={[
-									styles.text,
-									{ color: "rgba(53, 98, 166, 0.6)" },
-								]}
-							>
-								Update now{" "}
-							</Text>
-						</TouchableOpacity>
-					</View>
+					{userIsCreator ? (
+						noTimeLeft ? (
+							<View style={styles.confirmResult}>
+								{matchcompleted ? (
+									<>
+										<Text style={styles.text}>
+											Make sure to confirm the match score!{" "}
+										</Text>
+										<TouchableOpacity onPress={handleOpenModal}>
+											<Text
+												style={[
+													styles.text,
+													{ color: "rgba(53, 98, 166, 0.6)" },
+												]}
+											>
+												Update now
+											</Text>
+										</TouchableOpacity>
+									</>
+								) : (
+									<>
+										<Text style={styles.text}>
+											Please update the match status to{" "}
+										</Text>
+										<TouchableOpacity onPress={handleMatchcompleted}>
+											<Text
+												style={[
+													styles.text,
+													{ color: "rgba(53, 98, 166, 0.6)" },
+												]}
+											>
+												"Finished"
+											</Text>
+										</TouchableOpacity>
+									</>
+								)}
+							</View>
+						) : null
+					) : null}
 					<View style={styles.divider} />
 				</View>
 				<ScrollView
@@ -98,15 +238,15 @@ const MatchMainScreen = ({ route }) => {
 					{/* Game Details Section */}
 					<View style={styles.gameDetailsContainer}>
 						<Text style={styles.sectionTitle}>Game Details</Text>
-						<Text style={styles.detailText}>Date: 10/08/2024</Text>
-						<Text style={styles.detailText}>Hour: 19:30</Text>
 						<Text style={styles.detailText}>
-							Location: Calle Granada, S/N, Chana, 18015 Granada
+							Location: {center?.address || "Unknown"}
 						</Text>
+						<Text style={styles.detailText}>Date: {date}</Text>
+						<Text style={styles.detailText}>Hour: {hour}</Text>
 						<Text style={styles.detailText}>Duration: 1 hour</Text>
-						<Text style={styles.detailText}>Players: 5 vs 5</Text>
-						<Text style={styles.detailText}>Colour Kit - T.A: 🔴</Text>
-						<Text style={styles.detailText}>Colour Kit - T.B: 🟡</Text>
+						<Text style={styles.detailText}>
+							Pitch Type: {center?.pitch?.type || "Unknown"}
+						</Text>
 						<Text style={styles.detailText}>League: NaN</Text>
 						<Text style={styles.detailText}>Championship: NaN</Text>
 						<Text style={styles.detailText}>Price per Person: 2$</Text>
@@ -118,9 +258,13 @@ const MatchMainScreen = ({ route }) => {
 							<Text style={styles.sectionTitle}>
 								Automatic teams distribution
 							</Text>
-							<TouchableOpacity style={styles.doItNowButton}>
-								<Text style={styles.doItNowButtonText}>Do it now!</Text>
-							</TouchableOpacity>
+							{userIsCreator ? (
+								<TouchableOpacity style={styles.doItNowButton}>
+									<Text style={styles.doItNowButtonText}>
+										Do it now!
+									</Text>
+								</TouchableOpacity>
+							) : null}
 						</View>
 						<Text style={styles.detailText}>
 							Team A: Juan, Antonino, Roberto, Eustaquio, Paloma.
@@ -148,6 +292,18 @@ const MatchMainScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
+	loadingContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "rgba(250, 250, 250, 0.8)",
+	},
+	loadingText: {
+		marginTop: 10,
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		color: "#353A50",
+	},
 	mainContainer: {
 		flex: 1,
 		paddingVertical: 16,
@@ -175,9 +331,9 @@ const styles = StyleSheet.create({
 		fontSize: 12,
 		fontFamily: "InriaSans-Bold",
 		textAlign: "center",
-		marginBottom: 20,
 	},
 	divider: {
+		marginTop: 20,
 		borderBottomColor: "grey",
 		borderBottomWidth: 1,
 		width: "100%",

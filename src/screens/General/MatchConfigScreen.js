@@ -1,20 +1,37 @@
 // React Imports
 import React, { useState } from "react";
-import { View, Text, StyleSheet, ImageBackground, Alert } from "react-native";
+import {
+	View,
+	Text,
+	StyleSheet,
+	ImageBackground,
+	Alert,
+	TouchableOpacity,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 // My components
 import FloatButton from "../../components/FloatButton";
 import { cancelMatch } from "../../utils/MatchesFunctions";
+// Icons
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const MatchConfigScreen = ({ route }) => {
+	// Navigation
+	const navigation = useNavigation();
 	// User lider data
 	const user = route.params.user || {};
 	const reservation = route.params.reservation || {};
+	const matchCompleted = route.params.matchCompleted || false;
+	const userIsCreator = route.params.userIsCreator || false;
 	const matchId = route.params.matchId || {};
 
-	const navigation = useNavigation();
-
+	// State to store the result of the cancel match
 	const [cancelResult, setCancelResult] = useState(null);
+
+	// Handle leave match
+	const handleLeaveMatch = () => {
+		Alert.alert("Leave Match", "Coming soon...");
+	};
 
 	const handleCancelMatch = async () => {
 		if (!matchId) {
@@ -42,13 +59,49 @@ const MatchConfigScreen = ({ route }) => {
 			}}
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
-			<View style={styles.mainContainer}>
-				<Text>AJUSTES DEL PARTIDO</Text>
-				<FloatButton
-					title="Cancel Match"
-					backgroundCustomColor="red"
-					onPress={handleCancelMatch}
-				/>
+			<View
+				style={[
+					styles.mainContainer,
+					{ paddingTop: "28%", paddingHorizontal: 30 },
+				]}
+			>
+				{/* For all participants */}
+				<View>
+					{!matchCompleted && !userIsCreator ? (
+						<TouchableOpacity
+							style={styles.leaveButton}
+							onPress={handleLeaveMatch}
+						>
+							<FontAwesome6 name="door-open" size={35} color="tomato" />
+						</TouchableOpacity>
+					) : null}
+				</View>
+
+				{/* Only for creators */}
+				{userIsCreator ? (
+					<View
+						style={{
+							width: "100%",
+							height: "100%",
+							paddingHorizontal: 10,
+						}}
+					>
+						{/* Finish a Match */}
+						<TouchableOpacity
+							style={styles.button}
+							// onPress={}
+						>
+							<Text style={styles.buttonText}>MATCH CONFIG</Text>
+						</TouchableOpacity>
+
+						{/* Cancel Match */}
+						<FloatButton
+							title="Cancel Match"
+							backgroundCustomColor="red"
+							onPress={handleCancelMatch}
+						/>
+					</View>
+				) : null}
 			</View>
 		</ImageBackground>
 	);
@@ -68,6 +121,10 @@ const styles = StyleSheet.create({
 		borderBottomColor: "grey",
 		borderBottomWidth: 1,
 		width: "100%",
+	},
+	leaveButton: {
+		alignItems: "center",
+		justifyContent: "center",
 	},
 });
 

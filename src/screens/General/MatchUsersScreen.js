@@ -16,15 +16,26 @@ import AddFriendButton from "../../components/AddFriendButton";
 import PopUpModal from "../../components/PopUpModal";
 import FriendInvitation from "../../components/FriendInvitation";
 // User Functions
-import { getFriendsList } from "../../utils/UserFunctions";
+import {
+	deleteMatchParticipant,
+	getFriendsNotInvited,
+	getMatchParticipants,
+	sendFriendInvitation,
+} from "../../utils/MatchesFunctions";
 
-const MatchUsersScreen = ({ route }) => {
+const MatchfriendsScreen = ({ route }) => {
 	const user = route.params.user || {};
-	const [users, setFriendList] = useState([]);
+	const matchId = route.params.matchId || {};
+	const matchCompleted = route.params.matchCompleted || false;
+	const [friends, setFriendList] = useState([]);
+	const [participants, setParticipants] = useState([]);
 	const [modalOpen, setModalOpen] = useState(false);
 
-	const handleRemoveUser = (userId) => {
-		setUsers(users.filter((user) => user.id !== userId));
+	const handleRemoveUser = async (userId) => {
+		setParticipants(participants.filter((user) => user.id !== userId));
+
+		// Delete participant from the match
+		await deleteMatchParticipant(matchId, userId);
 	};
 
 	const handleRoomChat = () => {
@@ -33,20 +44,28 @@ const MatchUsersScreen = ({ route }) => {
 
 	const handleAddFriendPress = () => {
 		setModalOpen(true);
+		updateUsersList();
 	};
 
 	const handleCloseModal = () => {
 		setModalOpen(false);
 	};
 
-	// Update the friends list
-	const updateFriendsList = async () => {
-		await getFriendsList(user.id, setFriendList);
+	// Update the friends list and invitations list
+	const updateUsersList = async () => {
+		await getFriendsNotInvited(user.id, matchId, setFriendList);
+		await getMatchParticipants(matchId, setParticipants);
 	};
-	// Update the friends list on component mount
+	// Update the friends list on component mount and
 	useEffect(() => {
-		updateFriendsList();
-	},[]);
+		updateUsersList();
+	}, []);
+
+	// Handle the friend invitation
+	const handleFriendInvitation = async (friendId) => {
+		await sendFriendInvitation(matchId, friendId, user.id);
+		updateUsersList();
+	};
 
 	return (
 		<ImageBackground
@@ -56,19 +75,28 @@ const MatchUsersScreen = ({ route }) => {
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
 			<View style={styles.mainContainer}>
-				<View style={styles.addFriendContainer}>
-					<AddFriendButton onPress={handleAddFriendPress} />
-				</View>
+				{route.params.userIsCreator ? (
+					!matchCompleted ? (
+						<View style={styles.addFriendContainer}>
+							<AddFriendButton onPress={handleAddFriendPress} />
+						</View>
+					) : null
+				) : null}
 				<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
 					<View style={styles.popUpAddFriend}>
-						<Text style={styles.title}>Friend List</Text>
+						<Text style={styles.title}>Invite your Friends!</Text>
 						<View style={styles.friendInvitationContainer}>
-							{users.length > 0 ? (
+							{friends.length > 0 ? (
 								<FlatList
-									data={users}
+									data={friends}
 									renderItem={({ item }) => (
 										<View style={styles.gridItem}>
-											<FriendInvitation friend={item} />
+											<FriendInvitation
+												friend={item}
+												onPress={() =>
+													handleFriendInvitation(item.id)
+												}
+											/>
 										</View>
 									)}
 									keyExtractor={(item) => item.id.toString()}
@@ -91,9 +119,13 @@ const MatchUsersScreen = ({ route }) => {
 					</View>
 				</PopUpModal>
 				<FlatList
-					data={users}
+					data={participants}
 					renderItem={({ item }) => (
-						<UserMatchItem user={item} onRemove={handleRemoveUser} />
+						<UserMatchItem
+							user={item}
+							onRemove={handleRemoveUser}
+							userIsCreator={route.params.userIsCreator}
+						/>
 					)}
 					keyExtractor={(item) => item.id.toString()}
 					showsVerticalScrollIndicator={false}
@@ -175,4 +207,4 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default MatchUsersScreen;
+export default MatchfriendsScreen;

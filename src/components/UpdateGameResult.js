@@ -2,14 +2,25 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 
-const UpdateGameResult = ({ teamA, teamB, result, onPress }) => {
+const UpdateGameResult = ({
+	teamA,
+	teamB,
+	result,
+	onPressClose,
+	onPressSave,
+}) => {
 	// State to store the scores of Team A and Team B
-	const [scoreA, setScoreA] = useState(result.A);
-	const [scoreB, setScoreB] = useState(result.B);
+	const [scoreA, setScoreA] = useState(result.teamA);
+	const [scoreB, setScoreB] = useState(result.teamB);
 
 	// Handle close action
 	const handleClose = () => {
-		onPress(); // Close the modal
+		onPressClose(); // Close the modal
+	};
+
+	// Handle save action
+	const handleSave = () => {
+		onPressSave(scoreA, scoreB); // Save the result
 	};
 
 	// Increment and decrement functions for the scores
@@ -65,7 +76,7 @@ const UpdateGameResult = ({ teamA, teamB, result, onPress }) => {
 				</View>
 			</View>
 			<View style={styles.buttonContainer}>
-				<TouchableOpacity style={styles.saveButton}>
+				<TouchableOpacity style={styles.saveButton} onPress={handleSave}>
 					<Text style={styles.saveButtonText}>Save</Text>
 				</TouchableOpacity>
 				<TouchableOpacity style={styles.closeButton} onPress={handleClose}>

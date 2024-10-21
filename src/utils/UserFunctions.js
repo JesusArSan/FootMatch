@@ -323,3 +323,95 @@ export const getUserById = async (userId, setUserData) => {
 		setUserData(null); // Optionally handle the error by setting user data to null
 	}
 };
+
+// Function to update the user's profile photo in the database
+export const updateProfilePhoto = async (userId, photoUrl) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/${userId}/update_photo`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ photoUrl }),
+			}
+		);
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			throw new Error(`Error updating profile photo: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		// Check if the response data contains an error message
+		if (data.error) {
+			throw new Error(`Error del servidor: ${data.error}`);
+		}
+
+		console.log("Profile photo updated successfully", data);
+	} catch (error) {
+		console.error("Error updating profile photo:", error);
+		alert(`${error.message}`);
+	}
+};
+
+// Update user
+export const updateUser = async (userId, updatedData) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/users/${userId}`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(updatedData),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Error updating user: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		console.log("User updated successfully", data);
+	} catch (error) {
+		console.error("Error updating user:", error);
+		throw error;
+	}
+};
+
+// update user role
+export const updateUserRole = async (userId, roleId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/${userId}/update_role`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ role_id: roleId }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error updating user role: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		console.log("User role updated successfully", data);
+	} catch (error) {
+		console.error("Error updating user role:", error);
+		throw error;
+	}
+};

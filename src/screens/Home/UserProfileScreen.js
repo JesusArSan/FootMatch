@@ -6,9 +6,14 @@ import {
 	StyleSheet,
 	Image,
 	TouchableOpacity,
+	Pressable,
+	TextInput,
+	Alert,
 	ImageBackground,
 	ScrollView,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 // My Utils
@@ -17,14 +22,21 @@ import {
 	getFriendsList,
 	sendFriendRequest,
 	isFriend,
+	updateUser,
 	removeFriend,
+	updateProfilePhoto,
 	deleteFriendRequest,
+	updateUserRole,
 } from "../../utils/UserFunctions";
+import { uploadImage } from "../../utils/UploadImage";
 // My components
 import CustomButton from "../../components/CustomButton";
+import PopUpModal from "../../components/PopUpModal";
 // Icons
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import Feather from "@expo/vector-icons/Feather";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 // Function to truncate text
 const truncate = (text, maxLength) => {
@@ -43,7 +55,8 @@ const UserProfileScreen = ({ route }) => {
 
 	// Get the user data from the route params
 	const { otherUser, userLogged } = route.params;
-	const user = otherUser || userLogged;
+	let user = otherUser || userLogged;
+	const isAdmin = userLogged.role_id === 1;
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
@@ -65,6 +78,82 @@ const UserProfileScreen = ({ route }) => {
 		if (otherUser && userLogged) {
 			setIsFriend(await isFriend(userLogged.id, otherUser.id));
 		}
+	};
+
+	// Image picker state and function
+	const [selectedImage, setSelectedImage] = useState(null);
+	// Update username
+	const [newUsername, setNewUsername] = useState("");
+
+	// Image picker
+	const pickImage = async () => {
+		// Request permission to access the gallery
+		let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+		if (result.granted === false) {
+			alert("You need access to the gallery to select an image.");
+			return;
+		}
+
+		// Open the image picker
+		let pickerResult = await ImagePicker.launchImageLibraryAsync({
+			mediaTypes: ImagePicker.MediaTypeOptions.Images,
+			allowsEditing: true,
+			quality: 1,
+		});
+
+		if (!pickerResult.canceled) {
+			setSelectedImage(pickerResult.assets[0].uri); // Save the selected image URI
+		}
+	};
+
+	// Popup
+	const [modalOpen, setModalOpen] = useState(false);
+	const handleOpenModal = () => {
+		setModalOpen(true);
+	};
+	const handleCloseModal = () => {
+		setModalOpen(false);
+
+		// Reset the selected image
+		setSelectedImage(null);
+	};
+
+	const handleSaveModal = async () => {
+		let updatedData = {}; // Object to store updated fields
+
+		// Check if username has been changed
+		if (newUsername.trim()) {
+			updatedData.username = newUsername;
+		}
+
+		// First, upload the image if a new one is selected
+		if (selectedImage) {
+			try {
+				const newImageUrl = await uploadImage(selectedImage); // Upload the image
+				await updateProfilePhoto(userLogged.id, newImageUrl); // Update the photo separately
+				user.photo = newImageUrl; // Update local user photo URL
+			} catch (error) {
+				alert("Error uploading image");
+				return;
+			}
+		}
+
+		// Then, update user information if there are any changes
+		if (Object.keys(updatedData).length > 0) {
+			try {
+				await updateUser(userLogged.id, updatedData); // Call `updateUser` for other user info
+
+				// Update local user data if username changed
+				if (updatedData.username) user.username = updatedData.username;
+
+				alert("User updated successfully!");
+			} catch (error) {
+				alert("Error updating user.");
+			}
+		}
+
+		handleCloseModal(); // Close the modal
 	};
 
 	// Focus effect
@@ -117,8 +206,185 @@ const UserProfileScreen = ({ route }) => {
 		return <Text style={styles.buttonText}>Be Friend</Text>;
 	};
 
+	// Modify user when the user is the logged user
+	useEffect(() => {
+		if (!otherUser) {
+			navigation.setOptions({
+				headerRight: () => (
+					<TouchableOpacity
+						style={styles.headerRightContainer}
+						onPress={handleOpenModal}
+					>
+						<View style={{ marginRight: "8%" }}>
+							<Feather name="edit" size={24} color="white" />
+						</View>
+					</TouchableOpacity>
+				),
+			});
+		}
+	}, [navigation, otherUser]);
+
+	// State to manage the second pop-up visibility
+	const [secondModalOpen, setSecondModalOpen] = useState(false);
+
+	// Functions to handle opening and closing the second pop-up
+	const handleOpenSecondModal = () => {
+		setSecondModalOpen(true);
+	};
+	const handleCloseSecondModal = () => {
+		setSecondModalOpen(false);
+	};
+
+	// State to manage selected role
+	const [selectedRole, setSelectedRole] = useState("User"); // Default is "User"
+
+	// Update selectedRole only when otherUser exists
+	useEffect(() => {
+		if (otherUser) {
+			if (otherUser.role_id === 1) {
+				setSelectedRole("Admin");
+			} else if (otherUser.role_id === 2) {
+				setSelectedRole("Moderator");
+			} else {
+				setSelectedRole("User");
+			}
+		}
+	}, [otherUser]);
+
+	// Handle role change
+	const handleRoleChange = (role) => {
+		setSelectedRole(role);
+	};
+
+	const handleSaveSecondModal = async () => {
+		let updatedData = { role: selectedRole }; // Save selected role
+
+		console.log("Updated data: ", updatedData);
+
+		try {
+			await updateUserRole(
+				otherUser.id,
+				selectedRole === "Admin" ? 1 : selectedRole === "Moderator" ? 2 : 3
+			);
+
+			alert("Role updated successfully!");
+			handleCloseSecondModal(); // Close the modal after saving
+		} catch (error) {
+			alert("Error updating role.");
+			console.error("Error updating role:", error);
+		}
+	};
+
 	return (
 		<View style={styles.container}>
+			<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
+				<View style={styles.popUpContainer}>
+					<View style={styles.formContainer}>
+						<Text style={styles.label}>Change Username:</Text>
+						<TextInput
+							style={styles.input}
+							placeholder="New username"
+							value={newUsername}
+							onChangeText={setNewUsername}
+							autoCapitalize="none"
+						/>
+
+						<Text style={styles.label}>Change Profile Image:</Text>
+						<TouchableOpacity
+							style={styles.filePickerButton}
+							onPress={pickImage}
+						>
+							<Text style={styles.filePickerButtonText}>
+								Seleccionar Imagen
+							</Text>
+						</TouchableOpacity>
+						{selectedImage && (
+							<Image
+								source={{ uri: selectedImage }}
+								style={styles.previewImage}
+							/>
+						)}
+					</View>
+
+					<View style={styles.buttonBoxPopUp}>
+						<Pressable
+							style={styles.closeButton}
+							onPress={handleCloseModal}
+						>
+							<Text style={styles.closeButtonText}>Cerrar</Text>
+						</Pressable>
+
+						<Pressable
+							style={styles.saveButton}
+							onPress={handleSaveModal}
+						>
+							<Text style={styles.saveButtonText}>Guardar</Text>
+						</Pressable>
+					</View>
+				</View>
+			</PopUpModal>
+
+			<PopUpModal isOpen={secondModalOpen} setIsOpen={setSecondModalOpen}>
+				<View style={styles.popUpContainer}>
+					<Text style={styles.label}>Change User Role</Text>
+
+					<View style={styles.dropdownContainer}>
+						<TouchableOpacity onPress={() => handleRoleChange("Admin")}>
+							<Text
+								style={
+									selectedRole === "Admin"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								Admin
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity
+							onPress={() => handleRoleChange("Moderator")}
+						>
+							<Text
+								style={
+									selectedRole === "Moderator"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								Moderator
+							</Text>
+						</TouchableOpacity>
+						<TouchableOpacity onPress={() => handleRoleChange("User")}>
+							<Text
+								style={
+									selectedRole === "User"
+										? styles.selectedRole
+										: styles.roleOption
+								}
+							>
+								User
+							</Text>
+						</TouchableOpacity>
+					</View>
+
+					{/* Button Box with Close and Save options */}
+					<View style={styles.buttonBoxPopUp}>
+						<Pressable
+							style={styles.closeButton}
+							onPress={handleCloseSecondModal}
+						>
+							<Text style={styles.closeButtonText}>Close</Text>
+						</Pressable>
+
+						<Pressable
+							style={styles.saveButton}
+							onPress={handleSaveSecondModal}
+						>
+							<Text style={styles.saveButtonText}>Save</Text>
+						</Pressable>
+					</View>
+				</View>
+			</PopUpModal>
+
 			<ImageBackground
 				source={{
 					uri:
@@ -127,6 +393,17 @@ const UserProfileScreen = ({ route }) => {
 				}} // Back url image
 				style={styles.backgroundImage}
 			>
+				{isAdmin && otherUser && (
+					<View style={styles.boxButtonRol}>
+						<TouchableOpacity
+							style={styles.buttonRol}
+							onPress={handleOpenSecondModal}
+						>
+							<FontAwesome name="exchange" size={24} color="black" />
+							<Text>Role</Text>
+						</TouchableOpacity>
+					</View>
+				)}
 				<ScrollView
 					contentContainerStyle={styles.scrollViewContent}
 					showsVerticalScrollIndicator={false}
@@ -348,6 +625,148 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontSize: 14,
 		fontFamily: "InriaSans-Regular",
+	},
+	popUpContainer: {
+		borderRadius: 20,
+		maxHeight: "40%",
+		justifyContent: "center",
+		alignItems: "center",
+		alignSelf: "center",
+		backgroundColor: "#fafafa",
+		padding: 20,
+		width: "90%",
+	},
+	formContainer: {
+		width: "100%",
+		justifyContent: "center",
+		alignItems: "flex-start",
+		marginBottom: 20,
+	},
+	input: {
+		height: 40,
+		width: "100%",
+		borderColor: "#ccc",
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		marginBottom: 15,
+		fontFamily: "InriaSans-Regular",
+	},
+	label: {
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		marginBottom: 5,
+		color: "#333",
+		textAlign: "left",
+		width: "100%",
+	},
+	buttonBoxPopUp: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		width: "80%",
+		marginTop: 10,
+	},
+	closeButton: {
+		width: 100,
+		backgroundColor: "#D9534F",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	closeButtonText: {
+		color: "white",
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	saveButton: {
+		width: 100,
+		backgroundColor: "#5cb85c",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 5,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+		elevation: 5,
+	},
+	saveButtonText: {
+		color: "white",
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	filePickerButton: {
+		backgroundColor: "grey",
+		paddingVertical: 5,
+		paddingHorizontal: 10,
+		borderRadius: 5,
+		marginBottom: 10,
+	},
+	filePickerButtonText: {
+		color: "white",
+		fontSize: 12,
+		fontFamily: "InriaSans-Bold",
+		textAlign: "center",
+	},
+	previewImage: {
+		width: 100,
+		height: 100,
+		borderRadius: 10,
+		marginTop: 10,
+		alignSelf: "left",
+		borderWidth: 1,
+		borderColor: "#ccc",
+	},
+	boxButtonRol: {
+		width: "15%",
+		height: "6%",
+		justifyContent: "flex-start",
+		alignItems: "center",
+		alignSelf: "flex-end",
+		margin: "2%",
+		marginBottom: "-10%",
+	},
+	buttonRol: {
+		width: "100%",
+		height: "100%",
+		borderRadius: 10,
+		backgroundColor: "#fff",
+		justifyContent: "center",
+		alignItems: "center",
+	},
+	dropdownContainer: {
+		backgroundColor: "#f9f9f9",
+		borderRadius: 8,
+		paddingVertical: 10,
+		paddingHorizontal: 5,
+		marginVertical: 10,
+		width: "100%",
+		borderWidth: 1,
+		borderColor: "#ddd",
+	},
+	roleOption: {
+		fontSize: 16,
+		color: "#333",
+		paddingHorizontal: 5,
+		paddingVertical: 12,
+		borderBottomWidth: 1,
+		borderBottomColor: "#eee",
+	},
+	selectedRole: {
+		fontSize: 16,
+		color: "#fff",
+		paddingHorizontal: 5,
+		paddingVertical: 12,
+		backgroundColor: "#007BFF",
+		fontWeight: "bold",
+		borderRadius: 4,
 	},
 });
 
