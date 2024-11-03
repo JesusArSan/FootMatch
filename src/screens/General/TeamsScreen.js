@@ -208,9 +208,13 @@ const TeamsScreen = ({ route }) => {
 
 	const openTeamUsersModal = (team) => {
 		setSelectedTeam(team);
-		updateUserLists();
 		setIsTeamUsersModalOpen(true);
 	};
+	useEffect(() => {
+		if (selectedTeam) {
+			updateUserLists(); // Load users and friends when team is selected
+		}
+	}, [selectedTeam]);
 
 	const handleAddUserToTeam = async (userId) => {
 		try {
@@ -326,7 +330,8 @@ const TeamsScreen = ({ route }) => {
 			>
 				<TouchableOpacity
 					style={[styles.button, { marginTop: -10 }]}
-					onPress={openBottomSheet}>
+					onPress={openBottomSheet}
+				>
 					<Text style={styles.buttonText}>Create a New Team</Text>
 				</TouchableOpacity>
 

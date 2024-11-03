@@ -21,6 +21,7 @@ import {
 	getFriendsNotInvited,
 	getMatchParticipants,
 	sendFriendInvitation,
+	addParticipantToMatch,
 } from "../../utils/MatchesFunctions";
 
 const MatchfriendsScreen = ({ route }) => {
@@ -33,8 +34,6 @@ const MatchfriendsScreen = ({ route }) => {
 
 	const handleRemoveUser = async (userId) => {
 		setParticipants(participants.filter((user) => user.id !== userId));
-
-		// Delete participant from the match
 		await deleteMatchParticipant(matchId, userId);
 	};
 
@@ -51,20 +50,31 @@ const MatchfriendsScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
-	// Update the friends list and invitations list
 	const updateUsersList = async () => {
 		await getFriendsNotInvited(user.id, matchId, setFriendList);
 		await getMatchParticipants(matchId, setParticipants);
 	};
-	// Update the friends list on component mount and
+
 	useEffect(() => {
 		updateUsersList();
 	}, []);
 
-	// Handle the friend invitation
 	const handleFriendInvitation = async (friendId) => {
 		await sendFriendInvitation(matchId, friendId, user.id);
 		updateUsersList();
+	};
+
+	const isUserParticipant = participants.some(
+		(participant) => participant.id === user.id
+	);
+
+	const handleAutoInvite = async () => {
+		try {
+			await addParticipantToMatch(matchId, user.id);
+			updateUsersList();
+		} catch (error) {
+			Alert.alert("Error", "Failed to join the match.");
+		}
 	};
 
 	return (
@@ -75,13 +85,19 @@ const MatchfriendsScreen = ({ route }) => {
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
 			<View style={styles.mainContainer}>
-				{route.params.userIsCreator ? (
-					!matchCompleted ? (
-						<View style={styles.addFriendContainer}>
-							<AddFriendButton onPress={handleAddFriendPress} />
-						</View>
-					) : null
-				) : null}
+				{!isUserParticipant && (
+					<Pressable
+						style={styles.autoInviteButton}
+						onPress={handleAutoInvite}
+					>
+						<Text style={styles.autoInviteText}>Enter the Game!</Text>
+					</Pressable>
+				)}
+				{route.params.userIsCreator && !matchCompleted && (
+					<View style={styles.addFriendContainer}>
+						<AddFriendButton onPress={handleAddFriendPress} />
+					</View>
+				)}
 				<PopUpModal isOpen={modalOpen} setIsOpen={setModalOpen}>
 					<View style={styles.popUpAddFriend}>
 						<Text style={styles.title}>Invite your Friends!</Text>
@@ -148,6 +164,25 @@ const styles = StyleSheet.create({
 		backgroundColor: "rgba(250, 250, 250, 0.8)",
 		marginTop: 30,
 		marginHorizontal: 20,
+	},
+	autoInviteButton: {
+		backgroundColor: "#4CAF50",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 8,
+		alignSelf: "center",
+		marginVertical: 15,
+		shadowColor: "#000",
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.3,
+		shadowRadius: 4,
+		elevation: 5,
+	},
+	autoInviteText: {
+		color: "white",
+		fontSize: 18,
+		fontWeight: "bold",
+		textAlign: "center",
 	},
 	title: {
 		fontSize: 22,

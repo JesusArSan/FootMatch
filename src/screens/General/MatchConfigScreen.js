@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -9,11 +9,14 @@ import {
 	Switch,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 // My components
 import FloatButton from "../../components/FloatButton";
 import {
 	cancelMatch,
 	changeMatchAccessType,
+	deleteMatchParticipant,
+	getMatchParticipantsData,
 } from "../../utils/MatchesFunctions";
 // Icons
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -27,7 +30,7 @@ const MatchConfigScreen = ({ route }) => {
 	const matchCompleted = route.params.matchCompleted || false;
 	const userIsCreator = route.params.userIsCreator || false;
 	const matchId = route.params.matchId || {};
-
+	const [isParticipant, setIsParticipant] = useState(false);
 	// State for access type switch (public/private)
 	const [isPrivate, setIsPrivate] = useState(
 		route.params.accessType === "private"
@@ -45,9 +48,39 @@ const MatchConfigScreen = ({ route }) => {
 		}
 	};
 
+	// Check if the current user is a participant
+	useFocusEffect(
+		useCallback(() => {
+			const checkParticipation = async () => {
+				try {
+					const participants = await getMatchParticipantsData(matchId);
+					const isUserInMatch = participants.some(
+						(participant) => participant.id === user.id
+					);
+					setIsParticipant(isUserInMatch);
+				} catch (error) {
+					console.error("Error fetching match participants:", error);
+				}
+			};
+
+			checkParticipation();
+		}, [matchId, user.id])
+	);
+
 	// Handle leave match
-	const handleLeaveMatch = () => {
-		Alert.alert("Leave Match", "Coming soon...");
+	const handleLeaveMatch = async () => {
+		if (!matchId) {
+			Alert.alert("Error", "No match ID provided.");
+			return;
+		}
+
+		try {
+			await deleteMatchParticipant(matchId, user.id);
+			Alert.alert("Success", "You have left the match.");
+			navigation.navigate("MainNavigatorScreen"); // Navega al home
+		} catch (error) {
+			Alert.alert("Error", `Failed to leave match: ${error.message}`);
+		}
 	};
 
 	// Handle cancel match
@@ -74,8 +107,8 @@ const MatchConfigScreen = ({ route }) => {
 			style={styles.backgroundImage}
 		>
 			<View style={styles.mainContainer}>
-				{/* For all participants */}
-				{!matchCompleted && !userIsCreator && (
+				{/* For participants who are not the creator */}
+				{!matchCompleted && !userIsCreator && isParticipant && (
 					<TouchableOpacity
 						style={styles.leaveButton}
 						onPress={handleLeaveMatch}

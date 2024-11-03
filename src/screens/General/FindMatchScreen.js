@@ -1,5 +1,6 @@
 // React Imports
-import React, { useEffect, useState } from "react";
+// React Imports
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -8,35 +9,62 @@ import {
 	TouchableOpacity,
 	Image,
 	Alert,
+	RefreshControl,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
+import { format } from "date-fns";
 import { getMatchesByAccessType } from "../../utils/MatchesFunctions.js";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-const FindMatchScreen = () => {
+const FindMatchScreen = ({ route }) => {
 	const [publicMatches, setPublicMatches] = useState([]);
+	const [refreshing, setRefreshing] = useState(false);
+	const navigation = useNavigation();
+	const user = route.params.user || {};
 
-	// Fetch public matches when component mounts
-	useEffect(() => {
-		const fetchMatches = async () => {
-			try {
-				const matches = await getMatchesByAccessType("public");
-				setPublicMatches(matches);
-			} catch (error) {
-				console.error("Error fetching public matches:", error);
-			}
-		};
-		fetchMatches();
-	}, []);
+	// Fetch public matches
+	const fetchMatches = async () => {
+		try {
+			setRefreshing(true);
+			const matches = await getMatchesByAccessType("public", user.id);
+			setPublicMatches(matches);
+		} catch (error) {
+			console.error("Error fetching public matches:", error);
+		} finally {
+			setRefreshing(false);
+		}
+	};
+
+	// Refresh matches when the screen is focused
+	useFocusEffect(
+		useCallback(() => {
+			fetchMatches();
+		}, [user.id])
+	);
 
 	// Truncate text to a certain length
 	const truncateText = (text, length) => {
 		return text.length > length ? `${text.substring(0, length)}.` : text;
 	};
 
-	const handleEnterMatch = () => {
+	const handleEnterMatch = (item) => {
+		const matchDateTime = new Date(item.match_date);
+		const utcDate = new Date(
+			matchDateTime.getTime() - matchDateTime.getTimezoneOffset() * 60000
+		);
+		const formattedDate = format(utcDate, "yyyy-MM-dd HH:mm");
+
 		try {
-			navigation.navigate("MatchDetailScreen", { matchId });
-			
+			navigation.navigate("MatchTabNavigator", {
+				matchId: item.id,
+				reservation: {
+					matchDate: formattedDate,
+					pitchId: item.pitch_id,
+					user_id: item.created_by_user_id,
+				},
+				accessType: item.access_type,
+			});
 		} catch (error) {
 			Alert.alert("Error", "Failed to enter match.");
 		}
@@ -44,7 +72,10 @@ const FindMatchScreen = () => {
 
 	const renderMatchItem = ({ item }) => (
 		<View style={styles.matchCard}>
-			<Image source={{ uri: item.team_a_logo }} style={styles.teamLogo} />
+			<View style={styles.teamLogosContainer}>
+				<Image source={{ uri: item.team_a_logo }} style={styles.teamLogo} />
+				<Image source={{ uri: item.team_b_logo }} style={styles.teamLogo} />
+			</View>
 			<View style={styles.matchInfo}>
 				<Text style={styles.teamNames}>
 					{truncateText(item.team_a_name, 8)} vs{" "}
@@ -58,7 +89,7 @@ const FindMatchScreen = () => {
 					Location: {item.center_name}
 				</Text>
 			</View>
-			<TouchableOpacity onPress={handleEnterMatch}>
+			<TouchableOpacity onPress={() => handleEnterMatch(item)}>
 				<MaterialCommunityIcons
 					name="location-enter"
 					size={30}
@@ -70,12 +101,18 @@ const FindMatchScreen = () => {
 
 	return (
 		<View style={styles.container}>
-			<Text style={styles.title}>Time to play!</Text>
+			<Text style={styles.title}>Show Your Skills!</Text>
 			<FlatList
 				data={publicMatches}
 				renderItem={renderMatchItem}
 				keyExtractor={(item) => item.id.toString()}
 				contentContainerStyle={styles.listContent}
+				refreshControl={
+					<RefreshControl
+						refreshing={refreshing}
+						onRefresh={fetchMatches}
+					/>
+				}
 				ListEmptyComponent={
 					<Text style={styles.emptyText}>No public matches available</Text>
 				}
@@ -115,11 +152,14 @@ const styles = StyleSheet.create({
 		shadowRadius: 5,
 		elevation: 3,
 	},
-	teamLogo: {
-		width: 60,
-		height: 60,
-		borderRadius: 30,
+	teamLogosContainer: {
+		alignItems: "center",
 		marginRight: 15,
+	},
+	teamLogo: {
+		width: 40,
+		height: 40,
+		marginVertical: 5,
 	},
 	matchInfo: {
 		flex: 1,

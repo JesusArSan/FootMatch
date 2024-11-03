@@ -191,6 +191,38 @@ export const getMatchParticipants = async (matchId, setParticipants) => {
 	}
 };
 
+// get match participants by match id
+export const getMatchParticipantsData = async (matchId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/participants/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Error getting match participants: ${response.status}`
+			);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data; // Return the list of participants
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
 // Get list of matches that user is invited to join based on status
 export const getUserMatchInvitations = async (userId, status) => {
 	try {
@@ -553,8 +585,10 @@ export const changeMatchAccessType = async (matchId, accessType) => {
 };
 
 // Get matches by access type
-export const getMatchesByAccessType = async (accessType) => {
+// Fetch matches by access type and filter out matches where the user is already a participant
+export const getMatchesByAccessType = async (accessType, userId) => {
 	try {
+		// Fetch matches based on access type
 		const response = await fetch(
 			`${config.serverUrl}/matches/access_type/${accessType}`,
 			{
@@ -571,15 +605,82 @@ export const getMatchesByAccessType = async (accessType) => {
 			);
 		}
 
-		const data = await response.json();
+		const matches = await response.json();
 
-		if (data.error) {
-			throw new Error(`Server error: ${data.error}`);
+		if (matches.error) {
+			throw new Error(`Server error: ${matches.error}`);
 		}
 
-		return data; // Return the list of matches with the specified access type
+		// Filter out matches where the user is already a participant
+		const filteredMatches = [];
+
+		for (const match of matches) {
+			try {
+				// Direct fetch of participants for each match
+				const participantsResponse = await fetch(
+					`${config.serverUrl}/matches/participants/${match.id}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
+
+				if (!participantsResponse.ok) {
+					throw new Error(
+						`Error getting participants for match ${match.id}: ${participantsResponse.status}`
+					);
+				}
+
+				const participants = await participantsResponse.json();
+
+				// Check if the user is not in the participants list
+				const isUserInMatch = participants.some(
+					(participant) => participant.id === userId
+				);
+
+				if (!isUserInMatch) {
+					filteredMatches.push(match);
+				}
+			} catch (error) {
+				console.error(
+					`Error fetching participants for match ${match.id}:`,
+					error
+				);
+			}
+		}
+
+		return filteredMatches;
 	} catch (error) {
 		console.error("Error:", error);
-		throw error; // Re-throw the error to be handled in the component
+		throw error; // Re-throw the error for handling in the component
+	}
+};
+
+// Function to add a participant to a match
+export const addParticipantToMatch = async (matchId, userId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/participants`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ matchId, userId }),
+		});
+
+		if (!response.ok) {
+			// Handle HTTP errors
+			const errorData = await response.json();
+			throw new Error(errorData.message || `Error: ${response.status}`);
+		}
+
+		const data = await response.json();
+		console.log("Participant added successfully:", data);
+		return data.message;
+	} catch (error) {
+		// Log the error and rethrow it to be handled by the calling function
+		console.error("Error adding participant to match:", error);
+		throw error;
 	}
 };

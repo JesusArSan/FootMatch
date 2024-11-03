@@ -75,6 +75,7 @@ export default function App() {
 				<Stack.Screen
 					name="FindMatchScreen"
 					component={FindMatchScreen}
+					initialParams={{ user: userData }}
 					options={{
 						headerTitle: (props) => (
 							<HeaderTitleScreen {...props} text={"Find a Match"} />
