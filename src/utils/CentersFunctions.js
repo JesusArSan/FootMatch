@@ -60,11 +60,11 @@ export const getFavCenters = async (userId, setFavCenters) => {
 	}
 };
 
-// Get pitch occupancy
-export const getPitchOccupancy = async (pitchId, setPitchOccupancy) => {
+// Get pitch host (occupancy)
+export const getPitchHost = async (pitchId, setPitchHost) => {
 	try {
 		const response = await fetch(
-			`${config.serverUrl}/centers/pitch_occupancies/${pitchId}`,
+			`${config.serverUrl}/centers/pitches/${pitchId}/host`,
 			{
 				method: "GET",
 				headers: {
@@ -74,21 +74,17 @@ export const getPitchOccupancy = async (pitchId, setPitchOccupancy) => {
 		);
 
 		if (!response.ok) {
-			// Handle HTTP errors
-			throw new Error(`Error fetching pitch occupancy: ${response.status}`);
+			throw new Error(`Error fetching pitch host: ${response.status}`);
 		}
 
 		const data = await response.json();
 
-		// Check if the response data contains an error message
 		if (data.error) {
 			throw new Error(`Server error: ${data.error}`);
 		}
 
-		//console.log(data);
-		setPitchOccupancy(data);
+		setPitchHost(data);
 	} catch (error) {
-		// Alert the user about the error
 		alert(`${error.message}`);
 	}
 };
@@ -177,7 +173,7 @@ export const getCenterByPitch = async (pitchId, setCenter) => {
 
 		if (!response.ok) {
 			// Handle HTTP errors
-			throw new Error(`Error fetching pitch occupancy: ${response.status}`);
+			throw new Error(`Error getting center by pitch: ${response.status}`);
 		}
 
 		const data = await response.json();

@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
 import { format, isSameDay } from "date-fns";
 import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 // My components
 import Subscription from "../../components/SubscriptionCard";
 import DaySelector from "../../components/DaySelector";
@@ -14,7 +15,7 @@ import {
 } from "../../utils/NotificationService"; // Import Message and NotificationManager
 import FloatButton from "../../components/FloatButton";
 // Centers functions
-import { getPitchOccupancy } from "../../utils/CentersFunctions";
+import { getPitchHost } from "../../utils/CentersFunctions";
 import { createMatch } from "../../utils/MatchesFunctions";
 
 const PitchTimeScreen = ({ route }) => {
@@ -35,7 +36,7 @@ const PitchTimeScreen = ({ route }) => {
 	useEffect(() => {
 		const fetchOccupancyData = async () => {
 			try {
-				await getPitchOccupancy(pitchInfo.id, setOccupancyData);
+				await getPitchHost(pitchInfo.id, setOccupancyData);
 			} catch (error) {
 				addMessage("Error loading pitch occupancy.");
 			}
@@ -43,6 +44,21 @@ const PitchTimeScreen = ({ route }) => {
 
 		fetchOccupancyData();
 	}, [pitchInfo.id]);
+
+	// focus effect to fetch occupancy data
+	useFocusEffect(
+		React.useCallback(() => {
+			const fetchOccupancyData = async () => {
+				try {
+					await getPitchHost(pitchInfo.id, setOccupancyData);
+				} catch (error) {
+					addMessage("Error loading pitch occupancy.");
+				}
+			};
+
+			fetchOccupancyData();
+		}, [pitchInfo.id])
+	);
 
 	// Update the time slots whenever selectedDate or occupancyData changes
 	useEffect(() => {

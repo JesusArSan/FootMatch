@@ -52,7 +52,7 @@ const MatchMainScreen = ({ route }) => {
 		image: "https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
 	});
 
-	const [result, setResult] = useState({
+	const [result,setResult] = useState({
 		teamA: 0,
 		teamB: 0,
 		status: matchDetails?.status || "sheduled",

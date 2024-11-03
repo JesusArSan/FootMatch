@@ -13,7 +13,6 @@ import {
 	ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 // My Utils

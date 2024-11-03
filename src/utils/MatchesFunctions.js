@@ -152,7 +152,7 @@ export const getMatchDetails = async (matchId) => {
 		}
 
 		// Return the parsed data
-		return(data);
+		return data;
 	} catch (error) {
 		console.error("Error:", error);
 		throw error;
@@ -513,5 +513,73 @@ export const setMatchCompleted = async (matchId) => {
 	} catch (error) {
 		console.error("Error:", error);
 		throw error;
+	}
+};
+
+// Change match access type to 'public' or 'private'
+export const changeMatchAccessType = async (matchId, accessType) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/change_access_type`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					matchId: matchId,
+					accessType: accessType,
+				}),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Error changing match access type: ${response.status}`
+			);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data;
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
+// Get matches by access type
+export const getMatchesByAccessType = async (accessType) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/access_type/${accessType}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Error getting matches by access type: ${response.status}`
+			);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data; // Return the list of matches with the specified access type
+	} catch (error) {
+		console.error("Error:", error);
+		throw error; // Re-throw the error to be handled in the component
 	}
 };

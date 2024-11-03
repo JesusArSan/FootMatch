@@ -109,7 +109,6 @@ const MatchesListScreen = ({ route }) => {
 
 	// Handle match press
 	const handleMatchPress = (item) => {
-		console.log("Match pressed:", item);
 		// Extract and process match_date (assuming it is in the "2024-09-05T13:30:00.000Z" format)
 		const matchDateTime = new Date(item.match_date);
 
@@ -120,6 +119,8 @@ const MatchesListScreen = ({ route }) => {
 
 		// Format the date to "yyyy-MM-dd HH:mm" as in the handleReserve function
 		const formattedDate = format(utcDate, "yyyy-MM-dd HH:mm");
+
+		console.log("Formatted date:", formattedDate);
 
 		// Navigate to MatchConfigScreen with formatted date and other details
 		navigation.navigate("MatchTabNavigator", {
