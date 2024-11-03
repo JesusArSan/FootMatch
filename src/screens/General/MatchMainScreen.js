@@ -8,6 +8,7 @@ import {
 	TouchableOpacity,
 	ScrollView,
 	ActivityIndicator,
+	Alert,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 // My components
@@ -21,6 +22,10 @@ import { getCenterByPitch } from "../../utils/CentersFunctions";
 import {
 	getMatchDetails,
 	setMatchCompleted,
+	setNewLocalTeamToMatch,
+	setNewVisitorTeamToMatch,
+	removeAllPlayersFromMatch,
+	addPlayersToMatchFromTeam,
 } from "../../utils/MatchesFunctions";
 
 const MatchMainScreen = ({ route }) => {
@@ -45,18 +50,49 @@ const MatchMainScreen = ({ route }) => {
 	const [teamA, setTeamA] = useState({
 		name: "Team A",
 		image: "https://espndeportes.espn.com/i/teamlogos/soccer/500/default-team-logo-500.png?h=100&w=100",
+		isCustom: false,
+		idTeam: "",
 	});
 
 	const [teamB, setTeamB] = useState({
 		name: "Team B",
 		image: "https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
+		isCustom: false,
+		idTeam: "",
 	});
 
-	const [result,setResult] = useState({
+	const [result, setResult] = useState({
 		teamA: 0,
 		teamB: 0,
 		status: matchDetails?.status || "sheduled",
 	});
+
+	// Update match with custom teams when both are custom
+	useEffect(() => {
+		const updateMatchWithCustomTeams = async () => {
+			if (teamA.isCustom && teamB.isCustom) {
+				try {
+					console.log("Match ID:", matchId);
+					console.log("Team A ID:", teamA.idTeam);
+					console.log("Team B ID:", teamB.idTeam);
+					await removeAllPlayersFromMatch(matchId);
+					await addPlayersToMatchFromTeam(matchId, teamA.idTeam);
+					await addPlayersToMatchFromTeam(matchId, teamB.idTeam);
+
+					// const updatedMatchData = await getMatchDetails(matchId);
+					// setMatchDetails(updatedMatchData);
+				} catch (error) {
+					console.error("Error updating match with custom teams:", error);
+					Alert.alert(
+						"Error",
+						"Failed to update match with custom teams."
+					);
+				}
+			}
+		};
+
+		updateMatchWithCustomTeams();
+	}, [teamA, teamB, matchId]);
 
 	// Fetch center data on mount
 	useEffect(() => {
@@ -92,6 +128,8 @@ const MatchMainScreen = ({ route }) => {
 						image:
 							matchData.team_a_logo ||
 							"https://espndeportes.espn.com/i/teamlogos/soccer/500/default-team-logo-500.png?h=100&w=100",
+						isCustom: matchData.team_a_is_custom,
+						idTeam: matchData.team_a_id,
 					});
 
 					setTeamB({
@@ -99,6 +137,8 @@ const MatchMainScreen = ({ route }) => {
 						image:
 							matchData.team_b_logo ||
 							"https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
+						isCustom: matchData.team_b_is_custom,
+						idTeam: matchData.team_b_id,
 					});
 
 					// Update result state
@@ -153,6 +193,58 @@ const MatchMainScreen = ({ route }) => {
 		);
 	}
 
+	const handleSetNewLocalTeam = async (match_id, team_id) => {
+		if (!noTimeLeft && userIsCreator) {
+			try {
+				await setNewLocalTeamToMatch(match_id, team_id);
+				// Fetch updated match data and update team state
+				const updatedMatchData = await getMatchDetails(match_id);
+				setTeamA({
+					name: updatedMatchData.team_a_name || "Team A",
+					image:
+						updatedMatchData.team_a_logo ||
+						"https://espndeportes.espn.com/i/teamlogos/soccer/500/default-team-logo-500.png?h=100&w=100",
+					isCustom: updatedMatchData.team_a_is_custom,
+					idTeam: updatedMatchData.team_a_id,
+				});
+			} catch (error) {
+				console.error("Error setting local team:", error);
+				Alert.alert("Error", "Failed to set local team.");
+			}
+		} else {
+			Alert.alert(
+				"Not Allowed",
+				"Only the creator can set teams before the time expires."
+			);
+		}
+	};
+
+	const handleSetNewVisitorTeam = async (match_id, team_id) => {
+		if (!noTimeLeft && userIsCreator) {
+			try {
+				await setNewVisitorTeamToMatch(match_id, team_id);
+				// Fetch updated match data and update team state
+				const updatedMatchData = await getMatchDetails(match_id);
+				setTeamB({
+					name: updatedMatchData.team_b_name || "Team B",
+					image:
+						updatedMatchData.team_b_logo ||
+						"https://b.fssta.com/uploads/application/soccer/team-logos/Placeholder.vresize.250.250.medium.0.png",
+					isCustom: updatedMatchData.team_b_is_custom,
+					idTeam: updatedMatchData.team_b_id,
+				});
+			} catch (error) {
+				console.error("Error setting visitor team:", error);
+				Alert.alert("Error", "Failed to set visitor team.");
+			}
+		} else {
+			Alert.alert(
+				"Not Allowed",
+				"Only the creator can set teams before the time expires."
+			);
+		}
+	};
+
 	// Render actual screen content once data is available
 	return (
 		<ImageBackground
@@ -182,7 +274,16 @@ const MatchMainScreen = ({ route }) => {
 					) : (
 						<Text style={styles.title}>COMING SOON</Text>
 					)}
-					<MatchCustom teamA={teamA} teamB={teamB} result={result} />
+					<MatchCustom
+						matchId={matchId}
+						teamA={teamA}
+						teamB={teamB}
+						result={result}
+						isLeader={userIsCreator}
+						noTimeLeft={noTimeLeft}
+						onPressLocal={handleSetNewLocalTeam}
+						onPressVisitor={handleSetNewVisitorTeam}
+					/>
 					<View style={{ marginTop: 30 }}>
 						<CounterDownTimer
 							targetDate={reservationData.matchDate}

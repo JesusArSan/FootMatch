@@ -289,3 +289,31 @@ export const getFriendsNotInTeam = async (userId, teamId) => {
 		throw error;
 	}
 };
+
+// Get all teams
+export const getAllCustomTeams = async (matchId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/teams/custom/${matchId}`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to fetch custom teams: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log("Fetched custom teams:", data);
+		return data;
+	} catch (error) {
+		console.error("Error fetching custom teams:", error);
+		throw error;
+	}
+};

@@ -45,7 +45,7 @@ const TeamsScreen = ({ route }) => {
 	const [uploadedLogoUrl, setUploadedLogoUrl] = useState(null);
 	const [myTeams, setMyTeams] = useState([]);
 	const [joinedTeams, setJoinedTeams] = useState([]);
-	const [step, setStep] = useState(1);
+	const [activeList, setActiveList] = useState("myTeams"); // State to switch between lists
 	const bottomSheetModalRef = useRef(null);
 	const [refreshing, setRefreshing] = useState(false);
 	const [isEditTeamModalOpen, setIsEditTeamModalOpen] = useState(false);
@@ -54,24 +54,24 @@ const TeamsScreen = ({ route }) => {
 	const [isTeamUsersModalOpen, setIsTeamUsersModalOpen] = useState(false);
 	const [friends, setFriends] = useState([]);
 	const [filterType, setFilterType] = useState("team"); // "team" or "friends"
+	const [step, setStep] = useState(1);
 
+	// Toggle between team members and friends for adding
 	const toggleFilterType = () => {
 		setFilterType(filterType === "team" ? "friends" : "team");
 	};
 
+	// Load teams created by the user and teams the user has joined
 	useEffect(() => {
-		// Load teams created by the user
 		const loadMyTeams = async () => {
 			try {
 				const teams = await getCreatedTeamsByUser(user.id);
 				setMyTeams(teams);
-				await updateUserLists();
 			} catch (error) {
 				Alert.alert("Error", "Failed to load teams created by you.");
 			}
 		};
 
-		// Load teams the user has joined
 		const loadJoinedTeams = async () => {
 			try {
 				const teams = await getTeamsByUser(user.id);
@@ -85,18 +85,20 @@ const TeamsScreen = ({ route }) => {
 		loadJoinedTeams();
 	}, [user.id]);
 
+	// Open modal to create a team
 	const openBottomSheet = () => {
 		setStep(1);
 		bottomSheetModalRef.current?.present();
 	};
 
+	// Proceed to the next step in team creation
 	const handleNextStep = () => {
 		if (teamName.trim()) {
 			setStep(2);
 		}
 	};
 
-	// Function to pick image from gallery
+	// Select an image for the team logo
 	const pickImage = async () => {
 		let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
 		if (!result.granted) {
@@ -116,7 +118,7 @@ const TeamsScreen = ({ route }) => {
 		}
 	};
 
-	// Function to upload image
+	// Upload the selected image
 	const handleUploadImage = async (imageUri) => {
 		try {
 			const uploadedUrl = await uploadImage(imageUri);
@@ -126,6 +128,7 @@ const TeamsScreen = ({ route }) => {
 		}
 	};
 
+	// Create a new team
 	const handleCreateTeam = async () => {
 		if (!teamName.trim() || !shortName.trim() || !uploadedLogoUrl) {
 			Alert.alert("Missing Information", "Please provide all team details.");
@@ -137,6 +140,7 @@ const TeamsScreen = ({ route }) => {
 			short_name: shortName,
 			logo_url: uploadedLogoUrl,
 			created_by_user_id: user.id,
+			is_custom_team: 1,
 		};
 
 		try {
@@ -155,7 +159,7 @@ const TeamsScreen = ({ route }) => {
 		}
 	};
 
-	// Function to load both lists of teams
+	// Load both lists of teams
 	const loadTeams = async () => {
 		try {
 			const teamsCreated = await getCreatedTeamsByUser(user.id);
@@ -179,6 +183,7 @@ const TeamsScreen = ({ route }) => {
 		}
 	};
 
+	// Open edit team modal
 	const openEditTeamModal = (team) => {
 		setSelectedTeam(team);
 		setIsEditTeamModalOpen(true);
@@ -189,7 +194,7 @@ const TeamsScreen = ({ route }) => {
 		setSelectedTeam(null);
 	};
 
-	// Update the list in team users pop up modal
+	// Update the team users list in the modal
 	const updateUserLists = async () => {
 		if (selectedTeam) {
 			try {
@@ -210,9 +215,10 @@ const TeamsScreen = ({ route }) => {
 		setSelectedTeam(team);
 		setIsTeamUsersModalOpen(true);
 	};
+
 	useEffect(() => {
 		if (selectedTeam) {
-			updateUserLists(); // Load users and friends when team is selected
+			updateUserLists();
 		}
 	}, [selectedTeam]);
 
@@ -227,7 +233,6 @@ const TeamsScreen = ({ route }) => {
 
 	const handleRemoveUserFromTeam = async (teamId, userId) => {
 		try {
-			console.log("teamId", teamId);
 			await removeUserFromTeam(teamId, userId);
 			await updateUserLists();
 			await loadTeams();
@@ -239,7 +244,6 @@ const TeamsScreen = ({ route }) => {
 	const handleDeleteTeam = async (teamId) => {
 		try {
 			await deleteTeam(teamId);
-			// Alert.alert("Success", "Team deleted successfully!");
 			await loadTeams();
 		} catch (error) {
 			Alert.alert("Error", "Failed to delete the team.");
@@ -252,7 +256,6 @@ const TeamsScreen = ({ route }) => {
 				name: selectedTeam.name,
 				short_name: selectedTeam.short_name,
 			});
-			// Alert.alert("Success", "Team updated successfully!");
 			closeEditTeamModal();
 			await loadTeams();
 		} catch (error) {
@@ -260,6 +263,7 @@ const TeamsScreen = ({ route }) => {
 		}
 	};
 
+	// Render list of created teams
 	const renderCreatedTeams = ({ item }) => (
 		<View style={styles.teamContainer}>
 			<Text style={styles.teamText}>{item.name}</Text>
@@ -270,23 +274,18 @@ const TeamsScreen = ({ route }) => {
 				<Text style={styles.teamDetails}>No Logo</Text>
 			)}
 			<View style={styles.iconContainer}>
-				{/* Icon to edit team */}
 				<TouchableOpacity
 					style={styles.icon}
 					onPress={() => openEditTeamModal(item)}
 				>
 					<MaterialIcons name="edit" size={28} color="black" />
 				</TouchableOpacity>
-
-				{/* Icon to show team users */}
 				<TouchableOpacity
 					style={styles.icon}
 					onPress={() => openTeamUsersModal(item)}
 				>
 					<FontAwesome6 name="user-pen" size={24} color="black" />
 				</TouchableOpacity>
-
-				{/* Icon to delete team */}
 				<TouchableOpacity
 					style={styles.icon}
 					onPress={() => handleDeleteTeam(item.id)}
@@ -297,6 +296,7 @@ const TeamsScreen = ({ route }) => {
 		</View>
 	);
 
+	// Render list of joined teams
 	const renderJoinedTeams = ({ item }) => (
 		<View style={styles.teamContainer}>
 			<Text style={styles.teamText}>{item.name}</Text>
@@ -307,11 +307,9 @@ const TeamsScreen = ({ route }) => {
 				<Text style={styles.teamDetails}>No Logo</Text>
 			)}
 			<View style={styles.iconContainer}>
-				{/* Display crown icon if current user is the creator */}
 				{item.created_by_user_id === user.id ? (
 					<FontAwesome5 name="crown" size={24} color="black" />
 				) : (
-					// Display log-out icon as button if current user is not the creator
 					<TouchableOpacity
 						style={styles.icon}
 						onPress={() => handleRemoveUserFromTeam(item.id, user.id)}
@@ -335,36 +333,69 @@ const TeamsScreen = ({ route }) => {
 					<Text style={styles.buttonText}>Create a New Team</Text>
 				</TouchableOpacity>
 
-				<View style={styles.flatListContainer}>
-					<Text style={styles.subTitle}>My Teams</Text>
-					<FlatList
-						data={myTeams}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={renderCreatedTeams}
-						ListEmptyComponent={
-							<Text style={styles.emptyText}>
-								No teams created by you.
-							</Text>
-						}
-						refreshing={refreshing}
-						onRefresh={onRefresh}
-						style={styles.halfHeight}
-					/>
+				<View style={styles.toggleContainer}>
+					<TouchableOpacity
+						style={[
+							styles.toggleButton,
+							activeList === "myTeams" && styles.activeButton,
+						]}
+						onPress={() => setActiveList("myTeams")}
+					>
+						<Text
+							style={[
+								styles.toggleButtonText,
+								activeList === "myTeams" && styles.activeButtonText,
+							]}
+						>
+							My Teams
+						</Text>
+					</TouchableOpacity>
+					<TouchableOpacity
+						style={[
+							styles.toggleButton,
+							activeList === "joinedTeams" && styles.activeButton,
+						]}
+						onPress={() => setActiveList("joinedTeams")}
+					>
+						<Text
+							style={[
+								styles.toggleButtonText,
+								activeList === "joinedTeams" && styles.activeButtonText,
+							]}
+						>
+							Teams I'm In
+						</Text>
+					</TouchableOpacity>
+				</View>
 
-					<Text style={styles.subTitle}>Teams I'm In</Text>
-					<FlatList
-						data={joinedTeams}
-						keyExtractor={(item) => item.id.toString()}
-						renderItem={renderJoinedTeams}
-						ListEmptyComponent={
-							<Text style={styles.emptyText}>
-								You have not joined any teams.
-							</Text>
-						}
-						refreshing={refreshing}
-						onRefresh={onRefresh}
-						style={styles.halfHeight}
-					/>
+				<View style={styles.flatListContainer}>
+					{activeList === "myTeams" ? (
+						<FlatList
+							data={myTeams}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={renderCreatedTeams}
+							ListEmptyComponent={
+								<Text style={styles.emptyText}>
+									No teams created by you.
+								</Text>
+							}
+							refreshing={refreshing}
+							onRefresh={onRefresh}
+						/>
+					) : (
+						<FlatList
+							data={joinedTeams}
+							keyExtractor={(item) => item.id.toString()}
+							renderItem={renderJoinedTeams}
+							ListEmptyComponent={
+								<Text style={styles.emptyText}>
+									You have not joined any teams.
+								</Text>
+							}
+							refreshing={refreshing}
+							onRefresh={onRefresh}
+						/>
+					)}
 				</View>
 
 				<BottomSheetModal
@@ -428,6 +459,7 @@ const TeamsScreen = ({ route }) => {
 						)}
 					</View>
 				</BottomSheetModal>
+
 				<PopUpModal
 					isOpen={isEditTeamModalOpen}
 					setIsOpen={setIsEditTeamModalOpen}
@@ -547,7 +579,7 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 20,
 	},
 	button: {
-		backgroundColor: "#4A84DC",
+		backgroundColor: "#3562A6",
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 8,
@@ -555,24 +587,39 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		marginTop: 10,
 	},
-	imageButton: {
-		backgroundColor: "#FF8C00",
+	buttonText: {
+		color: "#fff",
+		fontSize: 16,
+		fontFamily: "InriaSans-Bold",
+	},
+	toggleContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		marginVertical: 10,
+	},
+	toggleButton: {
 		paddingVertical: 10,
 		paddingHorizontal: 20,
 		borderRadius: 8,
-		alignSelf: "center",
-		marginBottom: 10,
+		marginHorizontal: 5,
+		backgroundColor: "#f0f0f0",
+		borderColor: "black",
+		borderWidth: 1,
 	},
-	buttonText: {
+	toggleButtonText: {
+		fontSize: 16,
+		color: "#333",
+		fontFamily: "InriaSans-Regular",
+	},
+	activeButton: {
+		backgroundColor: "black",
+	},
+	activeButtonText: {
 		color: "#fff",
-		fontWeight: "bold",
+		fontFamily: "InriaSans-Regular",
 	},
-	subTitle: {
-		fontSize: 20,
-		fontWeight: "bold",
-		marginTop: 20,
-		marginBottom: 10,
-		textAlign: "center",
+	flatListContainer: {
+		flex: 1,
 	},
 	teamContainer: {
 		paddingVertical: 15,
@@ -590,11 +637,12 @@ const styles = StyleSheet.create({
 	},
 	teamText: {
 		fontSize: 18,
-		fontWeight: "bold",
+		fontFamily: "InriaSans-Bold",
 		color: "#333",
 	},
 	teamDetails: {
 		fontSize: 14,
+		fontFamily: "InriaSans-Regular",
 		color: "#555",
 		marginVertical: 5,
 	},
@@ -617,14 +665,16 @@ const styles = StyleSheet.create({
 		color: "#999",
 		textAlign: "center",
 		marginTop: 10,
+		fontFamily: "InriaSans-Regular",
 	},
+	// Bottom Sheet content for creating a new team
 	sheetContent: {
 		flex: 1,
 		padding: 20,
 	},
 	sheetTitle: {
 		fontSize: 20,
-		fontWeight: "bold",
+		fontFamily: "InriaSans-Bold",
 		marginBottom: 20,
 		textAlign: "center",
 	},
@@ -645,19 +695,16 @@ const styles = StyleSheet.create({
 		borderWidth: 1,
 		borderColor: "#ddd",
 	},
-	flatListContainer: {
-		flex: 1,
-	},
-	halfHeight: {
-		flex: 0.5,
-	},
-	popUpContainer: {
-		borderRadius: 20,
-		padding: 20,
-		backgroundColor: "#FFFFFF",
-		width: "90%",
+	imageButton: {
+		backgroundColor: "#FF8C00",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 8,
 		alignSelf: "center",
-		alignItems: "center",
+		marginBottom: 10,
+	},
+	disabledButton: {
+		backgroundColor: "#ccc",
 	},
 	title: {
 		fontSize: 22,
@@ -666,25 +713,21 @@ const styles = StyleSheet.create({
 		marginBottom: 10,
 		textAlign: "center",
 	},
-	userContainer: {
-		flexDirection: "row",
-		justifyContent: "space-between",
+	// PopUp Modal styling
+	popUpContainer: {
+		borderRadius: 20,
+		padding: 20,
+		backgroundColor: "#FFFFFF",
+		width: "90%",
+		alignSelf: "center",
 		alignItems: "center",
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: "#ddd",
-		width: "100%",
-		paddingHorizontal: 10,
 	},
-	userText: {
-		fontSize: 16,
+	label: {
+		fontSize: 22,
+		fontFamily: "InriaSans-Bold",
 		color: "#333",
-	},
-	noUsersText: {
-		fontSize: 18,
-		color: "#999",
+		marginBottom: 10,
 		textAlign: "center",
-		marginVertical: 20,
 	},
 	saveButton: {
 		backgroundColor: "#4A84DC",
@@ -697,7 +740,7 @@ const styles = StyleSheet.create({
 	},
 	saveButtonText: {
 		color: "#fff",
-		fontWeight: "bold",
+		fontFamily: "InriaSans-Bold",
 		fontSize: 16,
 	},
 	closeButton: {
@@ -711,11 +754,40 @@ const styles = StyleSheet.create({
 	},
 	closeButtonText: {
 		color: "#fff",
-		fontWeight: "bold",
+		fontFamily: "InriaSans-Bold",
 		fontSize: 16,
 	},
-	disabledButton: {
-		backgroundColor: "#ccc",
+	// User Container inside the PopUp Modal
+	userContainer: {
+		flexDirection: "row",
+		justifyContent: "space-between",
+		alignItems: "center",
+		paddingVertical: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: "#ddd",
+		width: "100%",
+		paddingHorizontal: 10,
+	},
+	userText: {
+		fontSize: 16,
+		fontFamily: "InriaSans-Regular",
+		color: "#333",
+	},
+	noUsersText: {
+		fontSize: 18,
+		color: "#999",
+		fontFamily: "InriaSans-Regular",
+		textAlign: "center",
+		marginVertical: 20,
+	},
+	filterButton: {
+		marginBottom: 15,
+	},
+	filterButtonText: {
+		color: "#4A84DC",
+		fontSize: 16,
+		textAlign: "center",
+		fontFamily: "InriaSans-Bold",
 	},
 });
 

@@ -102,6 +102,7 @@ export default function App() {
 				<Stack.Screen
 					name="TeamsScreen"
 					component={TeamsScreen}
+					initialParams={{ user: userData }}
 					options={{
 						headerTitle: (props) => (
 							<HeaderTitleScreen {...props} text={"Teams"} />

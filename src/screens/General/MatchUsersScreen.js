@@ -85,7 +85,7 @@ const MatchfriendsScreen = ({ route }) => {
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
 			<View style={styles.mainContainer}>
-				{!isUserParticipant && (
+				{!isUserParticipant && !matchCompleted && (
 					<Pressable
 						style={styles.autoInviteButton}
 						onPress={handleAutoInvite}
@@ -167,11 +167,11 @@ const styles = StyleSheet.create({
 	},
 	autoInviteButton: {
 		backgroundColor: "#4CAF50",
-		paddingVertical: 10,
-		paddingHorizontal: 20,
+		paddingVertical: 5,
+		paddingHorizontal: 10,
 		borderRadius: 8,
 		alignSelf: "center",
-		marginVertical: 15,
+		marginBottom: 15,
 		shadowColor: "#000",
 		shadowOffset: { width: 0, height: 2 },
 		shadowOpacity: 0.3,
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
 	},
 	autoInviteText: {
 		color: "white",
-		fontSize: 18,
+		fontSize: 15,
 		fontWeight: "bold",
 		textAlign: "center",
 	},

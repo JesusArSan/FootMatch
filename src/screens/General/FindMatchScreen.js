@@ -57,6 +57,7 @@ const FindMatchScreen = ({ route }) => {
 
 		try {
 			navigation.navigate("MatchTabNavigator", {
+				user: user,
 				matchId: item.id,
 				reservation: {
 					matchDate: formattedDate,

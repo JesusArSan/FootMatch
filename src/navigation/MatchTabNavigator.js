@@ -17,7 +17,7 @@ const TabNav = createBottomTabNavigator();
 const MatchTabNavigator = ({ route }) => {
 	// User creator match data for permissions
 	const userIsCreator =
-		route.params.reservation.user_id === route.params.user.id;
+		route.params?.reservation?.user_id === route.params?.user?.id;
 
 	// Match completed state and loading state
 	const [matchCompleted, setMatchcompleted] = useState(false);

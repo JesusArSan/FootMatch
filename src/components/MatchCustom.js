@@ -1,30 +1,86 @@
-// React Imports
-import React from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import React, { useState } from "react";
+import {
+	View,
+	Text,
+	StyleSheet,
+	Image,
+	TouchableOpacity,
+	FlatList,
+	Pressable,
+} from "react-native";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import PopUpModal from "./PopUpModal.js";
+import { getAllCustomTeams } from "../utils/TeamsFunctions.js";
 
 const NAME_LIMIT = 6;
 
-const MatchCustom = ({ teamA = {}, teamB = {}, result = {} }) => (
-	console.log("Result", result),
-	(
+const MatchCustom = ({
+	matchId = {},
+	teamA = {},
+	teamB = {},
+	result = {},
+	isLeader = false,
+	noTimeLeft = false,
+	onPressLocal = () => {},
+	onPressVisitor = () => {},
+}) => {
+	const [isModalOpen, setModalOpen] = useState(false);
+	const [teams, setTeams] = useState([]);
+	const [selectedTeam, setSelectedTeam] = useState(null);
+	const [isLocalTeam, setIsLocalTeam] = useState(false);
+
+	// Open modal and fetch teams, determine if it's for local or visitor
+	const handleOpenModal = async (isLocal) => {
+		try {
+			const fetchedTeams = await getAllCustomTeams(matchId);
+			setTeams(fetchedTeams);
+			setIsLocalTeam(isLocal);
+			setModalOpen(true);
+		} catch (error) {
+			console.error("Error fetching teams:", error);
+		}
+	};
+
+	// Handle team selection
+	const handleSelectTeam = (teamId) => {
+		setSelectedTeam(teamId);
+		setModalOpen(false);
+		if (isLocalTeam) {
+			onPressLocal(matchId, teamId);
+		} else {
+			onPressVisitor(matchId, teamId);
+		}
+	};
+
+	return (
 		<View style={styles.matchContainer}>
+			{/* Team A Display */}
 			<View style={styles.teamContainer}>
 				<Image
-					source={{
-						uri: teamA.image
-							? teamA.image
-							: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJQAAACUCAMAAABC4vDmAAAAWlBMVEX///8AAAD39/fY2NguLi6WlpYpKSnj4+MzMzPq6urb29uampqioqKFhYXm5uafn585OTmOjo6pqam7u7sjIyMPDw9iYmIdHR0+Pj5SUlJ/f3/x8fHQ0NAYGBggQFzxAAAFdUlEQVR4nM2c6YKrIAyFXbpJp47Tdea28/6veccuFpODLIImP63a9CNATqBkWSxbfkV7VTTb5/nn3D5Q+8r/bDe3F33b53cTxWqbP01QXO3zzsSwWuaaCYmrj7xn27n9aW2bExMQV5/Upzxfzu0T4ySA1QfyaWZWoO1m9wq23cwtaGi7WVkNcJqNlTGeZmRl4TQLKx5PqxW7NPGMs2QOHKvqyC5OOjvv2devyiwrOasJMxnOaVW11yvu1WSsOKdj+fik5C04EasvA6fW5mJl5tTaPKw4p0Wlf14t2A3/UvuE+51u0/dB3u82Nb2n3kwbV4CT4nepSVm5cGptSlZunFoDrBLNg4DT2nTvmrNKkjPwvGBh4NSa4iNDAlY8fzJzam0KVoAT8akk3NacVeRc1M5J5SdyJTUrno9TTrc/Lg0Z29Oy4j5tSFupU3v1SEYtxVlF84q33YpyeuYGG8qKj1eRWtA+Fqhfk7dgZIjCCnAirXTTeNC4qpOw8uGEPE4xiiIt1b/jRnLNBWEFlNdIVnwOpt/J5146gpWRWZm0lPaNv+wWlovGVROc0+aWFbrd+Pf9WaN6N2U3Pl4FZ30gV0EuuFi0rA/kdLdQpwDRIFZQS4U6FUl5Qc1ZhDpVRFGpWHNCp07n3UEV7UOFOuzOJ+wUYuUZVwaNAJy6bMtCf7Iotxfo1Gjlxfvd4j57MKd+Dujxww9yKqubMayMWoo69VHgFxR0xnzcB3JRZ1ZmLdV36gyV6MPqM3Aqq4JZDeQFPad216G3FDvgVLbmXjnNg0MaQXfKmqzpwLtmBqwccoZBjaA55ZBAal69Yw/UGayvGtZSb6ecQuHdglqHqL99WVk0Z+fUeTCeXnbtol3vpZUnK8Cpl/t2Tg30O91q5JQnKx5PRJ28nPpw8+lNvj+e+bDibcc05+Pyj2HM5FY8x3ZaZ+CsDF7ZtVT57M9wbsF2eDxBlReYnWEL2rX5S+9e3H3KsguMAzSKAlYOnF6R4KVFXu+liv7qUJMBY4GphnIq6cNDVr7yqwX5jfYZx6453zX7s3OYt1Z0YxVVXldL1mdfR9B+l2e++B7WG3tVTctkeDyZOXn1vdYO5l8KWHVxZefUm0UHasLIlPYoXQsAtb4nq6H1u4f1lYhXSJEc7Gjvg/foGF6/u/+efj/x8ynra0W3uLLXMBQRTaOcyk+k9Qs0Xs3uFEzbJTafzECXOSTIHDxlTjMyJ2SZqYvMJE9mOixTOMiUWDLFqEzZ7lHgcGrAOAUOmaWgqEUz7QeOK5q5lxetQ6j+opHlxViF2GvUQqzMkrXM4n6qZZDrqGWQNAtGQ7mvm8VfWhvLCbM6qjGLkGDbS8CCLWfVFOHLtUBzBm2UBRslFLvkaGBzSeAmAN4H+bTlaPzB4O0SnNW36m+WULxVcr5ZQnGfRmyRBeMVGS7B9mWmpYrRS9p946zsipJuwAmf70wGKkVkHqabfqhevCbY1sVzBsaq961UAcXn1BrPrxaUlfa9VEsN1zDCzYdVqOb0N5CL0urHM9qpNgcaIdqmWJ63U1b1vdZHN5+m42TwirJqgDZP6hNqwYZSOdENzWBrS+TN36DOQDd0knpBmJbyM87quxq6vwrQnP5mZ6Ub4JTkrxcgkzGymoZTa2Dbp+FvDkBLJfurpisrwCnhH59AhgxYjddSfsZZNayiEENL+Zk9rsZp8zADyqvHCnBK/qdDW1xNHU8v46w2HSvz+l1qM7Oai1NrQHndWdnXpVIa7oNz9DvdQAWyAIv5Ex+HA9REEi3lZxIPcZB53IXMg0FkHqEi87AZmcfyyDzASOZRTzIPxZJ5fJjMg9ZkHkkn8/A+mcccyjwQUubRmTIPGY16HOt/TO9Ib30g6AgAAAAASUVORK5CYII=",
-					}}
+					source={{ uri: teamA.image || "default_teamA_image_url" }}
 					style={styles.teamLogo}
 				/>
-
 				<Text style={styles.teamName}>
 					{teamA.name
 						? teamA.name.substring(0, NAME_LIMIT) +
 							(teamA.name.length > NAME_LIMIT ? "." : "")
 						: "Team A"}
 				</Text>
+				{!isLeader || noTimeLeft ? null : (
+					<TouchableOpacity
+						onPress={() => handleOpenModal(true)}
+						style={styles.editButton}
+					>
+						<MaterialCommunityIcons
+							name="clock-edit"
+							size={24}
+							color="black"
+						/>
+					</TouchableOpacity>
+				)}
 			</View>
+
+			{/* VS Text */}
 			<Text style={styles.vsText}>
 				{result.status === "completed" &&
 				result.teamA >= 0 &&
@@ -32,13 +88,11 @@ const MatchCustom = ({ teamA = {}, teamB = {}, result = {} }) => (
 					? `${result.teamA} - ${result.teamB}`
 					: "VS"}
 			</Text>
+
+			{/* Team B Display with Pop-up for team selection */}
 			<View style={styles.teamContainer}>
 				<Image
-					source={{
-						uri: teamB.image
-							? teamB.image
-							: "https://static-00.iconduck.com/assets.00/team-bravo-icon-2048x2048-wyxo7j5s.png",
-					}}
+					source={{ uri: teamB.image || "default_teamB_image_url" }}
 					style={styles.teamLogo}
 				/>
 				<Text style={styles.teamName}>
@@ -47,10 +101,47 @@ const MatchCustom = ({ teamA = {}, teamB = {}, result = {} }) => (
 							(teamB.name.length > NAME_LIMIT ? "." : "")
 						: "Team B"}
 				</Text>
+				{!isLeader || noTimeLeft ? null : (
+					<TouchableOpacity
+						onPress={() => handleOpenModal(false)}
+						style={styles.editButton}
+					>
+						<MaterialCommunityIcons
+							name="clock-edit"
+							size={24}
+							color="black"
+						/>
+					</TouchableOpacity>
+				)}
 			</View>
+
+			{/* PopUpModal for team selection */}
+			<PopUpModal isOpen={isModalOpen} setIsOpen={setModalOpen}>
+				<View style={styles.modalContainer}>
+					<Text style={styles.modalTitle}>Select a Team</Text>
+					<FlatList
+						data={teams}
+						keyExtractor={(item) => item.id.toString()}
+						renderItem={({ item }) => (
+							<Pressable
+								onPress={() => handleSelectTeam(item.id)}
+								style={styles.teamItem}
+							>
+								<Text style={styles.teamText}>{item.name}</Text>
+							</Pressable>
+						)}
+					/>
+					<Pressable
+						onPress={() => setModalOpen(false)}
+						style={styles.closeButton}
+					>
+						<Text style={styles.closeButtonText}>Close</Text>
+					</Pressable>
+				</View>
+			</PopUpModal>
 		</View>
-	)
-);
+	);
+};
 
 const styles = StyleSheet.create({
 	matchContainer: {
@@ -83,6 +174,48 @@ const styles = StyleSheet.create({
 		fontFamily: "InriaSans-Bold",
 		marginHorizontal: 20,
 		color: "#000",
+	},
+	editButton: {
+		position: "absolute",
+		top: -10,
+		right: -20,
+		padding: 4,
+	},
+	modalContainer: {
+		alignItems: "center",
+		backgroundColor: "#fff",
+		borderRadius: 10,
+		padding: 20,
+		marginHorizontal: 20,
+		height: "50%",
+		justifyContent: "center",
+	},
+
+	modalTitle: {
+		fontSize: 18,
+		fontWeight: "bold",
+		marginBottom: 10,
+	},
+	teamItem: {
+		padding: 10,
+		borderBottomWidth: 1,
+		borderColor: "#ccc",
+		width: "100%",
+		alignItems: "center",
+	},
+	teamText: {
+		fontSize: 16,
+		color: "#333",
+	},
+	closeButton: {
+		backgroundColor: "#D9534F",
+		padding: 10,
+		borderRadius: 8,
+		marginTop: 20,
+	},
+	closeButtonText: {
+		color: "white",
+		fontSize: 16,
 	},
 });
 

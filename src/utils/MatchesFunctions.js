@@ -684,3 +684,115 @@ export const addParticipantToMatch = async (matchId, userId) => {
 		throw error;
 	}
 };
+
+// Function to set a new local team for a match
+export const setNewLocalTeamToMatch = async (matchId, teamId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/setLocalTeam`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ matchId, teamId }),
+		});
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to set new local team: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log("Local team updated successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error setting new local team:", error);
+		throw error; // Rethrow to handle it in calling component
+	}
+};
+
+// Function to set a new visitor team for a match
+export const setNewVisitorTeamToMatch = async (matchId, teamId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/setVisitorTeam`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ matchId, teamId }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to set new visitor team: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log("Visitor team updated successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error setting new visitor team:", error);
+		throw error; // Rethrow to handle it in calling component
+	}
+};
+
+// Remove all players from a match
+export const removeAllPlayersFromMatch = async (matchId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/${matchId}/players`,
+			{
+				method: "DELETE",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Failed to remove players: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		console.log("All players removed from match successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error removing players from match:", error);
+		throw error;
+	}
+};
+
+// Add players from a custom team to a match
+export const addPlayersToMatchFromTeam = async (matchId, teamId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/${matchId}/teams/${teamId}/players`,
+			{
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to add players from team: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log(
+			"Players from custom team added to match successfully:",
+			data
+		);
+		return data;
+	} catch (error) {
+		console.error("Error adding players from custom team to match:", error);
+		throw error;
+	}
+};
