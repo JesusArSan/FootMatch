@@ -48,6 +48,9 @@ const MatchMainScreen = ({ route }) => {
 	// State for the additional modal
 	const [additionalModalOpen, setAdditionalModalOpen] = useState(false);
 
+	// New state to track if results have been successfully saved
+	const [resultsSaved, setResultsSaved] = useState(false);
+
 	// State to store data and loading state
 	const [center, setCenter] = useState(null);
 	const [matchDetails, setMatchDetails] = useState(null);
@@ -141,6 +144,9 @@ const MatchMainScreen = ({ route }) => {
 						? setMatchcompleted(true)
 						: setMatchcompleted(false);
 
+					console.log("User: ", user); // Debugging
+					console.log("Match data: ", matchData); // Debugging
+
 					// Update teamA and teamB state
 					setTeamA({
 						name: matchData.team_a_name || "Team A",
@@ -189,6 +195,7 @@ const MatchMainScreen = ({ route }) => {
 		try {
 			await setMatchGoals(matchId, scoreA, scoreB);
 			setResult({ teamA: scoreA, teamB: scoreB, status: "completed" });
+			setResultsSaved(true); // Update state to indicate results are saved
 			handleOpenAdditionalModal();
 		} catch (error) {
 			console.error("Failed to set match score:", error);
@@ -284,7 +291,7 @@ const MatchMainScreen = ({ route }) => {
 	return (
 		<ImageBackground
 			source={{
-				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg?t=st=1723396538~exp=1723400138~hmac=d82321aa904617abebebaa6436b2f76b72acbfafaee89164349a45ba8908920e&w=740",
+				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg",
 			}}
 			style={{ flex: 1, resizeMode: "cover" }}
 		>
@@ -342,21 +349,27 @@ const MatchMainScreen = ({ route }) => {
 						noTimeLeft ? (
 							<View style={styles.confirmResult}>
 								{matchcompleted ? (
-									<>
+									resultsSaved ? (
 										<Text style={styles.text}>
-											Make sure to confirm the match score!{" "}
+											Results successfully recorded.
 										</Text>
-										<TouchableOpacity onPress={handleOpenModal}>
-											<Text
-												style={[
-													styles.text,
-													{ color: "rgba(53, 98, 166, 0.6)" },
-												]}
-											>
-												Update now
+									) : (
+										<>
+											<Text style={styles.text}>
+												Make sure to confirm the match score!{" "}
 											</Text>
-										</TouchableOpacity>
-									</>
+											<TouchableOpacity onPress={handleOpenModal}>
+												<Text
+													style={[
+														styles.text,
+														{ color: "rgba(53, 98, 166, 0.6)" },
+													]}
+												>
+													Update now
+												</Text>
+											</TouchableOpacity>
+										</>
+									)
 								) : (
 									<>
 										<Text style={styles.text}>

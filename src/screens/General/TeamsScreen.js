@@ -513,7 +513,9 @@ const TeamsScreen = ({ route }) => {
 							style={styles.filterButton}
 						>
 							<Text style={styles.filterButtonText}>
-								View {filterType === "team" ? "Friends" : "Team Users"}
+								{filterType === "team"
+									? "Invite Friends"
+									: "Show Team Users"}
 							</Text>
 						</TouchableOpacity>
 

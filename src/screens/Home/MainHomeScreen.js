@@ -15,11 +15,16 @@ import { ScrollView } from "react-native-gesture-handler";
 import { getFavCenters } from "../../utils/CentersFunctions.js";
 // User Location
 import UserLocation from "../../utils/UserLocation.js";
+// User Last game
+import { fetchLastCompletedMatch } from "../../utils/UserFunctions.js";
 import { useDrawerProgress } from "@react-navigation/drawer";
 
 const MainHomeScreen = ({ route }) => {
 	// State to store the fav centers
 	const [favCenters, setCenters] = useState([]);
+
+	// State to store the last completed match
+	const [lastCompletedMatch, setLastCompletedMatch] = useState(null);
 
 	// Navigation between screens
 	const navigation = useNavigation();
@@ -67,6 +72,21 @@ const MainHomeScreen = ({ route }) => {
 		}
 	}, [user]);
 
+	useEffect(() => {
+		const fetchLastGame = async () => {
+			try {
+				const matchData = await fetchLastCompletedMatch(user.id);
+				setLastCompletedMatch(matchData);
+			} catch (error) {
+				console.error("Error fetching last completed match:", error);
+			}
+		};
+
+		if (user.id) {
+			fetchLastGame();
+		}
+	}, [user.id]);
+
 	const handleCenterPress = (center) => {
 		navigation.navigate("BookingStackNavigator", {
 			centerInfo: center,
@@ -105,7 +125,7 @@ const MainHomeScreen = ({ route }) => {
 				{/* MyLastGame */}
 				<View style={styles.lastGameContainer}>
 					<Text style={styles.sectionTitle}>Your Last Game</Text>
-					<MyLastGame />
+					<MyLastGame matchData={lastCompletedMatch} user={user} />
 				</View>
 
 				{/* ActionsApp */}

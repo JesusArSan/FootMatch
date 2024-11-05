@@ -102,9 +102,9 @@ const MatchConfigScreen = ({ route }) => {
 	return (
 		<ImageBackground
 			source={{
-				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg?t=st=1723396538~exp=1723400138~hmac=d82321aa904617abebebaa6436b2f76b72acbfafaee89164349a45ba8908920e&w=740",
+				uri: "https://img.freepik.com/foto-gratis/vista-balon-futbol-campo_23-2150885911.jpg",
 			}}
-			style={styles.backgroundImage}
+			style={{ flex: 1, resizeMode: "cover" }}
 		>
 			<View style={styles.mainContainer}>
 				{/* For participants who are not the creator */}
@@ -156,10 +156,6 @@ const MatchConfigScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-	backgroundImage: {
-		flex: 1,
-		resizeMode: "cover",
-	},
 	mainContainer: {
 		flex: 1,
 		paddingTop: "25%",

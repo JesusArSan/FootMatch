@@ -415,3 +415,36 @@ export const updateUserRole = async (userId, roleId) => {
 		throw error;
 	}
 };
+
+// Fetch last completed match for a user
+export const fetchLastCompletedMatch = async (userId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/users/${userId}/completed-match`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Error fetching last completed match: ${response.status}`
+			);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		console.log("Last completed match fetched successfully", data);
+		return data;
+	} catch (error) {
+		console.error("Error fetching last completed match:", error);
+		throw error;
+	}
+};
