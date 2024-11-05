@@ -796,3 +796,85 @@ export const addPlayersToMatchFromTeam = async (matchId, teamId) => {
 		throw error;
 	}
 };
+
+// Set goals for a participant in a match
+export const setParticipantGoals = async (matchId, userId, goals) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/participants/goals`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ matchId, userId, goals }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to set participant goals: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log("Participant goals updated successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error setting participant goals:", error);
+		throw error;
+	}
+};
+
+// Set assists for a participant in a match
+export const setParticipantAssists = async (matchId, userId, assists) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/participants/assists`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ matchId, userId, assists }),
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(
+				`Failed to set participant assists: ${response.statusText}`
+			);
+		}
+
+		const data = await response.json();
+		console.log("Participant assists updated successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error setting participant assists:", error);
+		throw error;
+	}
+};
+
+// Set match score for teams A and B
+export const setMatchGoals = async (matchId, teamAScore, teamBScore) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/matches/goals`, {
+			method: "PUT",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ matchId, teamAScore, teamBScore }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to set match score: ${response.statusText}`);
+		}
+
+		const data = await response.json();
+		console.log("Match score updated successfully:", data);
+		return data;
+	} catch (error) {
+		console.error("Error setting match score:", error);
+		throw error;
+	}
+};

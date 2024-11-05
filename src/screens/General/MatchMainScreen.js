@@ -16,6 +16,7 @@ import CounterDownTimer from "../../components/CounterDownTimer";
 import MatchCustom from "../../components/MatchCustom";
 import PopUpModal from "../../components/PopUpModal";
 import UpdateGameResult from "../../components/UpdateGameResult";
+import UpdateStatsParticipants from "../../components/UpdateStatsParticipants";
 import FloatButton from "../../components/FloatButton";
 // Center function
 import { getCenterByPitch } from "../../utils/CentersFunctions";
@@ -26,6 +27,8 @@ import {
 	setNewVisitorTeamToMatch,
 	removeAllPlayersFromMatch,
 	addPlayersToMatchFromTeam,
+	setMatchGoals,
+	getMatchParticipants,
 } from "../../utils/MatchesFunctions";
 
 const MatchMainScreen = ({ route }) => {
@@ -35,11 +38,15 @@ const MatchMainScreen = ({ route }) => {
 	const [date, hour] = reservationData.matchDate.split(" ");
 	const pitchId = route.params.reservation.pitchId || {};
 	const matchId = route.params.matchId || {};
+	const [participants, setParticipants] = useState([]);
 	// Bool userIsCreator
 	const userIsCreator = route.params.userIsCreator || false;
 	// No time left
 	const [noTimeLeft, setNoTimeLeft] = useState(false);
 	const [matchcompleted, setMatchcompleted] = useState(false);
+
+	// State for the additional modal
+	const [additionalModalOpen, setAdditionalModalOpen] = useState(false);
 
 	// State to store data and loading state
 	const [center, setCenter] = useState(null);
@@ -72,9 +79,6 @@ const MatchMainScreen = ({ route }) => {
 		const updateMatchWithCustomTeams = async () => {
 			if (teamA.isCustom && teamB.isCustom) {
 				try {
-					console.log("Match ID:", matchId);
-					console.log("Team A ID:", teamA.idTeam);
-					console.log("Team B ID:", teamB.idTeam);
 					await removeAllPlayersFromMatch(matchId);
 					await addPlayersToMatchFromTeam(matchId, teamA.idTeam);
 					await addPlayersToMatchFromTeam(matchId, teamB.idTeam);
@@ -93,6 +97,21 @@ const MatchMainScreen = ({ route }) => {
 
 		updateMatchWithCustomTeams();
 	}, [teamA, teamB, matchId]);
+
+	// useEffect for load participants when additionalModalOpen is true
+	useEffect(() => {
+		if (additionalModalOpen) {
+			const fetchParticipants = async () => {
+				try {
+					await getMatchParticipants(matchId, setParticipants);
+					console.log("Participants fetched:", participants); // Depuración
+				} catch (error) {
+					console.error("Error fetching participants:", error);
+				}
+			};
+			fetchParticipants();
+		}
+	}, [additionalModalOpen, matchId]);
 
 	// Fetch center data on mount
 	useEffect(() => {
@@ -166,9 +185,25 @@ const MatchMainScreen = ({ route }) => {
 		setModalOpen(false);
 	};
 
-	const handleSaveScoreModal = (scoreA, scoreB) => {
-		setResult({ teamA: scoreA, teamB: scoreB, status: "completed" });
+	const handleSaveScoreModal = async (scoreA, scoreB) => {
+		try {
+			await setMatchGoals(matchId, scoreA, scoreB);
+			setResult({ teamA: scoreA, teamB: scoreB, status: "completed" });
+			handleOpenAdditionalModal();
+		} catch (error) {
+			console.error("Failed to set match score:", error);
+		}
 		setModalOpen(false);
+	};
+
+	// Function to open the additional modal after saving the score
+	const handleOpenAdditionalModal = () => {
+		setAdditionalModalOpen(true);
+	};
+
+	// Function to close the additional modal
+	const handleCloseAdditionalModal = () => {
+		setAdditionalModalOpen(false);
 	};
 
 	// Handle no time left
@@ -260,6 +295,19 @@ const MatchMainScreen = ({ route }) => {
 					result={result}
 					onPressClose={handleCloseModal}
 					onPressSave={handleSaveScoreModal}
+				/>
+			</PopUpModal>
+			<PopUpModal
+				isOpen={additionalModalOpen}
+				setIsOpen={setAdditionalModalOpen}
+			>
+				<UpdateStatsParticipants
+					isOpen={additionalModalOpen}
+					onClose={handleCloseAdditionalModal}
+					matchId={matchId}
+					result={result} // Passing result to track team scores
+					teamAId={teamA.idTeam}
+					teamBId={teamB.idTeam}
 				/>
 			</PopUpModal>
 			<View style={styles.mainContainer}>
