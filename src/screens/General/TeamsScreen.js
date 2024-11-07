@@ -32,9 +32,9 @@ import {
 } from "../../utils/TeamsFunctions";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import PopUpModal from "../../components/PopUpModal";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import PopUpModal from "../../components/PopUpModal";
 
 const TeamsScreen = ({ route }) => {
 	const user = route.params.user || {};

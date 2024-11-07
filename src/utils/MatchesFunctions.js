@@ -878,3 +878,63 @@ export const setMatchGoals = async (matchId, teamAScore, teamBScore) => {
 		throw error;
 	}
 };
+
+// Set match as done by updating match_done to true
+export const setMatchDone = async (matchId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/${matchId}/done`,
+			{
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error setting match as done: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data; // Return confirmation of match done status
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};
+
+// Get match done status for a specific match
+export const getMatchDone = async (matchId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/${matchId}/done`,
+			{
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			}
+		);
+
+		if (!response.ok) {
+			throw new Error(`Error getting match done status: ${response.status}`);
+		}
+
+		const data = await response.json();
+
+		if (data.error) {
+			throw new Error(`Server error: ${data.error}`);
+		}
+
+		return data.match_done; // Return the match done status (true or false)
+	} catch (error) {
+		console.error("Error:", error);
+		throw error;
+	}
+};

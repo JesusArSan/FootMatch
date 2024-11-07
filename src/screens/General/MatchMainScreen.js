@@ -29,6 +29,7 @@ import {
 	addPlayersToMatchFromTeam,
 	setMatchGoals,
 	getMatchParticipants,
+	getMatchDone,
 } from "../../utils/MatchesFunctions";
 
 const MatchMainScreen = ({ route }) => {
@@ -138,16 +139,19 @@ const MatchMainScreen = ({ route }) => {
 			const fetchMatchData = async () => {
 				try {
 					const matchData = await getMatchDetails(matchId);
-					setMatchDetails(matchData); // Store match data in state
+					setMatchDetails(matchData); // Update state with match data
 
 					matchData.status === "completed"
 						? setMatchcompleted(true)
 						: setMatchcompleted(false);
 
-					console.log("User: ", user); // Debugging
-					console.log("Match data: ", matchData); // Debugging
+					// Check if the match is done
+					const matchDoneStatus = await getMatchDone(matchId);
+					if (matchDoneStatus) {
+						setResultsSaved(true); // Update state to indicate results are saved
+					}
 
-					// Update teamA and teamB state
+					// Update team states with match data
 					setTeamA({
 						name: matchData.team_a_name || "Team A",
 						image:
@@ -166,11 +170,11 @@ const MatchMainScreen = ({ route }) => {
 						idTeam: matchData.team_b_id,
 					});
 
-					// Update result state
+					// Update result state with match data
 					setResult({
 						teamA: matchData.team_a_score || 0,
 						teamB: matchData.team_b_score || 0,
-						status: matchData.status || "sheduled",
+						status: matchData.status || "scheduled",
 					});
 				} catch (error) {
 					console.error("Error fetching match data:", error);

@@ -26,6 +26,8 @@ import {
 	updateProfilePhoto,
 	deleteFriendRequest,
 	updateUserRole,
+	getUserExperience,
+	updateUserExperience,
 } from "../../utils/UserFunctions";
 import { uploadImage } from "../../utils/UploadImage";
 // My components
@@ -56,6 +58,23 @@ const UserProfileScreen = ({ route }) => {
 	const { otherUser, userLogged } = route.params;
 	let user = otherUser || userLogged;
 	const isAdmin = userLogged.role_id === 1;
+
+	const [userExp, setUserExp] = useState(null);
+
+	// First useEffect to fetch user experience
+	useEffect(() => {
+		const fetchUserExperience = async () => {
+			try {
+				const new_exp = await getUserExperience(user.id);
+				setUserExp(new_exp); // Store the experience in local state
+			} catch (error) {
+				console.error("Error fetching user experience:", error);
+				Alert.alert("Error", "Could not load user experience points.");
+			}
+		};
+
+		fetchUserExperience();
+	}, [user.id]);
 
 	// Request status
 	const [requestStatus, setRequestStatus] = useState(user.requestStatus);
@@ -253,6 +272,28 @@ const UserProfileScreen = ({ route }) => {
 	// Handle role change
 	const handleRoleChange = (role) => {
 		setSelectedRole(role);
+	};
+
+	// Function to recalculate user level
+	const handleRecalculateLevel = async () => {
+		try {
+			// Update the user experience in the backend
+			const newExperience = await updateUserExperience(user.id);
+
+			setUserExp(newExperience);
+
+			// Show success alert with updated experience points
+			Alert.alert(
+				"Level Recalculated",
+				`The user's level has been recalculated to ${newExperience.user_exp}.`
+			);
+		} catch (error) {
+			console.error("Error recalculating level:", error);
+			Alert.alert(
+				"Error",
+				"There was an issue recalculating the user's level. Please try again."
+			);
+		}
 	};
 
 	const handleSaveSecondModal = async () => {
@@ -471,7 +512,9 @@ const UserProfileScreen = ({ route }) => {
 								<Text style={styles.characteristicLabel}>
 									Experience:
 								</Text>
-								<Text style={styles.characteristicValue}>1200 XP</Text>
+								<Text style={styles.characteristicValue}>
+									{userExp} XP
+								</Text>
 							</View>
 							<View style={styles.characteristicItem}>
 								<Text style={styles.characteristicLabel}>
@@ -484,6 +527,17 @@ const UserProfileScreen = ({ route }) => {
 								<Text style={styles.characteristicValue}>Diamond</Text>
 							</View>
 						</View>
+						{/* Button to recalculate exp */}
+						{!otherUser && (
+							<TouchableOpacity
+								style={styles.recalculateButton}
+								onPress={handleRecalculateLevel}
+							>
+								<Text style={styles.recalculateButtonText}>
+									Recalcular Nivel
+								</Text>
+							</TouchableOpacity>
+						)}
 					</View>
 				</ScrollView>
 				{userLogged && !otherUser && (
@@ -766,6 +820,20 @@ const styles = StyleSheet.create({
 		backgroundColor: "#007BFF",
 		fontWeight: "bold",
 		borderRadius: 4,
+	},
+	recalculateButton: {
+		backgroundColor: "#007BFF",
+		paddingVertical: 10,
+		paddingHorizontal: 20,
+		borderRadius: 8,
+		marginTop: 15,
+		alignItems: "center",
+	},
+	recalculateButtonText: {
+		color: "#fff",
+		fontSize: 16,
+		fontWeight: "bold",
+		fontFamily: "InriaSans-Bold",
 	},
 });
 

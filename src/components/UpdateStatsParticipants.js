@@ -11,6 +11,7 @@ import {
 	getMatchParticipants,
 	setParticipantAssists,
 	setParticipantGoals,
+	setMatchDone,
 } from "../utils/MatchesFunctions";
 
 const UpdateStatsParticipants = ({
@@ -60,8 +61,8 @@ const UpdateStatsParticipants = ({
 				updatedParticipants[index].goals = newGoalCount;
 			} else {
 				Alert.alert(
-					"Limit Exceeded",
-					"Total goals cannot exceed the combined team score."
+					"Goal Assignment Error",
+					"You must assign exactly the total number of goals scored."
 				);
 			}
 		}
@@ -78,8 +79,8 @@ const UpdateStatsParticipants = ({
 				updatedParticipants[index].assists = newAssistCount;
 			} else {
 				Alert.alert(
-					"Limit Exceeded",
-					"Total assists cannot exceed the total goals."
+					"Assist Assignment Error",
+					"Total assists cannot exceed total goals."
 				);
 			}
 		}
@@ -87,7 +88,7 @@ const UpdateStatsParticipants = ({
 		setParticipants(updatedParticipants);
 	};
 
-	// Check if total goals and assists match the team result before closing and update database
+	// Validation before saving stats
 	const checkGoalsAndAssistsBeforeClose = async () => {
 		const totalGoals = participants.reduce(
 			(sum, p) => sum + (p.goals || 0),
@@ -98,25 +99,26 @@ const UpdateStatsParticipants = ({
 			0
 		);
 
-		// Validate total goals and assists do not exceed allowed values
-		if (totalGoals > result.teamA + result.teamB) {
+		// Ensure total goals match team scores exactly
+		if (totalGoals !== result.teamA + result.teamB) {
 			Alert.alert(
-				"Goal Limit Exceeded",
-				"The total goals assigned to participants exceed the team's result. Please adjust."
+				"Goal Assignment Error",
+				"You must assign exactly the total number of goals scored."
 			);
 		} else if (totalAssists > totalGoals) {
 			Alert.alert(
-				"Assist Mismatch",
-				"The total assists cannot exceed the total goals. Please adjust."
+				"Assist Assignment Error",
+				"Total assists cannot exceed total goals."
 			);
 		} else {
-			// If validation passes, update each participant's goals and assists in the database
+			// Save participant stats if validation passes
 			try {
 				for (const participant of participants) {
 					const { id: userId, goals = 0, assists = 0 } = participant;
 
 					await setParticipantGoals(matchId, userId, goals);
 					await setParticipantAssists(matchId, userId, assists);
+					await setMatchDone(matchId);
 				}
 
 				Alert.alert("Success", "All stats have been saved successfully.");

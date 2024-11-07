@@ -448,3 +448,47 @@ export const fetchLastCompletedMatch = async (userId) => {
 		throw error;
 	}
 };
+
+// Fetch user experience points
+export const getUserExperience = async (userId) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/users/${userId}/exp`, {
+			method: "GET",
+			headers: { "Content-Type": "application/json" },
+		});
+		if (!response.ok) {
+			if (response.status === 404) {
+				throw new Error("User not found");
+			} else {
+				throw new Error("Error getting experience points");
+			}
+		}
+		const data = await response.json();
+		return data.user_exp;
+	} catch (error) {
+		console.error("Error fetching user experience:", error);
+		throw error;
+	}
+};
+
+// Update user experience points
+export const updateUserExperience = async (id) => {
+	try {
+		const response = await fetch(`${config.serverUrl}/users/${id}/exp`, {
+			method: "PUT",
+			headers: { "Content-Type": "application/json" },
+		});
+		if (!response.ok) {
+			if (response.status === 404) {
+				throw new Error("User not found or no match records found");
+			} else {
+				throw new Error("Error updating experience points");
+			}
+		}
+		const data = await response.json();
+		return data.user_exp; // Retorna el valor de `user_exp` de la respuesta
+	} catch (error) {
+		console.error("Error updating user experience:", error);
+		throw error;
+	}
+};

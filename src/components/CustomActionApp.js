@@ -57,7 +57,7 @@ const CustomActionApp = ({ actionType, user }) => {
 			return (
 				<TouchableOpacity
 					onPress={() =>
-						navigation.navigate("JoinCompetScreen", {
+						navigation.navigate("CreateCompetitionScreen", {
 							user: user,
 						})
 					}
@@ -67,7 +67,7 @@ const CustomActionApp = ({ actionType, user }) => {
 					<View style={styles.icon}>
 						<TrophyIcon />
 					</View>
-					<Text style={styles.title}>Join Competitions</Text>
+					<Text style={styles.title}>Competitions</Text>
 					<Text style={styles.descrip}>
 						Challenge yourself against the best teams
 					</Text>

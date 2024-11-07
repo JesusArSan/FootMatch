@@ -12,7 +12,8 @@ import BookFieldScreen from "./src/screens/General/BookFieldScreen";
 import CenterDetailsScreen from "./src/screens/General/CenterDetailsScreen";
 import PitchTimeScreen from "./src/screens/General/PitchTimeScreen";
 import FindMatchScreen from "./src/screens/General/FindMatchScreen";
-import JoinCompetScreen from "./src/screens/General/JoinCompetScreen";
+import CreateCompetitionScreen from "./src/screens/General/CreateCompetitionScreen";
+import CompetitionScreen from "./src/screens/General/CompetitionScreen";
 import TeamsScreen from "./src/screens/General/TeamsScreen";
 import UserProfileScreen from "./src/screens/Home/UserProfileScreen";
 import MatchTabNavigator from "./src/navigation/MatchTabNavigator";
@@ -87,11 +88,26 @@ export default function App() {
 					}}
 				/>
 				<Stack.Screen
-					name="JoinCompetScreen"
-					component={JoinCompetScreen}
+					name="CreateCompetitionScreen"
+					component={CreateCompetitionScreen}
+					initialParams={{ user: userData }}
 					options={{
 						headerTitle: (props) => (
-							<HeaderTitleScreen {...props} text={"Join Competitions"} />
+							<HeaderTitleScreen {...props} text={"Competitions"} />
+						),
+						headerStyle: {
+							backgroundColor: "#3562A6",
+						},
+						headerTintColor: "white",
+					}}
+				/>
+				<Stack.Screen
+					name="CompetitionScreen"
+					component={CompetitionScreen}
+					initialParams={{ user: userData }}
+					options={{
+						headerTitle: (props) => (
+							<HeaderTitleScreen {...props} text={"Competition"} />
 						),
 						headerStyle: {
 							backgroundColor: "#3562A6",
