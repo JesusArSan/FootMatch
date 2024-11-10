@@ -285,7 +285,7 @@ const UserProfileScreen = ({ route }) => {
 			// Show success alert with updated experience points
 			Alert.alert(
 				"Level Recalculated",
-				`The user's level has been recalculated to ${newExperience.user_exp}.`
+				`The user's level has been recalculated to ${newExperience}.`
 			);
 		} catch (error) {
 			console.error("Error recalculating level:", error);

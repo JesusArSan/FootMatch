@@ -66,9 +66,10 @@ const DrawerNavigator = ({ userData }) => {
 					),
 				}}
 			/>
-			<Drawer.Screen
+			{/* <Drawer.Screen
 				name="Teams"
 				component={TeamsScreen}
+				initialParams={{ user: userData }}
 				options={{
 					drawerIcon: ({ color }) => (
 						<MaterialCommunityIcons
@@ -78,7 +79,7 @@ const DrawerNavigator = ({ userData }) => {
 						/>
 					),
 				}}
-			/>
+			/> */}
 			<Drawer.Screen
 				name="Statistics"
 				component={StatisticsScreen}

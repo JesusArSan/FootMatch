@@ -430,21 +430,20 @@ export const fetchLastCompletedMatch = async (userId) => {
 		);
 
 		if (!response.ok) {
-			throw new Error(
-				`Error fetching last completed match: ${response.status}`
-			);
+			return null;
 		}
 
 		const data = await response.json();
 
 		if (data.error) {
-			throw new Error(`Server error: ${data.error}`);
+			console.warn(`Server error: ${data.error}`);
+			return null;
 		}
 
 		return data;
 	} catch (error) {
 		console.error("Error fetching last completed match:", error);
-		throw error;
+		return null;
 	}
 };
 
