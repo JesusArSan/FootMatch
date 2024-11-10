@@ -473,12 +473,12 @@ const UserProfileScreen = ({ route }) => {
 								</Text>
 								<Text style={styles.statLabel}>Friends</Text>
 							</View>
-							<View style={styles.statItem}>
+							{/* <View style={styles.statItem}>
 								<Text style={styles.statNumber}>
 									{user.gamesWon || "0"}
 								</Text>
 								<Text style={styles.statLabel}>Games</Text>
-							</View>
+							</View> */}
 						</View>
 						{otherUser && (
 							<View style={styles.buttonContainer}>
@@ -574,12 +574,13 @@ const styles = StyleSheet.create({
 		borderRadius: 20,
 		borderWidth: 1,
 		borderColor: "#ddd",
-		width: "90%",
+		width: "100%",
 		position: "relative",
 		marginTop: "20%",
 	},
 	loggedProfileContainer: {
 		backgroundColor: "rgba(255, 255, 255, 0.92)",
+		width: "100%",
 	},
 	imageContainer: {
 		position: "absolute",
@@ -636,7 +637,7 @@ const styles = StyleSheet.create({
 		padding: 20,
 		backgroundColor: "rgba(255, 255, 255, 0.9)",
 		borderRadius: 10,
-		width: "90%",
+		width: "100%",
 		marginTop: "10%",
 	},
 	characteristicsTitle: {

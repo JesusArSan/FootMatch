@@ -33,6 +33,7 @@ export const createMatch = async (matchData, setMatchId) => {
 
 // Cancel a match
 export const cancelMatch = async (matchId) => {
+	console.log("Cancelling match:", matchId);
 	try {
 		const response = await fetch(`${config.serverUrl}/matches/cancel`, {
 			method: "POST",
