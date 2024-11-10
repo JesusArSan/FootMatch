@@ -161,6 +161,7 @@ export const getMatchDetails = async (matchId) => {
 
 // get match participants by match id
 export const getMatchParticipants = async (matchId, setParticipants) => {
+	console.log("Getting participants for match:", matchId);
 	try {
 		const response = await fetch(
 			`${config.serverUrl}/matches/participants/${matchId}`,

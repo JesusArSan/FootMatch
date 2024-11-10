@@ -1,5 +1,6 @@
 // React Imports
 import React from "react";
+import { Alert } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 // Screen Imports
 import MainHomeScreen from "../screens/Home/MainHomeScreen";
@@ -63,6 +64,17 @@ const MainTabNavigator = ({ route }) => {
 				name="Notifications"
 				component={NotificationsScreen}
 				initialParams={{ user: userData }}
+				listeners={({ navigation }) => ({
+					tabPress: (e) => {
+						// Cancel the tab press
+						e.preventDefault();
+						// Show an alert
+						Alert.alert(
+							"In development",
+							"This feature is currently in development."
+						);
+					},
+				})}
 			/>
 			<Tab.Screen
 				name="Profile"

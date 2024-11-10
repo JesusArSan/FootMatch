@@ -76,6 +76,7 @@ const MainHomeScreen = ({ route }) => {
 		const fetchLastGame = async () => {
 			try {
 				const matchData = await fetchLastCompletedMatch(user.id);
+
 				setLastCompletedMatch(matchData);
 			} catch (error) {
 				console.error("Error fetching last completed match:", error);
@@ -86,6 +87,24 @@ const MainHomeScreen = ({ route }) => {
 			fetchLastGame();
 		}
 	}, [user.id]);
+
+	useFocusEffect(
+		useCallback(() => {
+			const fetchLastGame = async () => {
+				try {
+					const matchData = await fetchLastCompletedMatch(user.id);
+
+					setLastCompletedMatch(matchData);
+				} catch (error) {
+					console.error("Error fetching last completed match:", error);
+				}
+			};
+
+			if (user.id) {
+				fetchLastGame();
+			}
+		}, [user.id])
+	);
 
 	const handleCenterPress = (center) => {
 		navigation.navigate("BookingStackNavigator", {

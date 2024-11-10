@@ -37,8 +37,6 @@ const MyLastGame = ({ matchData, user }) => {
 		});
 	};
 
-	console.log("matchData", matchData);
-
 	// Return message if no match data is available
 	if (!matchData) {
 		return (

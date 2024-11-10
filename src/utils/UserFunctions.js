@@ -441,7 +441,6 @@ export const fetchLastCompletedMatch = async (userId) => {
 			throw new Error(`Server error: ${data.error}`);
 		}
 
-		console.log("Last completed match fetched successfully", data);
 		return data;
 	} catch (error) {
 		console.error("Error fetching last completed match:", error);
@@ -489,6 +488,34 @@ export const updateUserExperience = async (id) => {
 		return data.user_exp; // Retorna el valor de `user_exp` de la respuesta
 	} catch (error) {
 		console.error("Error updating user experience:", error);
+		throw error;
+	}
+};
+
+// Update team for a match participant
+export const updateMatchParticipantTeam = async (matchId, userId, teamId) => {
+	try {
+		const response = await fetch(
+			`${config.serverUrl}/matches/${matchId}/participants/${userId}/team`,
+			{
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ teamId }),
+			}
+		);
+
+		if (!response.ok) {
+			if (response.status === 404) {
+				throw new Error("Participant not found in the match.");
+			} else {
+				throw new Error("Error updating participant's team.");
+			}
+		}
+
+		const data = await response.json();
+		return data; // Retorna los datos de la respuesta
+	} catch (error) {
+		console.error("Error updating match participant team:", error);
 		throw error;
 	}
 };

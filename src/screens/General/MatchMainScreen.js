@@ -31,6 +31,7 @@ import {
 	getMatchParticipants,
 	getMatchDone,
 } from "../../utils/MatchesFunctions";
+import { getTeamUsers } from "../../utils/TeamsFunctions";
 
 const MatchMainScreen = ({ route }) => {
 	// User leader data
@@ -239,11 +240,30 @@ const MatchMainScreen = ({ route }) => {
 		);
 	}
 
+	// Modify setNewLocalTeam and setNewVisitorTeam functions to check for common players in both teams
 	const handleSetNewLocalTeam = async (match_id, team_id) => {
 		if (!noTimeLeft && userIsCreator) {
 			try {
+				// Fetch users in the local and visitor teams
+				const localTeamUsers = await getTeamUsers(teamA.idTeam);
+				const visitorTeamUsers = await getTeamUsers(teamB.idTeam);
+
+				// Check for overlapping participants between local and visitor teams
+				const commonPlayers = localTeamUsers.some((localUser) =>
+					visitorTeamUsers.some(
+						(visitorUser) => visitorUser.id === localUser.id
+					)
+				);
+
+				if (commonPlayers) {
+					Alert.alert(
+						"Invalid Selection",
+						"Both teams cannot have the same players."
+					);
+					return;
+				}
+
 				await setNewLocalTeamToMatch(match_id, team_id);
-				// Fetch updated match data and update team state
 				const updatedMatchData = await getMatchDetails(match_id);
 				setTeamA({
 					name: updatedMatchData.team_a_name || "Team A",
@@ -268,8 +288,26 @@ const MatchMainScreen = ({ route }) => {
 	const handleSetNewVisitorTeam = async (match_id, team_id) => {
 		if (!noTimeLeft && userIsCreator) {
 			try {
+				// Fetch users in the visitor and local teams
+				const visitorTeamUsers = await getTeamUsers(teamB.idTeam);
+				const localTeamUsers = await getTeamUsers(teamA.idTeam);
+
+				// Check for overlapping participants between visitor and local teams
+				const commonPlayers = visitorTeamUsers.some((visitorUser) =>
+					localTeamUsers.some(
+						(localUser) => localUser.id === visitorUser.id
+					)
+				);
+
+				if (commonPlayers) {
+					Alert.alert(
+						"Invalid Selection",
+						"Both teams cannot have the same players."
+					);
+					return;
+				}
+
 				await setNewVisitorTeamToMatch(match_id, team_id);
-				// Fetch updated match data and update team state
 				const updatedMatchData = await getMatchDetails(match_id);
 				setTeamB({
 					name: updatedMatchData.team_b_name || "Team B",
@@ -317,8 +355,8 @@ const MatchMainScreen = ({ route }) => {
 					onClose={handleCloseAdditionalModal}
 					matchId={matchId}
 					result={result} // Passing result to track team scores
-					teamAId={teamA.idTeam}
-					teamBId={teamB.idTeam}
+					teamA={teamA}
+					teamB={teamB}
 				/>
 			</PopUpModal>
 			<View style={styles.mainContainer}>
@@ -413,8 +451,6 @@ const MatchMainScreen = ({ route }) => {
 						<Text style={styles.detailText}>
 							Pitch Type: {center?.pitch?.type || "Unknown"}
 						</Text>
-						<Text style={styles.detailText}>League: NaN</Text>
-						<Text style={styles.detailText}>Championship: NaN</Text>
 						<Text style={styles.detailText}>Price per Person: 2$</Text>
 					</View>
 
@@ -425,7 +461,15 @@ const MatchMainScreen = ({ route }) => {
 								Automatic teams distribution
 							</Text>
 							{userIsCreator ? (
-								<TouchableOpacity style={styles.doItNowButton}>
+								<TouchableOpacity
+									style={styles.doItNowButton}
+									onPress={() =>
+										Alert.alert(
+											"Feature in Development",
+											"This functionality is currently under development."
+										)
+									}
+								>
 									<Text style={styles.doItNowButtonText}>
 										Do it now!
 									</Text>

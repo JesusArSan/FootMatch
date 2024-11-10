@@ -17,8 +17,6 @@ export const createCompetition = async (competitionData) => {
 		end_date: formatDate(competitionData.end_date),
 	};
 
-	console.log("Creating competition with data1111:", formattedData);
-
 	try {
 		const response = await fetch(`${config.serverUrl}/competitions/create`, {
 			method: "POST",
@@ -213,7 +211,7 @@ export const loadTeamsInCompetition = async (competitionId) => {
 	}
 };
 
-// Get Competitions by User
+// Get Competitions by User, sorted by created_at in descending order (newest first)
 export const getCompetitionsByUser = async (userId) => {
 	try {
 		const response = await fetch(
@@ -226,21 +224,25 @@ export const getCompetitionsByUser = async (userId) => {
 			}
 		);
 
-		// Only throw an error if the status is 500 (server error)
 		if (response.status === 500) {
 			throw new Error(`Error retrieving competitions: ${response.status}`);
 		}
 
 		const data = await response.json();
 
-		return data; // Return the list of competitions
+		// Check if data is an array before sorting
+		const sortedData = Array.isArray(data)
+			? data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+			: [];
+
+		return sortedData; // Return the sorted list or an empty array if no data
 	} catch (error) {
 		console.error("Error retrieving competitions by user:", error);
 		throw error;
 	}
 };
 
-// Get all competitions
+// Get all competitions, sorted by created_at in descending order (newest first)
 export const loadCompetitions = async () => {
 	try {
 		const response = await fetch(`${config.serverUrl}/competitions`, {
@@ -255,14 +257,20 @@ export const loadCompetitions = async () => {
 		}
 
 		const data = await response.json();
-		return data; // Return the list of all competitions
+
+		// Check if data is an array before sorting
+		const sortedData = Array.isArray(data)
+			? data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+			: [];
+
+		return sortedData; // Return the sorted list or an empty array if no data
 	} catch (error) {
 		console.error("Error retrieving competitions:", error);
 		throw error;
 	}
 };
 
-// Get all custom teams not in a specific competition
+// Get all custom teams not in a specific competition, sorted alphabetically
 export const loadAllCustomTeamsAvailable = async (competition_id) => {
 	try {
 		const response = await fetch(
@@ -282,8 +290,9 @@ export const loadAllCustomTeamsAvailable = async (competition_id) => {
 		}
 
 		const data = await response.json();
-		console.log("Fetched custom teams:", data);
-		return data;
+		const sortedData = data.sort((a, b) => a.name.localeCompare(b.name)); // Sort teams alphabetically by name
+		console.log("Fetched and sorted custom teams:", sortedData);
+		return sortedData;
 	} catch (error) {
 		console.error("Error fetching custom teams:", error);
 		throw error;

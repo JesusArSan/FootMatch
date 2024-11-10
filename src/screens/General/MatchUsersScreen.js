@@ -1,5 +1,5 @@
 // React Imports
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
 	View,
 	Text,
@@ -9,6 +9,7 @@ import {
 	Alert,
 	Pressable,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 // My components
 import UserMatchItem from "../../components/UserMatchItem";
 import FloatButton from "../../components/FloatButton";

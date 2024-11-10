@@ -28,6 +28,7 @@ import {
 	loadAllCustomTeamsAvailable,
 	removeTeamFromCompetition,
 } from "../../utils/CompetitionsFunctions.js";
+import { getTeamUsers } from "../../utils/TeamsFunctions.js";
 import PopUpModal from "../../components/PopUpModal.js";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -219,29 +220,110 @@ const CreateCompetitionScreen = ({ route }) => {
 		navigation.navigate("CompetitionScreen", { competitionId: id });
 	};
 
+	// Function to check for duplicate participants in a competition
+	const checkForDuplicateParticipants = async (competitionId, newTeamId) => {
+		try {
+			// Fetch existing teams in the competition
+			const teamsInCompetition = await loadTeamsInCompetition(competitionId);
+
+			if (!teamsInCompetition || !Array.isArray(teamsInCompetition)) {
+				return false;
+			}
+
+			// Fetch users in the new team to be added
+			const newTeamUsers = await getTeamUsers(newTeamId);
+
+			if (!newTeamUsers || !Array.isArray(newTeamUsers)) {
+				console.error(
+					"Error: newTeamUsers is undefined or not an array",
+					newTeamUsers
+				);
+				return false;
+			}
+
+			// Loop through each existing team to check for duplicate users
+			for (const team of teamsInCompetition) {
+				if (!team.id) {
+					console.error("Error: team.id is undefined", team);
+					continue; // Skip this team if no id
+				}
+
+				// Fetch users in each existing team
+				const teamUsers = await getTeamUsers(team.id);
+
+				if (!teamUsers || !Array.isArray(teamUsers)) {
+					console.error(
+						"Error: teamUsers is undefined or not an array for team id:",
+						team.id
+					);
+					continue;
+				}
+
+				// Check for any duplicate users between new team and existing team
+				const duplicateUser = newTeamUsers.some((newUser) =>
+					teamUsers.some((existingUser) => existingUser.id === newUser.id)
+				);
+
+				if (duplicateUser) {
+					return true; // Duplicate found
+				}
+			}
+
+			return false; // No duplicates found
+		} catch (error) {
+			console.error("Error checking for duplicate participants:", error);
+			throw error;
+		}
+	};
+
+	// Function to handle adding a new team, with duplicate check
 	const handleAddTeam = async (teamId) => {
 		try {
+			// Check for duplicate participants before adding the team
+			const hasDuplicates = await checkForDuplicateParticipants(
+				selectedCompetition.id,
+				teamId
+			);
+
+			if (hasDuplicates) {
+				Alert.alert(
+					"Error",
+					"This team has players already participating in the competition."
+				);
+				return;
+			}
+
+			// Add team if no duplicates found
 			await addTeamToCompetition(teamId, selectedCompetition.id);
 			Alert.alert("Success", "Team added to competition.");
+
+			// Update the list of teams in competition and available teams
 			const teams = await loadTeamsInCompetition(selectedCompetition.id);
 			setCompetitionTeams(teams);
+
 			const teamsAvailable = await loadAllCustomTeamsAvailable(
 				selectedCompetition.id
 			);
 			setAllCustomTeamsAvailables(teamsAvailable);
 		} catch (error) {
 			Alert.alert("Error", "Failed to add team to competition.");
+			console.error("Error adding team:", error);
 		}
 	};
 
 	const renderCompetitionItem = ({ item }) => (
 		<Pressable onPress={() => handlePressCompetition(item.id)}>
 			<View style={styles.compContainer}>
-				<Text style={styles.compText}>
-					{item.name.length > 12
-						? item.name.slice(0, 12) + "..."
-						: item.name}
-				</Text>
+				<View style={styles.textContainer}>
+					<Text style={styles.compText}>
+						{item.name.length > 6
+							? item.name.slice(0, 6) + "..."
+							: item.name}
+					</Text>
+					<Text style={styles.dateText}>
+						{new Date(item.created_at).toLocaleDateString()}
+					</Text>
+				</View>
 				<View style={styles.iconContainer}>
 					<TouchableOpacity
 						style={styles.icon}
@@ -622,6 +704,13 @@ const styles = StyleSheet.create({
 		borderBottomColor: "#ccc",
 	},
 	iconTeams: {
+		marginLeft: 10,
+	},
+	dateText: {
+		fontSize: 12,
+		color: "#353A50", // Light black
+		fontFamily: "InriaSans-Regular",
+		marginTop: 2,
 		marginLeft: 10,
 	},
 });

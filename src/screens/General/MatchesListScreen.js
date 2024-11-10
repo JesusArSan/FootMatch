@@ -120,8 +120,6 @@ const MatchesListScreen = ({ route }) => {
 		// Format the date to "yyyy-MM-dd HH:mm" as in the handleReserve function
 		const formattedDate = format(utcDate, "yyyy-MM-dd HH:mm");
 
-		console.log("Formatted date:", formattedDate);
-
 		// Navigate to MatchConfigScreen with formatted date and other details
 		navigation.navigate("MatchTabNavigator", {
 			user,

@@ -18,8 +18,8 @@ const UpdateStatsParticipants = ({
 	matchId,
 	onClose,
 	result,
-	teamAId,
-	teamBId,
+	teamA,
+	teamB,
 }) => {
 	const [participants, setParticipants] = useState([]);
 
@@ -133,6 +133,8 @@ const UpdateStatsParticipants = ({
 		}
 	};
 
+	console.log(participants);
+
 	return (
 		<View style={styles.container}>
 			<Text style={styles.title}>Update Participant Stats</Text>
@@ -142,6 +144,30 @@ const UpdateStatsParticipants = ({
 						<Text style={styles.participantName}>
 							{participant.username}
 						</Text>
+						<View styles={styles.logoContainer}>
+							{console.log(
+								"Team A and user:",
+								participant.team_id,
+								teamA.idTeam
+							)}
+							{console.log(
+								"Team B and user:",
+								participant.team_id,
+								teamB.idTeam
+							)}
+							{participant.teamId === teamA.idTeam && teamA.image ? (
+								<Image
+									source={{ uri: teamA.image }}
+									style={styles.teamLogo}
+								/>
+							) : participant.teamId === teamB.idTeam && teamB.image ? (
+								<Image
+									source={{ uri: teamB.image }}
+									style={styles.teamLogo}
+								/>
+							) : null}
+						</View>
+
 						<View style={styles.statContainer}>
 							<View style={styles.counterBox}>
 								<TouchableOpacity
@@ -287,6 +313,20 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		fontFamily: "InriaSans-Bold",
 		textAlign: "center",
+	},
+	logoContainer: {
+		flexDirection: "row",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "red",
+		width: 50,
+		height: 50,
+	},
+	teamLogo: {
+		width: 50,
+		height: 50,
+		borderRadius: 25,
+		marginRight: 10,
 	},
 });
 

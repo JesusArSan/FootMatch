@@ -114,6 +114,15 @@ const DrawerNavigator = ({ userData }) => {
 					drawerIcon: ({ color }) => (
 						<FontAwesome name="support" size={30} color={color} />
 					),
+					listeners: {
+						drawerItemPress: (e) => {
+							e.preventDefault();
+							Alert.alert(
+								"In development",
+								"This feature is currently in development."
+							);
+						},
+					},
 				}}
 			/>
 		</Drawer.Navigator>
